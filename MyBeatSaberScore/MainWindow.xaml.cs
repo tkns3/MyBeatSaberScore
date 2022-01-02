@@ -56,7 +56,7 @@ namespace MyBeatSaberScore
                 Bsr = key.ToLower();
                 Cover = cover;
                 Song = score.leaderboard.songName + " " + score.leaderboard.songSubName + " / " + score.leaderboard.songAuthorName + " [ " + score.leaderboard.levelAuthorName + " ]";
-                TimeSet = score.score.timeSet.Length > 0 ? score.score.timeSet : "000-00-00T00:00:00.000Z";
+                TimeSet = score.score.timeSet.Length > 0 ? score.score.timeSet : "0000-00-00T00:00:00.000Z";
                 GameMode = score.leaderboard.difficulty.gameMode;
                 Difficulty = score.leaderboard.difficulty.difficulty;
                 Stars = score.leaderboard.ranked ? score.leaderboard.stars : -1;
