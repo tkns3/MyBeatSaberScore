@@ -79,12 +79,12 @@ namespace MyBeatSaberScore
             _beatSaverData = new BeatSaverData();
             _scoreSaberData = new ScoreSaberData();
             _allScores = new();
-            _gridItemsViewSource.Filter += new FilterEventHandler(ShowOnlyRankFilter);
+            _gridItemsViewSource.Filter += new FilterEventHandler(DataGridFilter);
             xaDataGrid.ItemsSource = _gridItemsViewSource.View;
             xaTextPlayerId.Text = Config.ScoreSaberProfileId;
         }
 
-        private void ShowOnlyRankFilter(object sender, FilterEventArgs e)
+        private void DataGridFilter(object sender, FilterEventArgs e)
         {
             if (e.Item is GridItem item)
             {
