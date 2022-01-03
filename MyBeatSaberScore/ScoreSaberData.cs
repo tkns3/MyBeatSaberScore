@@ -72,15 +72,20 @@ namespace MyBeatSaberScore
             File.WriteAllText(_scoresPath, jsonString);
         }
 
-        public async Task DownloadLatestScores()
+        public async Task DownloadLatestScores(Action<int, int> callback)
         {
             if (PlayerId.Length == 0) return;
 
+            int count = 0;
             var playerId = this.PlayerId;
             var isAllGet = false;
             for (var page = 1; !isAllGet; page++)
             {
                 var recent = await GetRecentScores(playerId, 100, page);
+
+                count++;
+                callback((recent.metadata.total + 100) / 100, count);
+
                 foreach (var score in recent.playerScores)
                 {
                     // 更新日が同じデータであれば更新済みデータはすべて取得済み

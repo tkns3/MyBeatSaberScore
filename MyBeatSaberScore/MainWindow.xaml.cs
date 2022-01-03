@@ -288,11 +288,11 @@ namespace MyBeatSaberScore
             _scoreSaberData.LoadLocalFile(xaTextPlayerId.Text);
 
             // スコアセイバーから最新スコアを取得
-            Task t1 = Task1DownloadLatestScores(() =>
+            Task t1 = Task1DownloadLatestScores((max, count) =>
             {
                 progress.Dispatcher.Invoke(() =>
                 {
-                    t1txt = "Task1=100.00%";
+                    t1txt = $"Task1={(double)count * 100 / max:0.00}%";
                     progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt} {t4txt}";
                 });
             });
@@ -348,11 +348,11 @@ namespace MyBeatSaberScore
             button.IsEnabled = true;
         }
 
-        private async Task Task1DownloadLatestScores(Action callback)
+        private async Task Task1DownloadLatestScores(Action<int, int> callback)
         {
-            await _scoreSaberData.DownloadLatestScores();
+            await _scoreSaberData.DownloadLatestScores(callback);
             _scoreSaberData.SaveLocalFile();
-            callback();
+            callback(1, 1);
         }
 
         private async Task Task2DownloadRankedMaps(Action callback)
@@ -378,6 +378,7 @@ namespace MyBeatSaberScore
                 callback(_gridItems.Count, count);
             }
             _beatSaverData.SaveLocalFile();
+            callback(1, 1);
         }
 
         private async Task Task4DownloadUnacquiredCover(Action<int, int> callback)
@@ -398,6 +399,7 @@ namespace MyBeatSaberScore
                 count++;
                 callback(_gridItems.Count, count);
             });
+            callback(1, 1);
         }
 
         private void checkBoxRank_Checked(object sender, RoutedEventArgs e)
