@@ -17,8 +17,10 @@ namespace MyBeatSaberScore
         private static readonly string _mapsDir = Path.Combine("data", "maps");
         private static readonly string _mapsPath = Path.Combine(_mapsDir, "maps.json");
         private static readonly string _coverDir = Path.Combine(_mapsDir, "cover");
+        private static readonly string _deletedmapsPath = Path.Combine(_mapsDir, "deletedmaps.json");
 
-        public Dictionary<string, MapDetail> keyValuePairs = new Dictionary<string, MapDetail>();
+        public Dictionary<string, MapDetail> _acquiredMaps = new();
+        private HashSet<string> _deletedMaps = new();
 
         public BeatSaverData()
         {
@@ -28,7 +30,7 @@ namespace MyBeatSaberScore
 
         public void LoadLocalFile()
         {
-            keyValuePairs.Clear();
+            _acquiredMaps.Clear();
             if (File.Exists(_mapsPath))
             {
                 string jsonString = File.ReadAllText(_mapsPath, Encoding.UTF8);
@@ -39,9 +41,22 @@ namespace MyBeatSaberScore
                     {
                         if (detail != null && NormalizeMapDetail(detail) == true)
                         {
-                            
-                            keyValuePairs[detail.versions[0].hash] = detail;
+                            _acquiredMaps[detail.versions[0].hash] = detail;
                         }
+                    }
+                }
+            }
+
+            _deletedMaps.Clear();
+            if (File.Exists(_deletedmapsPath))
+            {
+                string jsonString = File.ReadAllText(_deletedmapsPath, Encoding.UTF8);
+                var collection = JsonSerializer.Deserialize<DeletedMapCollection>(jsonString);
+                if (collection != null)
+                {
+                    foreach (var hash in collection.hashs)
+                    {
+                        _deletedMaps.Add(hash);
                     }
                 }
             }
@@ -49,20 +64,28 @@ namespace MyBeatSaberScore
 
         public void SaveLocalFile()
         {
-            var collection = new MapCollection();
-            collection.mapDetails = keyValuePairs.Values.ToArray();
-            var jsonString = JsonSerializer.Serialize<MapCollection>(collection, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_mapsPath, jsonString);
+            {
+                var collection = new MapCollection();
+                collection.mapDetails = _acquiredMaps.Values.ToArray();
+                var jsonString = JsonSerializer.Serialize<MapCollection>(collection, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(_mapsPath, jsonString);
+            }
+            {
+                var collection = new DeletedMapCollection();
+                collection.hashs = _deletedMaps.ToArray();
+                var jsonString = JsonSerializer.Serialize<DeletedMapCollection>(collection, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(_deletedmapsPath, jsonString);
+            }
         }
 
         public int GetMaxScore(string hash, int difficultyRawInt)
         {
-            if (!keyValuePairs.ContainsKey(hash))
+            if (!_acquiredMaps.ContainsKey(hash))
             {
                 return 0;
             }
 
-            var detail = keyValuePairs[hash];
+            var detail = _acquiredMaps[hash];
             var list = detail.versions[0].diffs.Where(d => d.difficultyRawInt == difficultyRawInt);
             if (list.Any())
             {
@@ -86,9 +109,9 @@ namespace MyBeatSaberScore
         {
             hash = hash.ToLower();
 
-            if (keyValuePairs.ContainsKey(hash))
+            if (_acquiredMaps.ContainsKey(hash))
             {
-                return keyValuePairs[hash].id;
+                return _acquiredMaps[hash].id;
             }
 
             return "";
@@ -98,15 +121,20 @@ namespace MyBeatSaberScore
         {
             hash = hash.ToLower();
 
-            if (keyValuePairs.ContainsKey(hash))
+            if (_acquiredMaps.ContainsKey(hash))
             {
-                return keyValuePairs[hash].id;
+                return _acquiredMaps[hash].id;
+            }
+
+            if (_deletedMaps.Contains(hash))
+            {
+                return "";
             }
 
             var map = await GetMapDetailByHash(hash);
             if (map?.versions?.Length > 0)
             {
-                keyValuePairs[hash] = map;
+                _acquiredMaps[hash] = map;
                 return map.id;
             }
             else
@@ -115,7 +143,7 @@ namespace MyBeatSaberScore
             }
         }
 
-        public static async Task<MapDetail> GetMapDetailByHash(string hash)
+        public async Task<MapDetail> GetMapDetailByHash(string hash)
         {
             hash = hash.ToLower();
             string url = $"https://beatsaver.com/api/maps/hash/{hash}";
@@ -126,7 +154,11 @@ namespace MyBeatSaberScore
                 var responseContent = await httpsResponse.Content.ReadAsStringAsync();
                 var detail = JsonSerializer.Deserialize<MapDetail>(responseContent);
 
-                if (detail != null && NormalizeMapDetail(detail) == true)
+                if (detail?.error?.Contains("Not Found") == true)
+                {
+                    _deletedMaps.Add(hash);
+                }
+                else if (detail != null && NormalizeMapDetail(detail) == true)
                 {
                     return detail;
                 }
@@ -221,6 +253,18 @@ namespace MyBeatSaberScore
     }
 
     [DataContract]
+    public class DeletedMapCollection
+    {
+        [DataMember]
+        public string[] hashs { get; set; }
+
+        public DeletedMapCollection()
+        {
+            hashs = Array.Empty<string>();
+        }
+    }
+
+    [DataContract]
     public class MapCollection
     {
         [DataMember]
@@ -228,7 +272,7 @@ namespace MyBeatSaberScore
 
         public MapCollection()
         {
-            mapDetails = new MapDetail[0];
+            mapDetails = Array.Empty<MapDetail>();
         }
     }
 
@@ -283,6 +327,9 @@ namespace MyBeatSaberScore
         [DataMember]
         public MapVersion[] versions { get; set; }
 
+        [DataMember]
+        public string error { get; set; }
+
         public MapDetail()
         {
             createdAt = "";
@@ -298,6 +345,7 @@ namespace MyBeatSaberScore
             uploaded = "";
             uploader = new UserDetail();
             versions = new MapVersion[0];
+            error = "";
         }
     }
 
