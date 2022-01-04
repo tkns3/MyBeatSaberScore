@@ -11,6 +11,7 @@
         <convert:AccConverter x:Key="AccConverter"/>
         <convert:PPConverter x:Key="PPConverter"/>
         <convert:StarConverter x:Key="StarConverter"/>
+        <convert:DateConverter x:Key="DateConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -63,7 +64,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="更新日"  Width="150" Binding="{Binding TimeSet}"/>
+                <DataGridTextColumn Header="更新日"  Width="150" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
                 <DataGridTemplateColumn Header="モード" Width="45">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
