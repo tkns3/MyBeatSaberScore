@@ -23,8 +23,8 @@ namespace MyBeatSaberScore
     public partial class MainWindow : Window
     {
         private readonly BeatSaviorData _beatSaviorData;
-        private readonly BeatSaverData _beatSaverData;
-        private readonly ScoreSaberData _scoreSaberData;
+        private readonly MapUtil _mapUtil;
+        private readonly PlayerData _playerData;
         private List<ScoreSaber.PlayerScore> _allScores;
 
         static ObservableCollection<GridItem> _gridItems = new();
@@ -48,10 +48,10 @@ namespace MyBeatSaberScore
             public string CoverUrl { get; set; }
             public bool Ranked { get; set; }
 
-            public GridItem(string key, string cover, ScoreSaber.PlayerScore score, BeatSaverData bsData)
+            public GridItem(string key, string cover, ScoreSaber.PlayerScore score, MapUtil mapUtil)
             {
                 string hash = score.leaderboard.songHash.ToLower();
-                int maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : bsData.GetMaxScore(hash, score.leaderboard.difficulty.difficultyRawInt);
+                int maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : mapUtil.GetMaxScore(hash, score.leaderboard.difficulty.difficultyRawInt);
                 double acc = maxScore > 0 ? (double)score.score.modifiedScore * 100 / maxScore : 0;
 
                 Bsr = key.ToLower();
@@ -77,8 +77,8 @@ namespace MyBeatSaberScore
             InitializeComponent();
             Config.LoadLocalFile();
             _beatSaviorData = new BeatSaviorData();
-            _beatSaverData = new BeatSaverData();
-            _scoreSaberData = new ScoreSaberData();
+            _mapUtil = new MapUtil();
+            _playerData = new PlayerData();
             _allScores = new();
             _gridItemsViewSource.Filter += new FilterEventHandler(DataGridFilter);
             xaDataGrid.ItemsSource = _gridItemsViewSource.View;
@@ -184,7 +184,7 @@ namespace MyBeatSaberScore
         {
             if (diff != null)
             {
-                if (!_scoreSaberData.playedRankHash.Contains(map.hash + diffNum.ToString()))
+                if (!_playerData.playedRankHash.Contains(map.hash + diffNum.ToString()))
                 {
                     score =  new ScoreSaber.PlayerScore()
                     {
@@ -221,7 +221,7 @@ namespace MyBeatSaberScore
             _allScores.Clear();
 
             // プレイ済みスコアを追加
-            _allScores.AddRange(_scoreSaberData.playedMaps.Values);
+            _allScores.AddRange(_playerData.playedMaps.Values);
 
             // 未プレイランク譜面を追加
             foreach (var map in _beatSaviorData.rankedMapCollection.maps)
@@ -256,16 +256,16 @@ namespace MyBeatSaberScore
             button.IsEnabled = false;
 
             _beatSaviorData.LoadLocalFile();
-            _beatSaverData.LoadLocalFile();
-            _scoreSaberData.LoadLocalFile(xaTextPlayerId.Text);
+            _mapUtil.LoadLocalFile();
+            _playerData.LoadLocalFile(xaTextPlayerId.Text);
 
             _allScores = GetAllScores();
 
             foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
             {
-                string key = _beatSaverData.GetAlleadyKey(score.leaderboard.songHash);
-                string cover = BeatSaverData.GetCoverLocalPath(score);
-                _gridItems.Add(new GridItem(key, cover, score, _beatSaverData));
+                string key = _mapUtil.GetAlleadyKey(score.leaderboard.songHash);
+                string cover = MapUtil.GetCoverLocalPath(score);
+                _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
             }
 
             _gridItemsViewSource?.View.Refresh();
@@ -286,7 +286,7 @@ namespace MyBeatSaberScore
 
             _gridItems.Clear();
 
-            _scoreSaberData.LoadLocalFile(xaTextPlayerId.Text);
+            _playerData.LoadLocalFile(xaTextPlayerId.Text);
 
             // スコアセイバーから最新スコアを取得
             Task t1 = Task1DownloadLatestScores((max, count) =>
@@ -315,9 +315,9 @@ namespace MyBeatSaberScore
             // 未取得のKey(bsr)とカバー画像はなしでGridItemを構築。
             foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
             {
-                string key = _beatSaverData.GetAlleadyKey(score.leaderboard.songHash);
-                string cover = BeatSaverData.GetCoverLocalPath(score);
-                _gridItems.Add(new GridItem(key, cover, score, _beatSaverData));
+                string key = _mapUtil.GetAlleadyKey(score.leaderboard.songHash);
+                string cover = MapUtil.GetCoverLocalPath(score);
+                _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
             }
 
             // BeatSaverから未取得のKey(bsr)を取得しながらgridItemを逐次更新
@@ -351,8 +351,8 @@ namespace MyBeatSaberScore
 
         private async Task Task1DownloadLatestScores(Action<int, int> callback)
         {
-            await _scoreSaberData.DownloadLatestScores(callback);
-            _scoreSaberData.SaveLocalFile();
+            await _playerData.DownloadLatestScores(callback);
+            _playerData.SaveLocalFile();
             callback(1, 1);
         }
 
@@ -370,7 +370,7 @@ namespace MyBeatSaberScore
             // リクエスト過剰になるとToo Many Requestになるので並列化しない
             foreach (var item in _gridItems)
             {
-                string key = await _beatSaverData.GetKey(item.Hash);
+                string key = await _mapUtil.GetKey(item.Hash);
                 xaDataGrid.Dispatcher.Invoke(new Action(() =>
                 {
                     item.Bsr = key;
@@ -378,7 +378,7 @@ namespace MyBeatSaberScore
                 count++;
                 callback(_gridItems.Count, count);
             }
-            _beatSaverData.SaveLocalFile();
+            _mapUtil.SaveLocalFile();
             callback(1, 1);
         }
 
@@ -392,10 +392,10 @@ namespace MyBeatSaberScore
             };
             await Parallel.ForEachAsync(_gridItems, parallelOptions, async (item, y) =>
             {
-                string cover = await BeatSaverData.GetCover(item.Hash, item.CoverUrl);
+                string cover = await MapUtil.GetCover(item.Hash, item.CoverUrl);
                 xaDataGrid.Dispatcher.Invoke(new Action(() =>
                 {
-                    item.Cover = BeatSaverData.GetCoverLocalPath(item.Hash);
+                    item.Cover = MapUtil.GetCoverLocalPath(item.Hash);
                 }));
                 count++;
                 callback(_gridItems.Count, count);

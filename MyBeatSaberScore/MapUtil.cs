@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MyBeatSaberScore
 {
-    internal class BeatSaverData
+    internal class MapUtil
     {
         private static readonly HttpClient _client = new HttpClient();
         private static readonly string _mapsDir = Path.Combine("data", "maps");
@@ -23,7 +23,7 @@ namespace MyBeatSaberScore
         public Dictionary<string, BeatSaver.MapDetail> _acquiredMaps = new();
         private HashSet<string> _deletedMaps = new();
 
-        public BeatSaverData()
+        public MapUtil()
         {
             Directory.CreateDirectory(_mapsDir);
             Directory.CreateDirectory(_coverDir);

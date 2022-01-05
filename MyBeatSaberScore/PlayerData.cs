@@ -13,7 +13,7 @@ using MyBeatSaberScore.APIs;
 
 namespace MyBeatSaberScore
 {
-    internal class ScoreSaberData
+    internal class PlayerData
     {
         private string _userDir = "";
         private string _scoresPath = "";
@@ -22,7 +22,7 @@ namespace MyBeatSaberScore
         public HashSet<string> playedRankHash = new(); // プレイ済みマップのHashSet。キーは「hash + difficulty(1～9)」。
         public Dictionary<int, ScoreSaber.PlayerScore> playedMaps = new(); // プレイ済みマップ。キー「PlayerScore.leaderboard.id」
 
-        public ScoreSaberData()
+        public PlayerData()
         {
         }
 
