@@ -81,7 +81,7 @@ namespace MyBeatSaberScore.APIs
             public string coverURL { get; set; }
 
             [DataMember]
-            public RankedDifficulties diffs { get; set; }
+            public Dictionary<string, RankedDifficulty> diffs { get; set; }
 
             public RankedMap()
             {
@@ -92,7 +92,7 @@ namespace MyBeatSaberScore.APIs
                 songSubName = "";
                 songAuthorName = "";
                 coverURL = "";
-                diffs = new RankedDifficulties();
+                diffs = new();
             }
 
             public void Normalize()
@@ -104,41 +104,17 @@ namespace MyBeatSaberScore.APIs
         }
 
         [DataContract]
-        public class RankedDifficulties
-        {
-            [DataMember]
-            public RankedDifficulty? easy { get; set; }
-
-            [DataMember]
-            public RankedDifficulty? normal { get; set; }
-
-            [DataMember]
-            public RankedDifficulty? hard { get; set; }
-
-            [DataMember]
-            public RankedDifficulty? expert { get; set; }
-
-            [DataMember]
-            public RankedDifficulty? expertplus { get; set; }
-
-            public RankedDifficulties()
-            {
-                easy = null;
-                normal = null;
-                hard = null;
-                expert = null;
-                expertplus = null;
-            }
-        }
-
-        [DataContract]
         public class RankedDifficulty
         {
             [DataMember]
             public double Stars { get; set; }
 
+            [DataMember]
+            public string Diff { get; set; }
+
             public RankedDifficulty()
             {
+                Diff = "";
             }
         }
     }

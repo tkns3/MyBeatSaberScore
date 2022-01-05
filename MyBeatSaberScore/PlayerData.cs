@@ -78,15 +78,19 @@ namespace MyBeatSaberScore
         {
             if (PlayerId.Length == 0) return;
 
+            callback(1000, 100);
+
             int count = 0;
             var playerId = this.PlayerId;
             var isAllGet = false;
             for (var page = 1; !isAllGet; page++)
             {
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step6");
                 var collection = await ScoreSaber.GetPlayerScores(playerId, 100, page);
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step7");
 
                 count++;
-                callback((collection.metadata.total + 100) / 100, count);
+                callback(1000, 100 + (800 * count * 100) / collection.metadata.total);
 
                 foreach (var score in collection.playerScores)
                 {
@@ -104,6 +108,8 @@ namespace MyBeatSaberScore
                 }
             }
 
+            callback(1000, 900);
+
             playedRankHash.Clear();
             foreach (var score in playedMaps.Values)
             {
@@ -112,6 +118,8 @@ namespace MyBeatSaberScore
                     playedRankHash.Add(score.leaderboard.songHash + score.leaderboard.difficulty.difficulty);
                 }
             }
+
+            callback(1000, 950);
         }
     }
 }

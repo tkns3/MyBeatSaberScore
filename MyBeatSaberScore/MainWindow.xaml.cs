@@ -178,42 +178,6 @@ namespace MyBeatSaberScore
             }
         }
 
-        private bool TryCreateNotPlayRankScore(BeatSavior.RankedMap map, BeatSavior.RankedDifficulty? diff, int diffNum, out ScoreSaber.PlayerScore score)
-        {
-            if (diff != null)
-            {
-                if (!_playerData.playedRankHash.Contains(map.hash + diffNum.ToString()))
-                {
-                    score =  new ScoreSaber.PlayerScore()
-                    {
-                        score = new ScoreSaber.Score()
-                        {
-                            modifiedScore = -1
-                        },
-                        leaderboard = new ScoreSaber.LeaderboardInfo()
-                        {
-                            ranked = true,
-                            songHash = map.hash,
-                            songName = map.songName,
-                            songSubName = map.songSubName,
-                            songAuthorName = map.songAuthorName,
-                            levelAuthorName = map.levelAuthorName,
-                            stars = diff.Stars,
-                            coverImage = map.coverURL,
-                            difficulty = new ScoreSaber.Difficulty()
-                            {
-                                gameMode = "SoloStandard",
-                                difficulty = diffNum,
-                            }
-                        }
-                    };
-                    return true;
-                }
-            }
-            score = new ScoreSaber.PlayerScore();
-            return false;
-        }
-
         private List<ScoreSaber.PlayerScore> GetAllScores()
         {
             _allScores.Clear();
@@ -222,49 +186,70 @@ namespace MyBeatSaberScore
             _allScores.AddRange(_playerData.playedMaps.Values);
 
             // 未プレイランク譜面を追加
-            foreach (var map in _mapUtil.rankedMapCollection.maps)
+            foreach (var map in _mapUtil._mapList)
             {
-                if (TryCreateNotPlayRankScore(map, map.diffs.easy, 1, out var score))
+                map.Diffs.ForEach(diff =>
                 {
-                    _allScores.Add(score);
-                }
-                if (TryCreateNotPlayRankScore(map, map.diffs.normal, 3, out score))
-                {
-                    _allScores.Add(score);
-                }
-                if (TryCreateNotPlayRankScore(map, map.diffs.hard, 5, out score))
-                {
-                    _allScores.Add(score);
-                }
-                if (TryCreateNotPlayRankScore(map, map.diffs.expert, 7, out score))
-                {
-                    _allScores.Add(score);
-                }
-                if (TryCreateNotPlayRankScore(map, map.diffs.expertplus, 9, out score))
-                {
-                    _allScores.Add(score);
-                }
+                    if (diff.Ranked && !_playerData.playedRankHash.Contains(map.Hash + diff.difficultyInt))
+                    {
+                        var score = new ScoreSaber.PlayerScore()
+                        {
+                            score = new ScoreSaber.Score()
+                            {
+                                modifiedScore = -1
+                            },
+                            leaderboard = new ScoreSaber.LeaderboardInfo()
+                            {
+                                ranked = true,
+                                songHash = map.Hash,
+                                songName = map.SongName,
+                                songSubName = map.SongSubName,
+                                songAuthorName = map.SongAuthorName,
+                                levelAuthorName = map.LevelAuthorName,
+                                stars = diff.Stars,
+                                coverImage = $"https://cdn.scoresaber.com/covers/{map.Hash.ToUpper()}.png",
+                                difficulty = new ScoreSaber.Difficulty()
+                                {
+                                    gameMode = "SoloStandard",
+                                    difficulty = diff.difficultyInt,
+                                }
+                            }
+                        };
+                        _allScores.Add(score);
+                    }
+                });
             }
 
             return _allScores;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             button.IsEnabled = false;
 
-            _mapUtil.LoadLocalRankedFile();
-            _mapUtil.LoadLocalFile();
-            _playerData.LoadLocalFile(xaTextPlayerId.Text);
+            var profileId = xaTextPlayerId.Text;
 
-            _allScores = GetAllScores();
-
-            foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
+            await Task.Run(() =>
             {
-                string key = _mapUtil.GetAlleadyKey(score.leaderboard.songHash);
-                string cover = MapUtil.GetCoverLocalPath(score);
-                _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
-            }
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step1");
+                _mapUtil.LoadLocalFile();
+                _playerData.LoadLocalFile(profileId);
+
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step2");
+                _allScores = GetAllScores();
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step3");
+
+                foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
+                {
+                    string key = _mapUtil.GetAlleadyKey(score.leaderboard.songHash);
+                    string cover = MapUtil.GetCoverLocalPath(score);
+                    xaDataGrid.Dispatcher.Invoke(() =>
+                    {
+                        _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
+                    });
+                }
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step4");
+            });
 
             _gridItemsViewSource?.View.Refresh();
 
@@ -278,9 +263,8 @@ namespace MyBeatSaberScore
             string t1txt = "Task1=0.00%";
             string t2txt = "Task2=0.00%";
             string t3txt = "Task3=0.00%";
-            string t4txt = "Task4=0.00%";
 
-            progress.Text = $"{t1txt} {t2txt} {t3txt} {t4txt}";
+            progress.Text = $"{t1txt} {t2txt} {t3txt}";
 
             _gridItems.Clear();
 
@@ -292,17 +276,17 @@ namespace MyBeatSaberScore
                 progress.Dispatcher.Invoke(() =>
                 {
                     t1txt = $"Task1={(double)count * 100 / max:0.00}%";
-                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt} {t4txt}";
+                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt}";
                 });
             });
 
-            // BeatSaviorからランク譜面リストを取得
+            // ランク譜面リストを取得
             Task t2 = Task2DownloadRankedMaps((max, count) =>
             {
                 progress.Dispatcher.Invoke(() =>
                 {
                     t2txt = $"Task2={(double)count * 100 / max:0.00}%";
-                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt} {t4txt}";
+                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt}";
                 });
             });
 
@@ -318,27 +302,18 @@ namespace MyBeatSaberScore
                 _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
             }
 
-            // BeatSaverから未取得のKey(bsr)を取得しながらgridItemを逐次更新
-            Task t3 = Task3DownloadUnacquiredKey((max, count) =>
-            {
-                progress.Dispatcher.Invoke(() =>
-                {
-                    t3txt = $"Task3={(double)count*100/max:0.00}%";
-                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt} {t4txt}";
-                });
-            });
-
             // 未取得のカバー画像を取得しながら逐次更新
-            Task t4 = Task4DownloadUnacquiredCover((max, count) =>
+            Task t3 = Task3DownloadUnacquiredCover((max, count) =>
             {
                 progress.Dispatcher.Invoke(() =>
                 {
-                    t4txt = $"Task4={(double)count * 100 / max:0.00}%";
-                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt} {t4txt}";
+                    t3txt = $"Task4={(double)count * 100 / max:0.00}%";
+                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt}";
+                    _gridItemsViewSource.View.Refresh();
                 });
             });
 
-            await Task.WhenAll(t3, t4);
+            await Task.WhenAll(t3);
 
             _gridItemsViewSource.View.Refresh();
 
@@ -356,31 +331,13 @@ namespace MyBeatSaberScore
 
         private async Task Task2DownloadRankedMaps(Action<int, int> callback)
         {
-            await _mapUtil.DownloadRankedMaps();
-            _mapUtil.SaveLocalRankedFile();
+            await BeatSaberScrappedData.DownlaodCombinedScrappedData();
+            callback(10, 5);
+            _mapUtil.LoadLocalFile();
             callback(10, 10);
         }
 
-        private async Task Task3DownloadUnacquiredKey(Action<int, int> callback)
-        {
-            int count = 0;
-            // BeatSaverからKey(bsr)を取得
-            // リクエスト過剰になるとToo Many Requestになるので並列化しない
-            foreach (var item in _gridItems)
-            {
-                string key = await _mapUtil.GetKey(item.Hash);
-                xaDataGrid.Dispatcher.Invoke(new Action(() =>
-                {
-                    item.Bsr = key;
-                }));
-                count++;
-                callback(_gridItems.Count, count);
-            }
-            _mapUtil.SaveLocalFile();
-            callback(1, 1);
-        }
-
-        private async Task Task4DownloadUnacquiredCover(Action<int, int> callback)
+        private async Task Task3DownloadUnacquiredCover(Action<int, int> callback)
         {
             int count = 0;
             // カバー画像を並列で取得

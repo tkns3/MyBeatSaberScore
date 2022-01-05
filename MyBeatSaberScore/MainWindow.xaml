@@ -25,7 +25,7 @@
         <local:PlaceholderTextBox x:Name="xaTextPlayerId" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" VerticalAlignment="Top" Width="160" ToolTip="ScoreSaberのProfile ID (例 76561198003035723)を入力する" Height="18" Text=""/>
         <Button x:Name="button" Content="最新データを取得" HorizontalAlignment="Left" Margin="8,33,0,0" VerticalAlignment="Top" Click="Button_Click" ToolTip="最新のデータを取得して表示を更新する" Height="20" Width="87"/>
         <TextBlock HorizontalAlignment="Left" Margin="8,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" Text="{Binding Items.Count, ElementName=xaDataGrid, StringFormat={}ヒット{0:#\,0}曲}" Height="16"/>
-        <TextBlock Name="progress" HorizontalAlignment="Left" Margin="108,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="84" Text="Task1=0.00% Task2=0.00% Task3=0.00% Task4=0.00%"/>
+        <TextBlock Name="progress" HorizontalAlignment="Left" Margin="108,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="84" Text="Task1=0.00% Task2=0.00% Task3=0.00%"/>
         <TextBlock HorizontalAlignment="Left" Margin="212,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" Text="検索" Height="16"/>
         <local:PlaceholderTextBox x:Name="filterTextBox" HorizontalAlignment="Left" Margin="214,38,0,0" TextWrapping="Wrap" Placeholder="曲名・曲作者・譜面作者" VerticalAlignment="Top" Width="184" ToolTip="フィルター" TextChanged="filterTextBox_TextChanged" Height="18"/>
         <local:PlaceholderTextBox x:Name="filterBsrBox" HorizontalAlignment="Left" Margin="214,61,0,0" TextWrapping="Wrap" Placeholder="BSR or HASH" VerticalAlignment="Top" Width="184" ToolTip="フィルター" TextChanged="filterTextBox_TextChanged" Height="18"/>
