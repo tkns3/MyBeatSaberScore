@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyBeatSaberScore.APIs;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,11 +15,11 @@ namespace MyBeatSaberScore
 {
     internal class BeatSaviorData
     {
-        private static readonly HttpClient _client = new HttpClient();
         private static readonly string _mapsDir = Path.Combine("data", "maps");
         private static readonly string _rankedPath = Path.Combine(_mapsDir, "ranked.json");
 
-        public RankedMapCollection rankedMapCollection = new RankedMapCollection();
+        public BeatSavior.RankedMapCollection rankedMapCollection = new();
+        public HashSet<string> rankedMapHashSet = new(); // ランクマップのHashSet。キーは「hash + difficulty(1～9)」。
 
         public BeatSaviorData()
         {
@@ -32,13 +33,19 @@ namespace MyBeatSaberScore
                 if (File.Exists(_rankedPath))
                 {
                     string jsonString = File.ReadAllText(_rankedPath, Encoding.UTF8);
-                    var collection = JsonSerializer.Deserialize<RankedMapCollection>(jsonString);
+                    var collection = JsonSerializer.Deserialize<BeatSavior.RankedMapCollection>(jsonString);
                     if (collection != null)
                     {
+                        rankedMapHashSet.Clear();
                         foreach (var map in collection.maps)
                         {
                             map.hash = map.hash.ToLower();
                             map.coverURL = "https://cdn.scoresaber.com/covers/" + map.hash.ToUpper() + ".png";
+                            if (map.diffs.easy != null) rankedMapHashSet.Add(map.hash + "1");
+                            if (map.diffs.normal != null) rankedMapHashSet.Add(map.hash + "3");
+                            if (map.diffs.hard != null) rankedMapHashSet.Add(map.hash + "5");
+                            if (map.diffs.expert != null) rankedMapHashSet.Add(map.hash + "7");
+                            if (map.diffs.expertplus != null) rankedMapHashSet.Add(map.hash + "9");
                         }
                         rankedMapCollection = collection;
                     }
@@ -54,7 +61,7 @@ namespace MyBeatSaberScore
         {
             try
             {
-                var jsonString = JsonSerializer.Serialize<RankedMapCollection>(rankedMapCollection, new JsonSerializerOptions { WriteIndented = true });
+                var jsonString = JsonSerializer.Serialize<BeatSavior.RankedMapCollection>(rankedMapCollection, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_rankedPath, jsonString);
             }
             catch (Exception ex)
@@ -65,127 +72,18 @@ namespace MyBeatSaberScore
 
         public async Task DownloadRankedMaps()
         {
-            rankedMapCollection = await GetRankedMaps();
-        }
+            rankedMapCollection = await BeatSavior.GetRankedMaps();
 
-        public static async Task<RankedMapCollection> GetRankedMaps()
-        {
-            string url = @"https://www.beatsavior.io/api/maps/ranked";
-
-            try
+            rankedMapHashSet.Clear();
+            foreach (var map in rankedMapCollection.maps)
             {
-                HttpContent requestContent = new StringContent("{\"minStar\":0,\"maxStar\":20,\"playlist\":true}", Encoding.UTF8, "application/json");
-                var httpsResponse = await _client.PostAsync(url, requestContent);
-                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<RankedMapCollection>(responseContent);
-
-                if (result?.maps?.Length > 0)
-                {
-                    foreach (var map in result.maps)
-                    {
-                        map.hash = map.hash.ToLower();
-                        map.coverURL = "https://cdn.scoresaber.com/covers/" + map.hash.ToUpper() + ".png";
-                    }
-                    return result;
-                }
+                if (map.diffs.easy != null) rankedMapHashSet.Add(map.hash + "1");
+                if (map.diffs.normal != null) rankedMapHashSet.Add(map.hash + "3");
+                if (map.diffs.hard != null) rankedMapHashSet.Add(map.hash + "5");
+                if (map.diffs.expert != null) rankedMapHashSet.Add(map.hash + "7");
+                if (map.diffs.expertplus != null) rankedMapHashSet.Add(map.hash + "9");
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + url);
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
-            }
-
-            return new RankedMapCollection();
         }
-    }
 
-    [DataContract]
-    public class RankedMapCollection
-    {
-        [DataMember]
-        public RankedMap[] maps { get; set; }
-
-        public RankedMapCollection()
-        {
-            maps = Array.Empty<RankedMap>();
-        }
-    }
-
-    [DataContract]
-    public class RankedMap
-    {
-        [DataMember]
-        public string hash { get; set; }
-
-        [DataMember]
-        public string key { get; set; }
-
-        [DataMember]
-        public string levelAuthorName { get; set; }
-
-        [DataMember]
-        public string songName { get; set; }
-
-        [DataMember]
-        public string songSubName { get; set; }
-
-        [DataMember]
-        public string songAuthorName { get; set; }
-
-        [DataMember]
-        public string coverURL { get; set; }
-
-        [DataMember]
-        public RankedDifficulties diffs { get; set; }
-
-        public RankedMap()
-        {
-            hash = "";
-            key = "";
-            levelAuthorName = "";
-            songName = "";
-            songSubName = "";
-            songAuthorName = "";
-            coverURL = "";
-            diffs = new RankedDifficulties();
-        }
-    }
-
-    [DataContract]
-    public class RankedDifficulties
-    {
-        [DataMember]
-        public RankedDifficulty? easy { get; set; }
-
-        [DataMember]
-        public RankedDifficulty? normal { get; set; }
-
-        [DataMember]
-        public RankedDifficulty? hard { get; set; }
-
-        [DataMember]
-        public RankedDifficulty? expert { get; set; }
-
-        [DataMember]
-        public RankedDifficulty? expertplus { get; set; }
-
-        public RankedDifficulties()
-        {
-            easy = null;
-            normal = null;
-            hard = null;
-            expert = null;
-            expertplus = null;
-        }
-    }
-
-    public class RankedDifficulty
-    {
-        [DataMember]
-        public double Stars { get; set; }
-
-        public RankedDifficulty()
-        {
-        }
     }
  }

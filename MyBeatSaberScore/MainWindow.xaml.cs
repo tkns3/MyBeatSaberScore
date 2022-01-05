@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyBeatSaberScore.APIs;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace MyBeatSaberScore
         private readonly BeatSaviorData _beatSaviorData;
         private readonly BeatSaverData _beatSaverData;
         private readonly ScoreSaberData _scoreSaberData;
-        private List<PlayerScore> _allScores;
+        private List<ScoreSaber.PlayerScore> _allScores;
 
         static ObservableCollection<GridItem> _gridItems = new();
         static CollectionViewSource _gridItemsViewSource = new() { Source = _gridItems };
@@ -47,7 +48,7 @@ namespace MyBeatSaberScore
             public string CoverUrl { get; set; }
             public bool Ranked { get; set; }
 
-            public GridItem(string key, string cover, PlayerScore score, BeatSaverData bsData)
+            public GridItem(string key, string cover, ScoreSaber.PlayerScore score, BeatSaverData bsData)
             {
                 string hash = score.leaderboard.songHash.ToLower();
                 int maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : bsData.GetMaxScore(hash, score.leaderboard.difficulty.difficultyRawInt);
@@ -179,19 +180,19 @@ namespace MyBeatSaberScore
             }
         }
 
-        private bool TryCreateNotPlayRankScore(RankedMap map, RankedDifficulty? diff, int diffNum, out PlayerScore score)
+        private bool TryCreateNotPlayRankScore(BeatSavior.RankedMap map, BeatSavior.RankedDifficulty? diff, int diffNum, out ScoreSaber.PlayerScore score)
         {
             if (diff != null)
             {
                 if (!_scoreSaberData.playedRankHash.Contains(map.hash + diffNum.ToString()))
                 {
-                    score =  new PlayerScore()
+                    score =  new ScoreSaber.PlayerScore()
                     {
-                        score = new Score()
+                        score = new ScoreSaber.Score()
                         {
                             modifiedScore = -1
                         },
-                        leaderboard = new LeaderboardInfo()
+                        leaderboard = new ScoreSaber.LeaderboardInfo()
                         {
                             ranked = true,
                             songHash = map.hash,
@@ -201,7 +202,7 @@ namespace MyBeatSaberScore
                             levelAuthorName = map.levelAuthorName,
                             stars = diff.Stars,
                             coverImage = map.coverURL,
-                            difficulty = new Difficulty()
+                            difficulty = new ScoreSaber.Difficulty()
                             {
                                 gameMode = "SoloStandard",
                                 difficulty = diffNum,
@@ -211,11 +212,11 @@ namespace MyBeatSaberScore
                     return true;
                 }
             }
-            score = new PlayerScore();
+            score = new ScoreSaber.PlayerScore();
             return false;
         }
 
-        private List<PlayerScore> GetAllScores()
+        private List<ScoreSaber.PlayerScore> GetAllScores()
         {
             _allScores.Clear();
 
@@ -298,11 +299,11 @@ namespace MyBeatSaberScore
             });
 
             // BeatSaviorからランク譜面リストを取得
-            Task t2 = Task2DownloadRankedMaps(() =>
+            Task t2 = Task2DownloadRankedMaps((max, count) =>
             {
                 progress.Dispatcher.Invoke(() =>
                 {
-                    t2txt = "Task2=100.00%";
+                    t2txt = $"Task2={(double)count * 100 / max:0.00}%";
                     progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt} {t4txt}";
                 });
             });
@@ -355,11 +356,11 @@ namespace MyBeatSaberScore
             callback(1, 1);
         }
 
-        private async Task Task2DownloadRankedMaps(Action callback)
+        private async Task Task2DownloadRankedMaps(Action<int, int> callback)
         {
             await _beatSaviorData.DownloadRankedMaps();
             _beatSaviorData.SaveLocalFile();
-            callback();
+            callback(10, 10);
         }
 
         private async Task Task3DownloadUnacquiredKey(Action<int, int> callback)
