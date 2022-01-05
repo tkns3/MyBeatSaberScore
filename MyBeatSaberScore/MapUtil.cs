@@ -19,9 +19,13 @@ namespace MyBeatSaberScore
         private static readonly string _mapsPath = Path.Combine(_mapsDir, "maps.json");
         private static readonly string _coverDir = Path.Combine(_mapsDir, "cover");
         private static readonly string _deletedmapsPath = Path.Combine(_mapsDir, "deletedmaps.json");
+        private static readonly string _rankedPath = Path.Combine(_mapsDir, "ranked.json");
 
         public Dictionary<string, BeatSaver.MapDetail> _acquiredMaps = new();
         private HashSet<string> _deletedMaps = new();
+
+        public BeatSavior.RankedMapCollection rankedMapCollection = new();
+        public HashSet<string> rankedMapHashSet = new(); // ランクマップのHashSet。キーは「hash + difficulty(1～9)」。
 
         public MapUtil()
         {
@@ -77,6 +81,50 @@ namespace MyBeatSaberScore
                 collection.hashs = _deletedMaps.ToArray();
                 var jsonString = JsonSerializer.Serialize<DeletedMapCollection>(collection, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_deletedmapsPath, jsonString);
+            }
+        }
+
+        public void LoadLocalRankedFile()
+        {
+            try
+            {
+                if (File.Exists(_rankedPath))
+                {
+                    string jsonString = File.ReadAllText(_rankedPath, Encoding.UTF8);
+                    var collection = JsonSerializer.Deserialize<BeatSavior.RankedMapCollection>(jsonString);
+                    if (collection != null)
+                    {
+                        rankedMapHashSet.Clear();
+                        foreach (var map in collection.maps)
+                        {
+                            map.hash = map.hash.ToLower();
+                            map.coverURL = "https://cdn.scoresaber.com/covers/" + map.hash.ToUpper() + ".png";
+                            if (map.diffs.easy != null) rankedMapHashSet.Add(map.hash + "1");
+                            if (map.diffs.normal != null) rankedMapHashSet.Add(map.hash + "3");
+                            if (map.diffs.hard != null) rankedMapHashSet.Add(map.hash + "5");
+                            if (map.diffs.expert != null) rankedMapHashSet.Add(map.hash + "7");
+                            if (map.diffs.expertplus != null) rankedMapHashSet.Add(map.hash + "9");
+                        }
+                        rankedMapCollection = collection;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
+            }
+        }
+
+        public void SaveLocalRankedFile()
+        {
+            try
+            {
+                var jsonString = JsonSerializer.Serialize<BeatSavior.RankedMapCollection>(rankedMapCollection, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(_rankedPath, jsonString);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
             }
         }
 
@@ -199,6 +247,21 @@ namespace MyBeatSaberScore
                 System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + url);
                 System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
                 return System.IO.Path.Combine(_coverDir, "_404.png");
+            }
+        }
+
+        public async Task DownloadRankedMaps()
+        {
+            rankedMapCollection = await BeatSavior.GetRankedMaps();
+
+            rankedMapHashSet.Clear();
+            foreach (var map in rankedMapCollection.maps)
+            {
+                if (map.diffs.easy != null) rankedMapHashSet.Add(map.hash + "1");
+                if (map.diffs.normal != null) rankedMapHashSet.Add(map.hash + "3");
+                if (map.diffs.hard != null) rankedMapHashSet.Add(map.hash + "5");
+                if (map.diffs.expert != null) rankedMapHashSet.Add(map.hash + "7");
+                if (map.diffs.expertplus != null) rankedMapHashSet.Add(map.hash + "9");
             }
         }
 

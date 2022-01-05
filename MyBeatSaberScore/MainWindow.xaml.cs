@@ -22,7 +22,6 @@ namespace MyBeatSaberScore
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly BeatSaviorData _beatSaviorData;
         private readonly MapUtil _mapUtil;
         private readonly PlayerData _playerData;
         private List<ScoreSaber.PlayerScore> _allScores;
@@ -76,7 +75,6 @@ namespace MyBeatSaberScore
         {
             InitializeComponent();
             Config.LoadLocalFile();
-            _beatSaviorData = new BeatSaviorData();
             _mapUtil = new MapUtil();
             _playerData = new PlayerData();
             _allScores = new();
@@ -224,7 +222,7 @@ namespace MyBeatSaberScore
             _allScores.AddRange(_playerData.playedMaps.Values);
 
             // 未プレイランク譜面を追加
-            foreach (var map in _beatSaviorData.rankedMapCollection.maps)
+            foreach (var map in _mapUtil.rankedMapCollection.maps)
             {
                 if (TryCreateNotPlayRankScore(map, map.diffs.easy, 1, out var score))
                 {
@@ -255,7 +253,7 @@ namespace MyBeatSaberScore
         {
             button.IsEnabled = false;
 
-            _beatSaviorData.LoadLocalFile();
+            _mapUtil.LoadLocalRankedFile();
             _mapUtil.LoadLocalFile();
             _playerData.LoadLocalFile(xaTextPlayerId.Text);
 
@@ -358,8 +356,8 @@ namespace MyBeatSaberScore
 
         private async Task Task2DownloadRankedMaps(Action<int, int> callback)
         {
-            await _beatSaviorData.DownloadRankedMaps();
-            _beatSaviorData.SaveLocalFile();
+            await _mapUtil.DownloadRankedMaps();
+            _mapUtil.SaveLocalRankedFile();
             callback(10, 10);
         }
 
