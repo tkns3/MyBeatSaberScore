@@ -21,7 +21,7 @@ namespace MyBeatSaberScore
         private static readonly string _deletedmapsPath = Path.Combine(_mapsDir, "deletedmaps.json");
         private static readonly string _rankedPath = Path.Combine(_mapsDir, "ranked.json");
 
-        public Dictionary<string, BeatSaver.MapDetail> _acquiredMaps = new();
+        public AcquiredMapCollection _mapCollection = new();
         private HashSet<string> _deletedMaps = new();
 
         public BeatSavior.RankedMapCollection rankedMapCollection = new();
@@ -35,21 +35,14 @@ namespace MyBeatSaberScore
 
         public void LoadLocalFile()
         {
-            _acquiredMaps.Clear();
             if (File.Exists(_mapsPath))
             {
                 string jsonString = File.ReadAllText(_mapsPath, Encoding.UTF8);
-                var collection = JsonSerializer.Deserialize<BeatSaver.MapCollection>(jsonString);
+                var collection = JsonSerializer.Deserialize<AcquiredMapCollection>(jsonString);
                 if (collection != null)
                 {
                     collection.Normalize();
-                    collection.mapDetails.ForEach(detail =>
-                    {
-                        if (detail.versions.Count > 0)
-                        {
-                            _acquiredMaps[detail.versions[0].hash] = detail;
-                        }
-                    });
+                    _mapCollection = collection;
                 }
             }
 
@@ -71,9 +64,7 @@ namespace MyBeatSaberScore
         public void SaveLocalFile()
         {
             {
-                var collection = new BeatSaver.MapCollection();
-                collection.mapDetails = _acquiredMaps.Values.ToList();
-                var jsonString = JsonSerializer.Serialize<BeatSaver.MapCollection>(collection, new JsonSerializerOptions { WriteIndented = true });
+                var jsonString = JsonSerializer.Serialize<AcquiredMapCollection>(_mapCollection, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_mapsPath, jsonString);
             }
             {
@@ -130,12 +121,12 @@ namespace MyBeatSaberScore
 
         public int GetMaxScore(string hash, int difficultyRawInt)
         {
-            if (!_acquiredMaps.ContainsKey(hash))
+            if (!_mapCollection.maps.ContainsKey(hash))
             {
                 return 0;
             }
 
-            var detail = _acquiredMaps[hash];
+            var detail = _mapCollection.maps[hash];
             var list = detail.versions[0].diffs.Where(d => d.difficultyRawInt == difficultyRawInt);
             if (list.Any())
             {
@@ -159,9 +150,9 @@ namespace MyBeatSaberScore
         {
             hash = hash.ToLower();
 
-            if (_acquiredMaps.ContainsKey(hash))
+            if (_mapCollection.maps.ContainsKey(hash))
             {
-                return _acquiredMaps[hash].id;
+                return _mapCollection.maps[hash].id;
             }
 
             return "";
@@ -171,9 +162,9 @@ namespace MyBeatSaberScore
         {
             hash = hash.ToLower();
 
-            if (_acquiredMaps.ContainsKey(hash))
+            if (_mapCollection.maps.ContainsKey(hash))
             {
-                return _acquiredMaps[hash].id;
+                return _mapCollection.maps[hash].id;
             }
 
             if (_deletedMaps.Contains(hash))
@@ -188,7 +179,7 @@ namespace MyBeatSaberScore
             }
             else if (map.versions.Count > 0)
             {
-                _acquiredMaps[hash] = map;
+                _mapCollection.maps[hash] = map;
                 return map.id;
             }
             return "";
@@ -262,6 +253,38 @@ namespace MyBeatSaberScore
                 if (map.diffs.hard != null) rankedMapHashSet.Add(map.hash + "5");
                 if (map.diffs.expert != null) rankedMapHashSet.Add(map.hash + "7");
                 if (map.diffs.expertplus != null) rankedMapHashSet.Add(map.hash + "9");
+            }
+        }
+
+        [DataContract]
+        public class AcquiredMapCollection
+        {
+            [DataMember]
+            public string version { get; set; }
+
+            [DataMember]
+            public Dictionary<string, BeatSaver.MapDetail> maps { get; set; }
+
+            public AcquiredMapCollection()
+            {
+                version = "2";
+                maps = new();
+            }
+
+            public void Normalize()
+            {
+                if (version == null)
+                {
+                    version = "2";
+                }
+                if (maps == null)
+                {
+                    maps = new();
+                }
+                foreach (var map in maps)
+                {
+                    map.Value.Normalize();
+                }
             }
         }
 
