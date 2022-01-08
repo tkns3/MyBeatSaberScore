@@ -85,9 +85,7 @@ namespace MyBeatSaberScore
             var isAllGet = false;
             for (var page = 1; !isAllGet; page++)
             {
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step6");
                 var collection = await ScoreSaber.GetPlayerScores(playerId, 100, page);
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step7");
 
                 count++;
                 callback(1000, 100 + (800 * count * 100) / collection.metadata.total);

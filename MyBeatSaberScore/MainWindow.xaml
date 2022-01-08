@@ -19,146 +19,164 @@
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="#FF757575" BorderThickness="1" HorizontalAlignment="Left" Height="89" Margin="206,11,0,0" VerticalAlignment="Top" Width="200"/>
-        <Border BorderBrush="#FF757575" BorderThickness="1" HorizontalAlignment="Left" Height="89" Margin="412,11,0,0" VerticalAlignment="Top" Width="266"/>
-        <Border BorderBrush="#FF757575" BorderThickness="1" HorizontalAlignment="Left" Height="89" Margin="682,11,0,0" VerticalAlignment="Top" Width="90"/>
-        <local:PlaceholderTextBox x:Name="xaTextPlayerId" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" VerticalAlignment="Top" Width="160" ToolTip="ScoreSaberのProfile ID (例 76561198003035723)を入力する" Height="18" Text=""/>
-        <Button x:Name="button" Content="最新データを取得" HorizontalAlignment="Left" Margin="8,33,0,0" VerticalAlignment="Top" Click="Button_Click" ToolTip="最新のデータを取得して表示を更新する" Height="20" Width="87"/>
-        <TextBlock HorizontalAlignment="Left" Margin="8,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" Text="{Binding Items.Count, ElementName=xaDataGrid, StringFormat={}ヒット{0:#\,0}曲}" Height="16"/>
-        <TextBlock Name="progress" HorizontalAlignment="Left" Margin="108,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="84" Text="Task1=0.00% Task2=0.00% Task3=0.00%"/>
-        <TextBlock HorizontalAlignment="Left" Margin="212,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" Text="検索" Height="16"/>
-        <local:PlaceholderTextBox x:Name="filterTextBox" HorizontalAlignment="Left" Margin="214,38,0,0" TextWrapping="Wrap" Placeholder="曲名・曲作者・譜面作者" VerticalAlignment="Top" Width="184" ToolTip="フィルター" TextChanged="filterTextBox_TextChanged" Height="18"/>
-        <local:PlaceholderTextBox x:Name="filterBsrBox" HorizontalAlignment="Left" Margin="214,61,0,0" TextWrapping="Wrap" Placeholder="BSR or HASH" VerticalAlignment="Top" Width="184" ToolTip="フィルター" TextChanged="filterTextBox_TextChanged" Height="18"/>
-        <TextBlock HorizontalAlignment="Left" Margin="418,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" Text="譜面の種類" Height="16"/>
-        <CheckBox x:Name="checkBoxRank" Content="ランク" HorizontalAlignment="Left" Margin="426,39,0,0" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxRank_Checked" Unchecked="checkBoxRank_Unchecked" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
-        <CheckBox x:Name="checkBoxUnRank" Content="アンランク" HorizontalAlignment="Left" Margin="426,59,0,0" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxUnRank_Checked" Unchecked="checkBoxUnRank_Unchecked" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
-        <Slider x:Name="sliderMinStar" HorizontalAlignment="Left" Margin="512,39,0,0" VerticalAlignment="Top" Width="92" Maximum="20" Value="0" ValueChanged="sliderMinStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-        <Slider x:Name="sliderMaxStar" HorizontalAlignment="Left" Margin="512,62,0,0" VerticalAlignment="Top" Width="92" Value="20" Maximum="20" ValueChanged="sliderMaxStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-        <TextBlock x:Name="minStars" HorizontalAlignment="Left" Margin="610,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60" Text="{Binding Value, ElementName=sliderMinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
-        <TextBlock x:Name="maxStars" HorizontalAlignment="Left" Margin="610,61,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60" Text="{Binding Value, ElementName=sliderMaxStar, StringFormat=Max★\{0:N0\}}" Height="16"/>
-        <TextBlock HorizontalAlignment="Left" Margin="688,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60" Text="プレイ結果" Height="16"/>
-        <CheckBox x:Name="checkBoxClear" Content="Clear" HorizontalAlignment="Left" Margin="696,37,0,0" VerticalAlignment="Top" IsChecked="True" ToolTip="クリアした譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked" Height="15" Width="48"/>
-        <CheckBox x:Name="checkBoxFail" Content="NF" HorizontalAlignment="Left" Margin="696,57,0,0" VerticalAlignment="Top" IsChecked="True" ToolTip="NFがついた譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked" Height="15" Width="36"/>
-        <CheckBox x:Name="checkBoxNoPlayRank" Content="未プレイ" HorizontalAlignment="Left" Margin="696,77,0,0" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxNoPlayRank_Checked" Unchecked="checkBoxNoPlayRank_Unchecked" ToolTip="未プレイのランク譜面を表示する" Height="15" Width="66"/>
-        <DataGrid x:Name="xaDataGrid" AutoGenerateColumns="False" Margin="0,105,0,0" Grid.ColumnSpan="2">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="bsr" Binding="{Binding Bsr}">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <DataGridTemplateColumn Header="カバー">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding Cover}" Height="45" Width="45" CacheMode="BitmapCache"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" Width="370" Binding="{Binding Song}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="TextWrapping"
+
+        <DockPanel LastChildFill="True">
+            <Canvas Height="110" DockPanel.Dock="Top">
+                <DockPanel LastChildFill="True">
+                    <Canvas Width="300" Height="100" DockPanel.Dock="Left">
+                        <local:PlaceholderTextBox x:Name="xaTextPlayerId" HorizontalAlignment="Left" Canvas.Left="10" Canvas.Top="10" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" VerticalAlignment="Top" Width="160" ToolTip="ScoreSaberのProfile ID (例 76561198003035723)を入力する" Height="18" Text=""/>
+                        <Button x:Name="button" Content="最新データを取得" Canvas.Left="175" Canvas.Top="10" Click="Button_Click" ToolTip="最新のデータを取得して表示を更新する" Height="20" Width="87"/>
+                    </Canvas>
+                    <Canvas Height="100" DockPanel.Dock="Left">
+                        <Border BorderBrush="#FF757575" BorderThickness="1" HorizontalAlignment="Left" Height="89" Canvas.Left="6" Canvas.Top="11" VerticalAlignment="Top" Width="200"/>
+                        <Border BorderBrush="#FF757575" BorderThickness="1" HorizontalAlignment="Left" Height="89" Canvas.Left="212" Canvas.Top="11" VerticalAlignment="Top" Width="266"/>
+                        <Border BorderBrush="#FF757575" BorderThickness="1" HorizontalAlignment="Left" Height="89" Canvas.Left="482" Canvas.Top="11" VerticalAlignment="Top" Width="90"/>
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="12" Canvas.Top="16" Text="検索" Height="16"/>
+                        <local:PlaceholderTextBox x:Name="filterTextBox" HorizontalAlignment="Left" Canvas.Left="14" Canvas.Top="38" TextWrapping="Wrap" Placeholder="曲名・曲作者・譜面作者" VerticalAlignment="Top" Width="184" ToolTip="フィルター" TextChanged="filterTextBox_TextChanged" Height="18"/>
+                        <local:PlaceholderTextBox x:Name="filterBsrBox" HorizontalAlignment="Left" Canvas.Left="14" Canvas.Top="61" TextWrapping="Wrap" Placeholder="BSR or HASH" VerticalAlignment="Top" Width="184" ToolTip="フィルター" TextChanged="filterTextBox_TextChanged" Height="18"/>
+                        <TextBlock HorizontalAlignment="Left" Canvas.Left="218" Canvas.Top="17" VerticalAlignment="Top" Text="譜面の種類" Height="16"/>
+                        <CheckBox x:Name="checkBoxRank" Content="ランク" HorizontalAlignment="Left" Canvas.Left="226" Canvas.Top="39" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxRank_Checked" Unchecked="checkBoxRank_Unchecked" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
+                        <CheckBox x:Name="checkBoxUnRank" Content="アンランク" HorizontalAlignment="Left" Canvas.Left="226" Canvas.Top="59" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxUnRank_Checked" Unchecked="checkBoxUnRank_Unchecked" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
+                        <Slider x:Name="sliderMinStar" HorizontalAlignment="Left" Canvas.Left="312" Canvas.Top="39" VerticalAlignment="Top" Width="92" Maximum="20" Value="0" ValueChanged="sliderMinStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                        <Slider x:Name="sliderMaxStar" HorizontalAlignment="Left" Canvas.Left="312" Canvas.Top="62" VerticalAlignment="Top" Width="92" Value="20" Maximum="20" ValueChanged="sliderMaxStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                        <TextBlock x:Name="minStars" HorizontalAlignment="Left" Canvas.Left="410" Canvas.Top="38" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Value, ElementName=sliderMinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
+                        <TextBlock x:Name="maxStars" HorizontalAlignment="Left" Canvas.Left="410" Canvas.Top="61" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Value, ElementName=sliderMaxStar, StringFormat=Max★\{0:N0\}}" Height="16"/>
+                        <TextBlock HorizontalAlignment="Left" Canvas.Left="488" Canvas.Top="16" VerticalAlignment="Top" Text="プレイ結果" Height="16"/>
+                        <CheckBox x:Name="checkBoxClear" Content="Clear" HorizontalAlignment="Left" Canvas.Left="496" Canvas.Top="37" VerticalAlignment="Top" IsChecked="True" ToolTip="クリアした譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
+                        <CheckBox x:Name="checkBoxFail" Content="NF" HorizontalAlignment="Left" Canvas.Left="496" Canvas.Top="57" VerticalAlignment="Top" IsChecked="True" ToolTip="NFがついた譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
+                        <CheckBox x:Name="checkBoxNoPlayRank" Content="未プレイ" HorizontalAlignment="Left" Canvas.Left="496" Canvas.Top="77" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxNoPlayRank_Checked" Unchecked="checkBoxNoPlayRank_Unchecked" ToolTip="未プレイのランク譜面を表示する"/>
+                    </Canvas>
+                </DockPanel>
+            </Canvas>
+            <StatusBar Height="25" DockPanel.Dock="Bottom">
+                <StatusBarItem>
+                    <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Items.Count, ElementName=xaDataGrid, StringFormat={}ヒット{0:#\,0}曲}"/>
+                </StatusBarItem>
+                <Separator />
+                <StatusBarItem>
+                    <TextBlock Name="progress" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="Task1=0.00% Task2=0.00% Task3=0.00%"/>
+                </StatusBarItem>
+            </StatusBar>
+            <DataGrid x:Name="xaDataGrid" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="bsr" Binding="{Binding Bsr}">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="カバー">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Cover}" Height="45" Width="45" CacheMode="BitmapCache"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" Width="370" Binding="{Binding Song}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping"
                                 Value="Wrap" />
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="更新日"  Width="150" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
-                <DataGridTemplateColumn Header="モード" Width="45">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image>
-                                <Image.Style>
-                                    <Style>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding GameMode}" Value="SoloStandard">
-                                                <Setter Property="Image.Source" Value="Resources/standard.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GameMode}" Value="SoloLawless">
-                                                <Setter Property="Image.Source" Value="Resources/lawless.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GameMode}" Value="SoloOneSaber">
-                                                <Setter Property="Image.Source" Value="Resources/onesaber.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GameMode}" Value="SoloLightShow">
-                                                <Setter Property="Image.Source" Value="Resources/lightshow.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GameMode}" Value="Solo90Degree">
-                                                <Setter Property="Image.Source" Value="Resources/90degree.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GameMode}" Value="Solo360Degree">
-                                                <Setter Property="Image.Source" Value="Resources/360degree.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding GameMode}" Value="SoloNoArrows">
-                                                <Setter Property="Image.Source" Value="Resources/noarrows.png"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="難易度" Width="45">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image>
-                                <Image.Style>
-                                    <Style>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Difficulty}" Value="1">
-                                                <Setter Property="Image.Source" Value="Resources/easy.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Difficulty}" Value="3">
-                                                <Setter Property="Image.Source" Value="Resources/hard.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Difficulty}" Value="5">
-                                                <Setter Property="Image.Source" Value="Resources/normal.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Difficulty}" Value="7">
-                                                <Setter Property="Image.Source" Value="Resources/expert.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Difficulty}" Value="9">
-                                                <Setter Property="Image.Source" Value="Resources/expertplus.png"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="★" Binding="{Binding Stars, Converter={StaticResource StarConverter}}">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="スコア" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="精度" Binding="{Binding Acc, Converter={StaticResource AccConverter}}">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="PP" Binding="{Binding PP, Converter={StaticResource PPConverter}}">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Modifiers" Binding="{Binding Modifiers}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="更新日"  Width="150" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
+                    <DataGridTemplateColumn Header="モード" Width="45">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image>
+                                    <Image.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloStandard">
+                                                    <Setter Property="Image.Source" Value="Resources/standard.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloLawless">
+                                                    <Setter Property="Image.Source" Value="Resources/lawless.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloOneSaber">
+                                                    <Setter Property="Image.Source" Value="Resources/onesaber.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloLightShow">
+                                                    <Setter Property="Image.Source" Value="Resources/lightshow.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding GameMode}" Value="Solo90Degree">
+                                                    <Setter Property="Image.Source" Value="Resources/90degree.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding GameMode}" Value="Solo360Degree">
+                                                    <Setter Property="Image.Source" Value="Resources/360degree.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloNoArrows">
+                                                    <Setter Property="Image.Source" Value="Resources/noarrows.png"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="難易度" Width="45">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image>
+                                    <Image.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="1">
+                                                    <Setter Property="Image.Source" Value="Resources/easy.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="3">
+                                                    <Setter Property="Image.Source" Value="Resources/hard.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="5">
+                                                    <Setter Property="Image.Source" Value="Resources/normal.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="7">
+                                                    <Setter Property="Image.Source" Value="Resources/expert.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="9">
+                                                    <Setter Property="Image.Source" Value="Resources/expertplus.png"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="★" Binding="{Binding Stars, Converter={StaticResource StarConverter}}">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="スコア" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="精度" Binding="{Binding Acc, Converter={StaticResource AccConverter}}">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="PP" Binding="{Binding PP, Converter={StaticResource PPConverter}}">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Modifiers" Binding="{Binding Modifiers}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
     </Grid>
 </Window>

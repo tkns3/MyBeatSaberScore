@@ -231,13 +231,9 @@ namespace MyBeatSaberScore
 
             await Task.Run(() =>
             {
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step1");
                 _mapUtil.LoadLocalFile();
-                _playerData.LoadLocalFile(profileId);
 
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step2");
                 _allScores = GetAllScores();
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step3");
 
                 foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
                 {
@@ -248,7 +244,6 @@ namespace MyBeatSaberScore
                         _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
                     });
                 }
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " step4");
             });
 
             _gridItemsViewSource?.View.Refresh();
@@ -307,7 +302,7 @@ namespace MyBeatSaberScore
             {
                 progress.Dispatcher.Invoke(() =>
                 {
-                    t3txt = $"Task4={(double)count * 100 / max:0.00}%";
+                    t3txt = $"Task3={(double)count * 100 / max:0.00}%";
                     progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt}";
                     _gridItemsViewSource.View.Refresh();
                 });
