@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,80 @@ namespace MyBeatSaberScore
 
         static ObservableCollection<GridItem> _gridItems = new();
         static CollectionViewSource _gridItemsViewSource = new() { Source = _gridItems };
+        static BindingSource _bindingSource = new();
+
+        private class BindingSource : INotifyPropertyChanged
+        {
+            public string Name { get; set; }
+
+            public string ProfilePicture { get; set; }
+
+            public string Country { get; set; }
+
+            public double Pp { get; set; }
+
+            public int GlobalRank { get; set; }
+
+            public int CountryRank { get; set; }
+
+            public int TotalScore { get; set; }
+
+            public int TotalRankedScore { get; set; }
+
+            public double AverageRankedAccuracy { get; set; }
+
+            public int TotalPlayCount { get; set; }
+
+            public int RankedPlayCount { get; set; }
+
+            public int ReplaysWatched { get; set; }
+
+            public BindingSource()
+            {
+                Name = "";
+                ProfilePicture = "Resources/_404.png";
+                Country = "JP";
+                Pp = 0.0;
+                GlobalRank = 0;
+                CountryRank = 0;
+                TotalScore = 0;
+                TotalRankedScore = 0;
+                AverageRankedAccuracy = 0.0;
+                TotalPlayCount = 0;
+                RankedPlayCount = 0;
+                ReplaysWatched = 0;
+            }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
+
+            public void Set(ScoreSaber.Player profile)
+            {
+                Name = profile.name;
+                ProfilePicture = profile.profilePicture;
+                Country = profile.country;
+                Pp = profile.pp;
+                GlobalRank = profile.rank;
+                CountryRank = profile.countryRank;
+                TotalScore = profile.scoreStats.totalScore;
+                TotalRankedScore = profile.scoreStats.totalRankedScore;
+                AverageRankedAccuracy = profile.scoreStats.averageRankedAccuracy;
+                TotalPlayCount = profile.scoreStats.totalPlayCount;
+                RankedPlayCount = profile.scoreStats.rankedPlayCount;
+                ReplaysWatched = profile.scoreStats.replaysWatched;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProfilePicture)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Country)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pp)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GlobalRank)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CountryRank)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalScore)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalRankedScore)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AverageRankedAccuracy)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalPlayCount)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RankedPlayCount)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ReplaysWatched)));
+            }
+        }
 
         private class GridItem
         {
@@ -81,6 +156,7 @@ namespace MyBeatSaberScore
             _gridItemsViewSource.Filter += new FilterEventHandler(DataGridFilter);
             xaDataGrid.ItemsSource = _gridItemsViewSource.View;
             xaTextPlayerId.Text = Config.ScoreSaberProfileId;
+            DataContext = _bindingSource;
         }
 
         private void DataGridFilter(object sender, FilterEventArgs e)
@@ -229,6 +305,10 @@ namespace MyBeatSaberScore
 
             var profileId = xaTextPlayerId.Text;
 
+            _playerData.LoadLocalFile(profileId);
+            var profile = _playerData.GetPlayerProfileFromLocal();
+            _bindingSource.Set(profile);
+
             await Task.Run(() =>
             {
                 _mapUtil.LoadLocalFile();
@@ -285,6 +365,12 @@ namespace MyBeatSaberScore
                 });
             });
 
+            Task t4 = Task.Run(async () =>
+            {
+                var profile = await _playerData.GetPlayerProfile();
+                _bindingSource.Set(profile);
+            });
+
             await Task.WhenAll(t1, t2);
 
             _allScores = GetAllScores();
@@ -308,7 +394,7 @@ namespace MyBeatSaberScore
                 });
             });
 
-            await Task.WhenAll(t3);
+            await Task.WhenAll(t3, t4);
 
             _gridItemsViewSource.View.Refresh();
 
@@ -406,6 +492,12 @@ namespace MyBeatSaberScore
         private void filterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             _gridItemsViewSource?.View.Refresh();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            GridItem? obj = ((FrameworkElement)sender).DataContext as GridItem;
+            Clipboard.SetData(DataFormats.Text, $"!bsr {obj?.Bsr}");
         }
     }
 }

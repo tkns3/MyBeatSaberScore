@@ -74,6 +74,26 @@ namespace MyBeatSaberScore.APIs
             return new LeaderboardInfoCollection();
         }
 
+        public static async Task<Player> GetPlayerInfo(string playerId)
+        {
+            string url = $"https://scoresaber.com/api/player/{playerId}/full";
+
+            try
+            {
+                var httpsResponse = await _client.GetAsync(url);
+                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
+                var collection = JsonSerializer.Deserialize<Player>(responseContent);
+                return collection ?? new Player();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + url);
+                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
+            }
+
+            return new Player();
+        }
+
         [DataContract]
         public class LeaderboardInfoCollection
         {
@@ -385,6 +405,87 @@ namespace MyBeatSaberScore.APIs
 
             [DataMember]
             public int itemsPerPage { get; set; }
+        }
+
+        [DataContract]
+        public class Player
+        {
+            [DataMember]
+            public string id { get; set; }
+
+            [DataMember]
+            public string name { get; set; }
+
+            [DataMember]
+            public string profilePicture { get; set; }
+
+            [DataMember]
+            public string country { get; set; }
+
+            [DataMember]
+            public double pp { get; set; }
+
+            [DataMember]
+            public int rank { get; set; }
+
+            [DataMember]
+            public int countryRank { get; set; }
+
+            [DataMember]
+            public string role { get; set; }
+
+            [DataMember]
+            public string histories { get; set; }
+
+            [DataMember]
+            public double permissions { get; set; }
+
+            [DataMember]
+            public bool banned { get; set; }
+
+            [DataMember]
+            public bool inactive { get; set; }
+
+            [DataMember]
+            public ScoreStats scoreStats { get; set; }
+
+            public Player()
+            {
+                id = "";
+                name = "";
+                profilePicture = "Resources/_404.png";
+                country = "";
+                role = "";
+                histories = "";
+                scoreStats = new();
+            }
+        }
+
+        [DataContract]
+        public class ScoreStats
+        {
+            [DataMember]
+            public int totalScore { get; set; }
+
+            [DataMember]
+            public int totalRankedScore { get; set; }
+
+            [DataMember]
+            public double averageRankedAccuracy { get; set; }
+
+            [DataMember]
+            public int totalPlayCount { get; set; }
+
+            [DataMember]
+            public int rankedPlayCount { get; set; }
+
+            [DataMember]
+            public int replaysWatched { get; set; }
+
+            public ScoreStats()
+            {
+                //
+            }
         }
     }
 }

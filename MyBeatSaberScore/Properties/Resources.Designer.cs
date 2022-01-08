@@ -179,5 +179,25 @@ namespace MyBeatSaberScore.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] twitch1 {
+            get {
+                object obj = ResourceManager.GetObject("twitch1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] twitch2 {
+            get {
+                object obj = ResourceManager.GetObject("twitch2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

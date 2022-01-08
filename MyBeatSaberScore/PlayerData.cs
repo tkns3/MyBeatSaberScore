@@ -17,10 +17,12 @@ namespace MyBeatSaberScore
     {
         private string _userDir = "";
         private string _scoresPath = "";
+        private string _profilePath = "";
 
         public string PlayerId = "";
         public HashSet<string> playedRankHash = new(); // プレイ済みマップのHashSet。キーは「hash + difficulty(1～9)」。
         public Dictionary<int, ScoreSaber.PlayerScore> playedMaps = new(); // プレイ済みマップ。キー「PlayerScore.leaderboard.id」
+        public ScoreSaber.Player profile = new();
 
         public PlayerData()
         {
@@ -34,6 +36,7 @@ namespace MyBeatSaberScore
             Directory.CreateDirectory(_userDir);
 
             _scoresPath = Path.Combine(_userDir, "scores.json");
+            _profilePath = Path.Combine(_userDir, "profile.json");
 
             playedMaps.Clear();
 
@@ -56,6 +59,16 @@ namespace MyBeatSaberScore
                 if (score.leaderboard.ranked)
                 {
                     playedRankHash.Add(score.leaderboard.songHash + score.leaderboard.difficulty.difficulty);
+                }
+            }
+
+            if (File.Exists(_profilePath))
+            {
+                string jsonString = File.ReadAllText(_profilePath, Encoding.UTF8);
+                var tmp = JsonSerializer.Deserialize<ScoreSaber.Player>(jsonString);
+                if (tmp != null)
+                {
+                    profile = tmp;
                 }
             }
         }
@@ -118,6 +131,19 @@ namespace MyBeatSaberScore
             }
 
             callback(1000, 950);
+        }
+
+        public async Task<ScoreSaber.Player> GetPlayerProfile()
+        {
+            profile = await ScoreSaber.GetPlayerInfo(PlayerId) ?? new ScoreSaber.Player();
+            var jsonString = JsonSerializer.Serialize(profile, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(_profilePath, jsonString);
+            return profile;
+        }
+
+        public ScoreSaber.Player GetPlayerProfileFromLocal()
+        {
+            return profile;
         }
     }
 }
