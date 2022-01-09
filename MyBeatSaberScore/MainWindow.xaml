@@ -33,7 +33,7 @@
             <Canvas Height="120" DockPanel.Dock="Top">
                 <DockPanel LastChildFill="True">
                     <Canvas Width="480" Height="120" DockPanel.Dock="Left">
-                        <local:PlaceholderTextBox x:Name="xaTextPlayerId" Canvas.Left="10" Canvas.Top="10" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" Width="120" ToolTip="ScoreSaberのProfile ID (例 76561198003035723)を入力する" Height="18" Text=""/>
+                        <local:PlaceholderTextBox x:Name="xaProfileId" Canvas.Left="10" Canvas.Top="10" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" Width="120" ToolTip="ScoreSaberのProfile ID (例 76561198003035723)を入力する" Height="18" Text=""/>
                         <Button x:Name="button" Content="データを取得" Canvas.Left="135" Canvas.Top="9" Click="Button_Click" ToolTip="最新のデータを取得して表示を更新する" Height="20"/>
                         <Image Source="{Binding ProfilePicture}" Canvas.Left="10" Canvas.Top="36" Height="74" Width="74" CacheMode="BitmapCache"/>
                         <WrapPanel Canvas.Left="86" Canvas.Top="30" Width="380" RenderTransformOrigin="0.5,0.5">
@@ -71,27 +71,28 @@
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="176">
                             <Canvas>
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.Left="4" Canvas.Top="6" Text="検索"/>
-                                <local:PlaceholderTextBox x:Name="filterTextBox" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="28" TextWrapping="Wrap" Placeholder="曲名・曲作者・譜面作者" VerticalAlignment="Top" Width="160" ToolTip="フィルター" TextChanged="filterTextBox_TextChanged" Height="18"/>
-                                <local:PlaceholderTextBox x:Name="filterBsrBox" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="51" TextWrapping="Wrap" Placeholder="BSR or HASH" VerticalAlignment="Top" Width="160" ToolTip="フィルター" TextChanged="filterTextBox_TextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="xaSongNameFilter" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="28" TextWrapping="Wrap" Placeholder="曲名・曲作者・譜面作者" VerticalAlignment="Top" Width="160" ToolTip="曲名で検索" TextChanged="filterTextBox_TextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="xaBsrFilter" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="51" TextWrapping="Wrap" Placeholder="BSR" VerticalAlignment="Top" Width="160" ToolTip="BSRで検索" TextChanged="filterTextBox_TextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="xaHashFilter" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="74" TextWrapping="Wrap" Placeholder="HASH" VerticalAlignment="Top" Width="160" ToolTip="HASHで検索" TextChanged="filterTextBox_TextChanged" Height="18"/>
                             </Canvas>
                         </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="240">
                             <Canvas>
                                 <TextBlock HorizontalAlignment="Left" Canvas.Left="4" Canvas.Top="6" VerticalAlignment="Top" Text="譜面の種類"/>
-                                <CheckBox x:Name="checkBoxRank" Content="ランク" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="28" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxRank_Checked" Unchecked="checkBoxRank_Unchecked" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
-                                <CheckBox x:Name="checkBoxUnRank" Content="アンランク" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="51" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxUnRank_Checked" Unchecked="checkBoxUnRank_Unchecked" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
-                                <Slider x:Name="sliderMinStar" HorizontalAlignment="Left" Canvas.Left="86" Canvas.Top="28" VerticalAlignment="Top" Width="92" Maximum="20" Value="0" ValueChanged="sliderMinStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                <Slider x:Name="sliderMaxStar" HorizontalAlignment="Left" Canvas.Left="86" Canvas.Top="51" VerticalAlignment="Top" Width="92" Value="20" Maximum="20" ValueChanged="sliderMaxStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                <TextBlock x:Name="minStars" HorizontalAlignment="Left" Canvas.Left="184" Canvas.Top="28" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Value, ElementName=sliderMinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
-                                <TextBlock x:Name="maxStars" HorizontalAlignment="Left" Canvas.Left="184" Canvas.Top="51" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Value, ElementName=sliderMaxStar, StringFormat=Max★\{0:N0\}}" Height="16"/>
+                                <CheckBox x:Name="xaCheckBoxRank" Content="ランク" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="28" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxRank_Checked" Unchecked="checkBoxRank_Unchecked" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
+                                <CheckBox x:Name="xaCheckBoxUnRank" Content="アンランク" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="51" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxUnRank_Checked" Unchecked="checkBoxUnRank_Unchecked" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
+                                <Slider x:Name="xaSliderMinStar" HorizontalAlignment="Left" Canvas.Left="86" Canvas.Top="28" VerticalAlignment="Top" Width="92" Maximum="20" Value="0" ValueChanged="sliderMinStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                <Slider x:Name="xaSliderMaxStar" HorizontalAlignment="Left" Canvas.Left="86" Canvas.Top="51" VerticalAlignment="Top" Width="92" Value="20" Maximum="20" ValueChanged="sliderMaxStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                <TextBlock x:Name="minStars" HorizontalAlignment="Left" Canvas.Left="184" Canvas.Top="28" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Value, ElementName=xaSliderMinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
+                                <TextBlock x:Name="maxStars" HorizontalAlignment="Left" Canvas.Left="184" Canvas.Top="51" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Value, ElementName=xaSliderMaxStar, StringFormat=Max★\{0:N0\}}" Height="16"/>
                             </Canvas>
                         </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="80">
                             <Canvas>
                                 <TextBlock HorizontalAlignment="Left" Canvas.Left="4" Canvas.Top="6" VerticalAlignment="Top" Text="プレイ結果" Height="16"/>
-                                <CheckBox x:Name="checkBoxClear" Content="Clear" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="28" VerticalAlignment="Top" IsChecked="True" ToolTip="クリアした譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
-                                <CheckBox x:Name="checkBoxFail" Content="NF" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="51" VerticalAlignment="Top" IsChecked="True" ToolTip="NFがついた譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
-                                <CheckBox x:Name="checkBoxNoPlayRank" Content="未プレイ" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="74" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxNoPlayRank_Checked" Unchecked="checkBoxNoPlayRank_Unchecked" ToolTip="未プレイのランク譜面を表示する"/>
+                                <CheckBox x:Name="xaCheckBoxClear" Content="Clear" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="28" VerticalAlignment="Top" IsChecked="True" ToolTip="クリアした譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
+                                <CheckBox x:Name="xaCheckBoxFail" Content="NF" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="51" VerticalAlignment="Top" IsChecked="True" ToolTip="NFがついた譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
+                                <CheckBox x:Name="xaCheckBoxNoPlayRank" Content="未プレイ" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="74" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxNoPlayRank_Checked" Unchecked="checkBoxNoPlayRank_Unchecked" ToolTip="未プレイのランク譜面を表示する"/>
                             </Canvas>
                         </Border>
                     </StackPanel>
@@ -103,7 +104,13 @@
                 </StatusBarItem>
                 <Separator />
                 <StatusBarItem>
-                    <TextBlock Name="progress" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="Task1=0.00% Task2=0.00% Task3=0.00%"/>
+                    <ProgressBar Width="60" Height="12" Minimum="0.0" Maximum="100.0" Value="{Binding Task1Progress}"/>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <ProgressBar Width="60" Height="12" Minimum="0.0" Maximum="100.0" Value="{Binding Task2Progress}"/>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <ProgressBar Width="60" Height="12" Minimum="0.0" Maximum="100.0" Value="{Binding Task3Progress}"/>
                 </StatusBarItem>
             </StatusBar>
             <DataGrid x:Name="xaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader">
@@ -131,10 +138,10 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="更新日"  Width="150" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
-                    <DataGridTemplateColumn Header="モード" Width="45">
+                    <DataGridTemplateColumn Header="モード">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image>
+                                <Image Width="32">
                                     <Image.Style>
                                         <Style>
                                             <Style.Triggers>
@@ -166,10 +173,10 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="難易度" Width="45">
+                    <DataGridTemplateColumn Header="難易度">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image>
+                                <Image Width="32">
                                     <Image.Style>
                                         <Style>
                                             <Style.Triggers>
@@ -216,6 +223,13 @@
                             </Style>
                         </DataGridTextColumn.CellStyle>
                     </DataGridTextColumn>
+                    <DataGridTextColumn Header="ミス" Binding="{Binding Miss}">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="PP" Binding="{Binding PP, Converter={StaticResource PPConverter}}">
                         <DataGridTextColumn.CellStyle>
                             <Style TargetType="DataGridCell">
@@ -223,7 +237,14 @@
                             </Style>
                         </DataGridTextColumn.CellStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Modifiers" Binding="{Binding Modifiers}"/>
+                    <DataGridTextColumn Header="Modifiers" Width="70"  Binding="{Binding Modifiers}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping"
+                                Value="Wrap" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                     <DataGridTemplateColumn Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

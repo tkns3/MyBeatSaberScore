@@ -57,6 +57,47 @@ namespace MyBeatSaberScore
 
             public int ReplaysWatched { get; set; }
 
+            private double _task1progress;
+            public double Task1Progress {
+                get
+                {
+                    return _task1progress;
+                }
+                set
+                {
+                    _task1progress = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Task1Progress)));
+                } 
+            }
+
+            private double _task2progress;
+            public double Task2Progress
+            {
+                get
+                {
+                    return _task2progress;
+                }
+                set
+                {
+                    _task2progress = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Task2Progress)));
+                }
+            }
+
+            private double _task3progress;
+            public double Task3Progress
+            {
+                get
+                {
+                    return _task3progress;
+                }
+                set
+                {
+                    _task3progress = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Task3Progress)));
+                }
+            }
+
             public BindingSource()
             {
                 Name = "";
@@ -75,7 +116,7 @@ namespace MyBeatSaberScore
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
-            public void Set(ScoreSaber.Player profile)
+            public void Set(ScoreSaber.PlayerProfile profile)
             {
                 Name = profile.name;
                 ProfilePicture = profile.profilePicture;
@@ -121,6 +162,7 @@ namespace MyBeatSaberScore
             public string Hash { get; set; }
             public string CoverUrl { get; set; }
             public bool Ranked { get; set; }
+            public int Miss { get; set; }
 
             public GridItem(string key, string cover, ScoreSaber.PlayerScore score, MapUtil mapUtil)
             {
@@ -130,7 +172,7 @@ namespace MyBeatSaberScore
 
                 Bsr = key.ToLower();
                 Cover = cover;
-                Song = score.leaderboard.songName + " " + score.leaderboard.songSubName + " / " + score.leaderboard.songAuthorName + " [ " + score.leaderboard.levelAuthorName + " ]";
+                Song = $"{score.leaderboard.songName} {score.leaderboard.songSubName} / {score.leaderboard.songAuthorName} [ {score.leaderboard.levelAuthorName} ]";
                 TimeSet = score.score.timeSet.Length > 0 ? score.score.timeSet : "";
                 GameMode = score.leaderboard.difficulty.gameMode;
                 Difficulty = score.leaderboard.difficulty.difficulty;
@@ -143,6 +185,7 @@ namespace MyBeatSaberScore
                 Hash = hash;
                 CoverUrl = score.leaderboard.coverImage;
                 Ranked = score.leaderboard.ranked;
+                Miss = score.score.badCuts + score.score.missedNotes;
             }
         }
 
@@ -155,102 +198,99 @@ namespace MyBeatSaberScore
             _allScores = new();
             _gridItemsViewSource.Filter += new FilterEventHandler(DataGridFilter);
             xaDataGrid.ItemsSource = _gridItemsViewSource.View;
-            xaTextPlayerId.Text = Config.ScoreSaberProfileId;
+            xaProfileId.Text = Config.ScoreSaberProfileId;
             DataContext = _bindingSource;
+        }
+
+        /// <summary>
+        /// itemが曲名、BSR、HASHの指定がすべて満たしているかどうか。
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns>曲名、BSR、HASHの指定をすべて満たしたitemである場合にtrue</returns>
+        private bool FilterBySearch(GridItem item)
+        {
+            if (xaSongNameFilter.Text.Length > 0)
+            {
+                if (!item.Song.Contains(xaSongNameFilter.Text, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            if (xaBsrFilter.Text.Length > 0)
+            {
+                if (!item.Bsr.Contains(xaBsrFilter.Text, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            if (xaHashFilter.Text.Length > 0)
+            {
+                if (!item.Hash.Contains(xaHashFilter.Text, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool FilterByMapKind(GridItem item)
+        {
+            if (xaCheckBoxUnRank.IsChecked == true)
+            {
+                if (item.Stars < 0)
+                {
+                    return true;
+                }
+            }
+
+            if (xaCheckBoxRank.IsChecked == true)
+            {
+                if (xaSliderMinStar.Value <= item.Stars && item.Stars < xaSliderMaxStar.Value)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool FilterByResult(GridItem item)
+        {
+            if (xaCheckBoxClear.IsChecked == true)
+            {
+                if (item.ModifiedScore >= 0 && !item.Modifiers.Contains("NF"))
+                {
+                    return true;
+                }
+            }
+
+            if (xaCheckBoxFail.IsChecked == true)
+            {
+                if (item.ModifiedScore >= 0 && item.Modifiers.Contains("NF"))
+                {
+                    return true;
+                }
+            }
+
+            if (xaCheckBoxNoPlayRank.IsChecked == true)
+            {
+                if (item.ModifiedScore < 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void DataGridFilter(object sender, FilterEventArgs e)
         {
             if (e.Item is GridItem item)
             {
-                bool cond1st = false;
-                bool cond2nd = false;
-                bool cond3rd = false;
-
-                // 曲名＆曲作者＆譜面作者でフィルタリング
-                {
-                    if (filterTextBox.Text.Length > 0)
-                    {
-                        if (item.Song.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
-                        {
-                            cond1st = true;
-                        }
-                    }
-                    else
-                    {
-                        cond1st = true;
-                    }
-                }
-
-                if (cond1st)
-                {
-                    cond1st = false;
-                    if (filterBsrBox.Text.Length > 0)
-                    {
-                        if (item.Bsr.Contains(filterBsrBox.Text, StringComparison.OrdinalIgnoreCase))
-                        {
-                            cond1st = true;
-                        }
-                        if (item.Hash.Contains(filterBsrBox.Text, StringComparison.OrdinalIgnoreCase))
-                        {
-                            cond1st = true;
-                        }
-                    }
-                    else
-                    {
-                        cond1st = true;
-                    }
-                }
-
-                // 譜面の種類でフィルタリング
-                if (cond1st)
-                {
-                    if (checkBoxUnRank.IsChecked == true)
-                    {
-                        if (item.Stars < 0)
-                        {
-                            cond2nd = true;
-                        }
-                    }
-
-                    if (checkBoxRank.IsChecked == true)
-                    {
-                        if (sliderMinStar.Value <= item.Stars && item.Stars < sliderMaxStar.Value)
-                        {
-                            cond2nd = true;
-                        }
-                    }
-                }
-
-                // プレイ結果(クリア、未クリア)でフィルタリング
-                if (cond2nd)
-                {
-                    if (checkBoxClear.IsChecked == true)
-                    {
-                        if (item.ModifiedScore >= 0 && !item.Modifiers.Contains("NF"))
-                        {
-                            cond3rd = true;
-                        }
-                    }
-
-                    if (checkBoxFail.IsChecked == true)
-                    {
-                        if (item.ModifiedScore >= 0 && item.Modifiers.Contains("NF"))
-                        {
-                            cond3rd = true;
-                        }
-                    }
-
-                    if (checkBoxNoPlayRank.IsChecked == true)
-                    {
-                        if (item.ModifiedScore < 0)
-                        {
-                            cond3rd = true;
-                        }
-                    }
-                }
-
-                e.Accepted = cond1st && cond2nd && cond3rd;
+                e.Accepted = FilterBySearch(item) && FilterByMapKind(item) && FilterByResult(item);
             }
         }
 
@@ -303,7 +343,7 @@ namespace MyBeatSaberScore
         {
             button.IsEnabled = false;
 
-            var profileId = xaTextPlayerId.Text;
+            var profileId = xaProfileId.Text;
 
             _playerData.LoadLocalFile(profileId);
             var profile = _playerData.GetPlayerProfileFromLocal();
@@ -335,34 +375,24 @@ namespace MyBeatSaberScore
         {
             button.IsEnabled = false;
 
-            string t1txt = "Task1=0.00%";
-            string t2txt = "Task2=0.00%";
-            string t3txt = "Task3=0.00%";
-
-            progress.Text = $"{t1txt} {t2txt} {t3txt}";
+            _bindingSource.Task1Progress = 0.0;
+            _bindingSource.Task2Progress = 0.0;
+            _bindingSource.Task3Progress = 0.0;
 
             _gridItems.Clear();
 
-            _playerData.LoadLocalFile(xaTextPlayerId.Text);
+            _playerData.LoadLocalFile(xaProfileId.Text);
 
             // スコアセイバーから最新スコアを取得
             Task t1 = Task1DownloadLatestScores((max, count) =>
             {
-                progress.Dispatcher.Invoke(() =>
-                {
-                    t1txt = $"Task1={(double)count * 100 / max:0.00}%";
-                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt}";
-                });
+                _bindingSource.Task1Progress = (double)count * 100 / max;
             });
 
             // ランク譜面リストを取得
             Task t2 = Task2DownloadRankedMaps((max, count) =>
             {
-                progress.Dispatcher.Invoke(() =>
-                {
-                    t2txt = $"Task2={(double)count * 100 / max:0.00}%";
-                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt}";
-                });
+                _bindingSource.Task2Progress = (double)count * 100 / max;
             });
 
             Task t4 = Task.Run(async () =>
@@ -386,10 +416,9 @@ namespace MyBeatSaberScore
             // 未取得のカバー画像を取得しながら逐次更新
             Task t3 = Task3DownloadUnacquiredCover((max, count) =>
             {
-                progress.Dispatcher.Invoke(() =>
+                _bindingSource.Task3Progress = (double)count * 100 / max;
+                Dispatcher.Invoke(() =>
                 {
-                    t3txt = $"Task3={(double)count * 100 / max:0.00}%";
-                    progress.Text = progress.Text = $"{t1txt} {t2txt} {t3txt}";
                     _gridItemsViewSource.View.Refresh();
                 });
             });
@@ -398,7 +427,7 @@ namespace MyBeatSaberScore
 
             _gridItemsViewSource.View.Refresh();
 
-            Config.ScoreSaberProfileId = xaTextPlayerId.Text;
+            Config.ScoreSaberProfileId = xaProfileId.Text;
 
             button.IsEnabled = true;
         }
@@ -412,8 +441,9 @@ namespace MyBeatSaberScore
 
         private async Task Task2DownloadRankedMaps(Action<int, int> callback)
         {
+            callback(10, 1);
             await BeatSaberScrappedData.DownlaodCombinedScrappedData();
-            callback(10, 5);
+            callback(10, 8);
             _mapUtil.LoadLocalFile();
             callback(10, 10);
         }

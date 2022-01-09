@@ -22,7 +22,7 @@ namespace MyBeatSaberScore
         public string PlayerId = "";
         public HashSet<string> playedRankHash = new(); // プレイ済みマップのHashSet。キーは「hash + difficulty(1～9)」。
         public Dictionary<int, ScoreSaber.PlayerScore> playedMaps = new(); // プレイ済みマップ。キー「PlayerScore.leaderboard.id」
-        public ScoreSaber.Player profile = new();
+        public ScoreSaber.PlayerProfile profile = new();
 
         public PlayerData()
         {
@@ -65,7 +65,7 @@ namespace MyBeatSaberScore
             if (File.Exists(_profilePath))
             {
                 string jsonString = File.ReadAllText(_profilePath, Encoding.UTF8);
-                var tmp = JsonSerializer.Deserialize<ScoreSaber.Player>(jsonString);
+                var tmp = JsonSerializer.Deserialize<ScoreSaber.PlayerProfile>(jsonString);
                 if (tmp != null)
                 {
                     profile = tmp;
@@ -133,15 +133,15 @@ namespace MyBeatSaberScore
             callback(1000, 950);
         }
 
-        public async Task<ScoreSaber.Player> GetPlayerProfile()
+        public async Task<ScoreSaber.PlayerProfile> GetPlayerProfile()
         {
-            profile = await ScoreSaber.GetPlayerInfo(PlayerId) ?? new ScoreSaber.Player();
+            profile = await ScoreSaber.GetPlayerInfo(PlayerId) ?? new ScoreSaber.PlayerProfile();
             var jsonString = JsonSerializer.Serialize(profile, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(_profilePath, jsonString);
             return profile;
         }
 
-        public ScoreSaber.Player GetPlayerProfileFromLocal()
+        public ScoreSaber.PlayerProfile GetPlayerProfileFromLocal()
         {
             return profile;
         }

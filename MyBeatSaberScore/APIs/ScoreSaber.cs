@@ -74,7 +74,7 @@ namespace MyBeatSaberScore.APIs
             return new LeaderboardInfoCollection();
         }
 
-        public static async Task<Player> GetPlayerInfo(string playerId)
+        public static async Task<PlayerProfile> GetPlayerInfo(string playerId)
         {
             string url = $"https://scoresaber.com/api/player/{playerId}/full";
 
@@ -82,8 +82,8 @@ namespace MyBeatSaberScore.APIs
             {
                 var httpsResponse = await _client.GetAsync(url);
                 var responseContent = await httpsResponse.Content.ReadAsStringAsync();
-                var collection = JsonSerializer.Deserialize<Player>(responseContent);
-                return collection ?? new Player();
+                var collection = JsonSerializer.Deserialize<PlayerProfile>(responseContent);
+                return collection ?? new PlayerProfile();
             }
             catch (Exception ex)
             {
@@ -91,7 +91,7 @@ namespace MyBeatSaberScore.APIs
                 System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
             }
 
-            return new Player();
+            return new PlayerProfile();
         }
 
         [DataContract]
@@ -408,7 +408,7 @@ namespace MyBeatSaberScore.APIs
         }
 
         [DataContract]
-        public class Player
+        public class PlayerProfile
         {
             [DataMember]
             public string id { get; set; }
@@ -449,7 +449,7 @@ namespace MyBeatSaberScore.APIs
             [DataMember]
             public ScoreStats scoreStats { get; set; }
 
-            public Player()
+            public PlayerProfile()
             {
                 id = "";
                 name = "";
