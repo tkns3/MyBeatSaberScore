@@ -1,4 +1,5 @@
-﻿using MyBeatSaberScore.APIs;
+﻿using Microsoft.Win32;
+using MyBeatSaberScore.APIs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -149,7 +150,11 @@ namespace MyBeatSaberScore
         {
             public string Bsr { get; set; }
             public string Cover { get; set; }
-            public string Song { get; set; }
+            public string SongFullName { get; set; }
+            public string SongName { get; set; }
+            public string SongSubName { get; set; }
+            public string SongAuthor { get; set; }
+            public string LevelAuthor { get; set; }
             public string TimeSet { get; set; }
             public string GameMode { get; set; }
             public int Difficulty { get; set; }
@@ -172,7 +177,11 @@ namespace MyBeatSaberScore
 
                 Bsr = key.ToLower();
                 Cover = cover;
-                Song = $"{score.leaderboard.songName} {score.leaderboard.songSubName} / {score.leaderboard.songAuthorName} [ {score.leaderboard.levelAuthorName} ]";
+                SongFullName = $"{score.leaderboard.songName} {score.leaderboard.songSubName} / {score.leaderboard.songAuthorName} [ {score.leaderboard.levelAuthorName} ]";
+                SongName = score.leaderboard.songName;
+                SongSubName = score.leaderboard.songSubName;
+                SongAuthor = score.leaderboard.songAuthorName;
+                LevelAuthor = score.leaderboard.levelAuthorName;
                 TimeSet = score.score.timeSet.Length > 0 ? score.score.timeSet : "";
                 GameMode = score.leaderboard.difficulty.gameMode;
                 Difficulty = score.leaderboard.difficulty.difficulty;
@@ -211,7 +220,7 @@ namespace MyBeatSaberScore
         {
             if (xaSongNameFilter.Text.Length > 0)
             {
-                if (!item.Song.Contains(xaSongNameFilter.Text, StringComparison.OrdinalIgnoreCase))
+                if (!item.SongFullName.Contains(xaSongNameFilter.Text, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
@@ -353,7 +362,7 @@ namespace MyBeatSaberScore
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            button.IsEnabled = false;
+            xaButtonGetData.IsEnabled = false;
 
             var profileId = xaProfileId.Text;
 
@@ -380,12 +389,12 @@ namespace MyBeatSaberScore
 
             _gridItemsViewSource?.View.Refresh();
 
-            button.IsEnabled = true;
+            xaButtonGetData.IsEnabled = true;
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            button.IsEnabled = false;
+            xaButtonGetData.IsEnabled = false;
 
             _bindingSource.Task1Progress = 0.0;
             _bindingSource.Task2Progress = 0.0;
@@ -441,7 +450,7 @@ namespace MyBeatSaberScore
 
             Config.ScoreSaberProfileId = xaProfileId.Text;
 
-            button.IsEnabled = true;
+            xaButtonGetData.IsEnabled = true;
         }
 
         private async Task Task1DownloadLatestScores(Action<int, int> callback)
@@ -540,6 +549,37 @@ namespace MyBeatSaberScore
         {
             GridItem? obj = ((FrameworkElement)sender).DataContext as GridItem;
             Clipboard.SetData(DataFormats.Text, $"!bsr {obj?.Bsr}");
+        }
+
+        private void xaButtonCreatePlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            // ファイル保存ダイアログを生成します。
+            var dialog = new SaveFileDialog();
+
+            // フィルターを設定します。
+            // この設定は任意です。
+            dialog.Filter = "JSONファイル(*.json)|*.json|プレイリストファイル(*.bplist)|*.bplist|全てのファイル(*.*)|*.*";
+
+            // ファイル保存ダイアログを表示します。
+            var result = dialog.ShowDialog() ?? false;
+
+            // 保存ボタン以外が押下された場合
+            if (!result)
+            {
+                // 終了します。
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + xaDataGrid.Items.Count);
+            var playlist = new PlayList();
+            foreach (var item in xaDataGrid.Items)
+            {
+                if (item is GridItem i)
+                {
+                    playlist.AddSong(i.Bsr, i.Hash, i.SongName, i.LevelAuthor, i.GameMode, i.Difficulty);
+                }
+            }
+            playlist.Save(dialog.FileName);
         }
     }
 }

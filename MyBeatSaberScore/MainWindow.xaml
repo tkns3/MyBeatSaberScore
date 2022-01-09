@@ -34,7 +34,8 @@
                 <DockPanel LastChildFill="True">
                     <Canvas Width="480" Height="120" DockPanel.Dock="Left">
                         <local:PlaceholderTextBox x:Name="xaProfileId" Canvas.Left="10" Canvas.Top="10" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" Width="120" ToolTip="ScoreSaberのProfile ID (例 76561198003035723)を入力する" Height="18" Text=""/>
-                        <Button x:Name="button" Content="データを取得" Canvas.Left="135" Canvas.Top="9" Click="Button_Click" ToolTip="最新のデータを取得して表示を更新する" Height="20"/>
+                        <Button x:Name="xaButtonGetData" Content="データ取得" Canvas.Left="135" Canvas.Top="9" Click="Button_Click" ToolTip="最新のデータを取得して表示を更新する" Height="20"/>
+                        <Button x:Name="xaButtonCreatePlaylist" Content="プレイリスト作成" Canvas.Left="195" Canvas.Top="9" ToolTip="表示している譜面のプレイリストを作成する" Height="20" Click="xaButtonCreatePlaylist_Click"/>
                         <Image Source="{Binding ProfilePicture}" Canvas.Left="10" Canvas.Top="36" Height="74" Width="74" CacheMode="BitmapCache"/>
                         <WrapPanel Canvas.Left="86" Canvas.Top="30" Width="380" RenderTransformOrigin="0.5,0.5">
                             <TextBlock Margin="2,0,2,0" FontSize="16" FontWeight="Bold" Text="{Binding Name}"/>
@@ -129,7 +130,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" Width="370" Binding="{Binding Song}">
+                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" Width="370" Binding="{Binding SongFullName}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping"
