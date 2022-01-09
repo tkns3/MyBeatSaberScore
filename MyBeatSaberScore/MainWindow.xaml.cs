@@ -257,11 +257,23 @@ namespace MyBeatSaberScore
             return false;
         }
 
+        private bool IsFailureByConfig(string modifiers)
+        {
+            foreach (var f in Config.Failures)
+            {
+                if (modifiers.Contains(f))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private bool FilterByResult(GridItem item)
         {
             if (xaCheckBoxClear.IsChecked == true)
             {
-                if (item.ModifiedScore >= 0 && !item.Modifiers.Contains("NF"))
+                if (item.ModifiedScore >= 0 && !IsFailureByConfig(item.Modifiers))
                 {
                     return true;
                 }
@@ -269,7 +281,7 @@ namespace MyBeatSaberScore
 
             if (xaCheckBoxFail.IsChecked == true)
             {
-                if (item.ModifiedScore >= 0 && item.Modifiers.Contains("NF"))
+                if (item.ModifiedScore >= 0 && IsFailureByConfig(item.Modifiers))
                 {
                     return true;
                 }

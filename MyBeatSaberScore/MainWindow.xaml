@@ -91,7 +91,7 @@
                             <Canvas>
                                 <TextBlock HorizontalAlignment="Left" Canvas.Left="4" Canvas.Top="6" VerticalAlignment="Top" Text="プレイ結果" Height="16"/>
                                 <CheckBox x:Name="xaCheckBoxClear" Content="Clear" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="28" VerticalAlignment="Top" IsChecked="True" ToolTip="クリアした譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
-                                <CheckBox x:Name="xaCheckBoxFail" Content="NF" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="51" VerticalAlignment="Top" IsChecked="True" ToolTip="NFがついた譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
+                                <CheckBox x:Name="xaCheckBoxFail" Content="Failure" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="51" VerticalAlignment="Top" IsChecked="True" ToolTip="NFやSSがついた譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
                                 <CheckBox x:Name="xaCheckBoxNoPlayRank" Content="未プレイ" HorizontalAlignment="Left" Canvas.Left="8" Canvas.Top="74" VerticalAlignment="Top" IsChecked="True" Checked="checkBoxNoPlayRank_Checked" Unchecked="checkBoxNoPlayRank_Unchecked" ToolTip="未プレイのランク譜面を表示する"/>
                             </Canvas>
                         </Border>

@@ -33,6 +33,14 @@ namespace MyBeatSaberScore
             }
         }
 
+        public static List<string> Failures
+        {
+            get
+            {
+                return _data.failures;
+            }
+        }
+
         public static void LoadLocalFile()
         {
             try
@@ -43,6 +51,7 @@ namespace MyBeatSaberScore
                     var data = JsonSerializer.Deserialize<ConfigData>(jsonString);
                     if (data != null)
                     {
+                        data.Normalize();
                         _data = data;
                     }
                 }
@@ -73,9 +82,25 @@ namespace MyBeatSaberScore
         [DataMember]
         public string scoreSaberProfileId { get; set; }
 
+        public List<string> failures { get; set; }
+
         public ConfigData()
         {
             scoreSaberProfileId = "";
+            failures = new();
+        }
+
+        public void Normalize()
+        {
+            if (failures == null)
+            {
+                failures = new() { "NF", "SS" };
+            }
+            if (failures.Count == 0)
+            {
+                failures.Add("NF");
+                failures.Add("SS");
+            }
         }
     }
  }
