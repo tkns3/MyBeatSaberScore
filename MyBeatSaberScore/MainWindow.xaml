@@ -9,9 +9,10 @@
         Title="MyBeatSaberScore" Height="720" Width="1100" Loaded="Window_Loaded" Icon="/Resources/standard.png">
     <Window.Resources>
         <convert:AccConverter x:Key="AccConverter"/>
+        <convert:BsrConverter x:Key="BsrConverter"/>
+        <convert:DateConverter x:Key="DateConverter"/>
         <convert:PPConverter x:Key="PPConverter"/>
         <convert:StarConverter x:Key="StarConverter"/>
-        <convert:DateConverter x:Key="DateConverter"/>
         <Style TargetType="{x:Type Button}" x:Key="ImageButtonStyle">
             <Setter Property="Template">
                 <Setter.Value>
@@ -116,7 +117,7 @@
             </StatusBar>
             <DataGrid x:Name="xaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="bsr" Binding="{Binding Bsr}">
+                    <DataGridTextColumn Header="bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}">
                         <DataGridTextColumn.CellStyle>
                             <Style TargetType="DataGridCell">
                                 <Setter Property="HorizontalAlignment" Value="Right" />

@@ -148,7 +148,8 @@ namespace MyBeatSaberScore
 
         private class GridItem
         {
-            public string Bsr { get; set; }
+            public string Key { get; set; }
+            public long NumOfKey { get; set; }
             public string Cover { get; set; }
             public string SongFullName { get; set; }
             public string SongName { get; set; }
@@ -175,7 +176,8 @@ namespace MyBeatSaberScore
                 long maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : mapUtil.GetMaxScore(hash, score.leaderboard.difficulty.difficultyRawInt);
                 double acc = maxScore > 0 ? (double)score.score.modifiedScore * 100 / maxScore : 0;
 
-                Bsr = key.ToLower();
+                Key = key.ToLower();
+                NumOfKey = (key.Length > 0) ? Convert.ToInt64(key, 16) : 0;
                 Cover = cover;
                 SongFullName = $"{score.leaderboard.songName} {score.leaderboard.songSubName} / {score.leaderboard.songAuthorName} [ {score.leaderboard.levelAuthorName} ]";
                 SongName = score.leaderboard.songName;
@@ -228,7 +230,7 @@ namespace MyBeatSaberScore
 
             if (xaBsrFilter.Text.Length > 0)
             {
-                if (!item.Bsr.Contains(xaBsrFilter.Text, StringComparison.OrdinalIgnoreCase))
+                if (!item.Key.Contains(xaBsrFilter.Text, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
@@ -548,7 +550,7 @@ namespace MyBeatSaberScore
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             GridItem? obj = ((FrameworkElement)sender).DataContext as GridItem;
-            Clipboard.SetData(DataFormats.Text, $"!bsr {obj?.Bsr}");
+            Clipboard.SetData(DataFormats.Text, $"!bsr {obj?.Key}");
         }
 
         private void xaButtonCreatePlaylist_Click(object sender, RoutedEventArgs e)
@@ -576,7 +578,7 @@ namespace MyBeatSaberScore
             {
                 if (item is GridItem i)
                 {
-                    playlist.AddSong(i.Bsr, i.Hash, i.SongName, i.LevelAuthor, i.GameMode, i.Difficulty);
+                    playlist.AddSong(i.Key, i.Hash, i.SongName, i.LevelAuthor, i.GameMode, i.Difficulty);
                 }
             }
             playlist.Save(dialog.FileName);
