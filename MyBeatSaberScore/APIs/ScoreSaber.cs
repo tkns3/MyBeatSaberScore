@@ -161,19 +161,19 @@ namespace MyBeatSaberScore.APIs
         public class Score
         {
             [DataMember]
-            public int id { get; set; }
+            public long id { get; set; }
 
             [DataMember]
             public LeaderboardPlayerInfo leaderboardPlayerInfo { get; set; }
 
             [DataMember]
-            public int rank { get; set; }
+            public long rank { get; set; }
 
             [DataMember]
-            public int baseScore { get; set; }
+            public long baseScore { get; set; }
 
             [DataMember]
-            public int modifiedScore { get; set; }
+            public long modifiedScore { get; set; }
 
             [DataMember]
             public double pp { get; set; }
@@ -188,19 +188,19 @@ namespace MyBeatSaberScore.APIs
             public double multiplier { get; set; }
 
             [DataMember]
-            public int badCuts { get; set; }
+            public long badCuts { get; set; }
 
             [DataMember]
-            public int missedNotes { get; set; }
+            public long missedNotes { get; set; }
 
             [DataMember]
-            public int maxCombo { get; set; }
+            public long maxCombo { get; set; }
 
             [DataMember]
             public bool fullCombo { get; set; }
 
             [DataMember]
-            public int hmd { get; set; }
+            public long hmd { get; set; }
 
             [DataMember]
             public bool hasReplay { get; set; }
@@ -219,7 +219,7 @@ namespace MyBeatSaberScore.APIs
         public class LeaderboardPlayerInfo
         {
             [DataMember]
-            public int id { get; set; }
+            public long id { get; set; }
 
             [DataMember]
             public string name { get; set; }
@@ -231,7 +231,7 @@ namespace MyBeatSaberScore.APIs
             public string country { get; set; }
 
             [DataMember]
-            public int permissions { get; set; }
+            public long permissions { get; set; }
 
             [DataMember]
             public string role { get; set; }
@@ -249,7 +249,7 @@ namespace MyBeatSaberScore.APIs
         public class LeaderboardInfo
         {
             [DataMember]
-            public int id { get; set; }
+            public long id { get; set; }
 
             [DataMember]
             public string songHash { get; set; }
@@ -270,7 +270,7 @@ namespace MyBeatSaberScore.APIs
             public Difficulty difficulty { get; set; }
 
             [DataMember]
-            public int maxScore { get; set; }
+            public long maxScore { get; set; }
 
             [DataMember]
             public string createdDate { get; set; }
@@ -294,7 +294,7 @@ namespace MyBeatSaberScore.APIs
             public bool loved { get; set; }
 
             [DataMember]
-            public int maxPP { get; set; }
+            public long maxPP { get; set; }
 
             [DataMember]
             public double stars { get; set; }
@@ -303,10 +303,10 @@ namespace MyBeatSaberScore.APIs
             public bool positiveModifiers { get; set; }
 
             [DataMember]
-            public int plays { get; set; }
+            public long plays { get; set; }
 
             [DataMember]
-            public int dailyPlays { get; set; }
+            public long dailyPlays { get; set; }
 
             [DataMember]
             public string coverImage { get; set; }
@@ -348,10 +348,10 @@ namespace MyBeatSaberScore.APIs
         public class Difficulty
         {
             [DataMember]
-            public int leaderboardId { get; set; }
+            public long leaderboardId { get; set; }
 
             [DataMember]
-            public int difficulty { get; set; }
+            public long difficulty { get; set; }
 
             [DataMember]
             public string gameMode { get; set; }
@@ -360,7 +360,7 @@ namespace MyBeatSaberScore.APIs
             public string difficultyRaw { get; set; }
 
             [IgnoreDataMember]
-            public int difficultyRawInt { get; set; }
+            public long difficultyRawInt { get; set; }
 
             public Difficulty()
             {
@@ -385,12 +385,12 @@ namespace MyBeatSaberScore.APIs
                 difficultyRawInt = ToDifficultyRawInt(gameMode, difficulty);
             }
 
-            static public int ToDifficultyRawInt(string gameMode, int difficulty)
+            static public long ToDifficultyRawInt(string gameMode, long difficulty)
             {
                 EGameMode egm = EGameMode._UnKnown;
                 _ = Enum.TryParse(gameMode, out egm);
 
-                return (int)egm * 32 + difficulty;
+                return (long)egm * 32 + difficulty;
             }
         }
 
@@ -398,13 +398,13 @@ namespace MyBeatSaberScore.APIs
         public class Metadata
         {
             [DataMember]
-            public int total { get; set; }
+            public long total { get; set; }
 
             [DataMember]
-            public int page { get; set; }
+            public long page { get; set; }
 
             [DataMember]
-            public int itemsPerPage { get; set; }
+            public long itemsPerPage { get; set; }
         }
 
         [DataContract]
@@ -426,10 +426,10 @@ namespace MyBeatSaberScore.APIs
             public double pp { get; set; }
 
             [DataMember]
-            public int rank { get; set; }
+            public long rank { get; set; }
 
             [DataMember]
-            public int countryRank { get; set; }
+            public long countryRank { get; set; }
 
             [DataMember]
             public string role { get; set; }
@@ -465,22 +465,22 @@ namespace MyBeatSaberScore.APIs
         public class ScoreStats
         {
             [DataMember]
-            public int totalScore { get; set; }
+            public long totalScore { get; set; }
 
             [DataMember]
-            public int totalRankedScore { get; set; }
+            public long totalRankedScore { get; set; }
 
             [DataMember]
             public double averageRankedAccuracy { get; set; }
 
             [DataMember]
-            public int totalPlayCount { get; set; }
+            public long totalPlayCount { get; set; }
 
             [DataMember]
-            public int rankedPlayCount { get; set; }
+            public long rankedPlayCount { get; set; }
 
             [DataMember]
-            public int replaysWatched { get; set; }
+            public long replaysWatched { get; set; }
 
             public ScoreStats()
             {

@@ -40,7 +40,7 @@ namespace MyBeatSaberScore
             });
         }
 
-        public int GetMaxScore(string hash, int difficultyRawInt)
+        public int GetMaxScore(string hash, long difficultyRawInt)
         {
             if (!_mapDic.ContainsKey(hash))
             {

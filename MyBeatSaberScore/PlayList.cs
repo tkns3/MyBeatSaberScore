@@ -40,7 +40,7 @@ namespace MyBeatSaberScore
             _container = new Container();
         }
 
-        public void AddSong(string key, string hash, string songName, string levelAuthor, string mode, int difficultyInt)
+        public void AddSong(string key, string hash, string songName, string levelAuthor, string mode, long difficultyInt)
         {
             _container.songs.Add(new Song()
             {
@@ -141,7 +141,7 @@ namespace MyBeatSaberScore
                 name = "";
             }
 
-            public Difficulty(string mode, int difficultyInt)
+            public Difficulty(string mode, long difficultyInt)
             {
                 characteristic = mode.Substring(4);
                 switch (difficultyInt)

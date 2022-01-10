@@ -42,21 +42,21 @@ namespace MyBeatSaberScore
 
             public double Pp { get; set; }
 
-            public int GlobalRank { get; set; }
+            public long GlobalRank { get; set; }
 
-            public int CountryRank { get; set; }
+            public long CountryRank { get; set; }
 
-            public int TotalScore { get; set; }
+            public long TotalScore { get; set; }
 
-            public int TotalRankedScore { get; set; }
+            public long TotalRankedScore { get; set; }
 
             public double AverageRankedAccuracy { get; set; }
 
-            public int TotalPlayCount { get; set; }
+            public long TotalPlayCount { get; set; }
 
-            public int RankedPlayCount { get; set; }
+            public long RankedPlayCount { get; set; }
 
-            public int ReplaysWatched { get; set; }
+            public long ReplaysWatched { get; set; }
 
             private double _task1progress;
             public double Task1Progress {
@@ -157,22 +157,22 @@ namespace MyBeatSaberScore
             public string LevelAuthor { get; set; }
             public string TimeSet { get; set; }
             public string GameMode { get; set; }
-            public int Difficulty { get; set; }
+            public long Difficulty { get; set; }
             public double Stars { get; set; }
-            public int ModifiedScore { get; set; }
-            public int MaxScore { get; set; }
+            public long ModifiedScore { get; set; }
+            public long MaxScore { get; set; }
             public double Acc { get; set; }
             public double PP { get; set; }
             public string Modifiers { get; set; }
             public string Hash { get; set; }
             public string CoverUrl { get; set; }
             public bool Ranked { get; set; }
-            public int Miss { get; set; }
+            public long Miss { get; set; }
 
             public GridItem(string key, string cover, ScoreSaber.PlayerScore score, MapUtil mapUtil)
             {
                 string hash = score.leaderboard.songHash.ToLower();
-                int maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : mapUtil.GetMaxScore(hash, score.leaderboard.difficulty.difficultyRawInt);
+                long maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : mapUtil.GetMaxScore(hash, score.leaderboard.difficulty.difficultyRawInt);
                 double acc = maxScore > 0 ? (double)score.score.modifiedScore * 100 / maxScore : 0;
 
                 Bsr = key.ToLower();

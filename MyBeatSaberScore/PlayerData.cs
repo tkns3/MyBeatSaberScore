@@ -21,7 +21,7 @@ namespace MyBeatSaberScore
 
         public string PlayerId = "";
         public HashSet<string> playedRankHash = new(); // プレイ済みマップのHashSet。キーは「hash + difficulty(1～9)」。
-        public Dictionary<int, ScoreSaber.PlayerScore> playedMaps = new(); // プレイ済みマップ。キー「PlayerScore.leaderboard.id」
+        public Dictionary<long, ScoreSaber.PlayerScore> playedMaps = new(); // プレイ済みマップ。キー「PlayerScore.leaderboard.id」
         public ScoreSaber.PlayerProfile profile = new();
 
         public PlayerData()
@@ -101,7 +101,7 @@ namespace MyBeatSaberScore
                 var collection = await ScoreSaber.GetPlayerScores(playerId, 100, page);
 
                 count++;
-                callback(1000, 100 + (800 * count * 100) / collection.metadata.total);
+                callback(1000, (int)(100 + (800 * count * 100) / collection.metadata.total));
 
                 foreach (var score in collection.playerScores)
                 {
