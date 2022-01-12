@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MyBeatSaberScore"
         xmlns:convert="clr-namespace:MyBeatSaberScore.Convertes"
         mc:Ignorable="d"
-        Title="MyBeatSaberScore" Height="720" Width="1100" Loaded="Window_Loaded" Icon="/Resources/standard.png">
+        Title="MyBeatSaberScore" Height="720" Width="1100" Loaded="Window_Loaded" Icon="/Resources/onesaber.png">
     <Window.Resources>
         <convert:AccConverter x:Key="AccConverter"/>
         <convert:BsrConverter x:Key="BsrConverter"/>
@@ -25,7 +25,7 @@
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
