@@ -50,6 +50,7 @@ namespace MyBeatSaberScore
             private double _Task1Progress;
             private double _Task2Progress;
             private double _Task3Progress;
+            private string _StatusText = "";
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -298,6 +299,19 @@ namespace MyBeatSaberScore
                 set
                 {
                     _Task3Progress = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public string StatusText
+            {
+                get
+                {
+                    return _StatusText;
+                }
+                set
+                {
+                    _StatusText = value;
                     OnPropertyChanged();
                 }
             }
@@ -727,10 +741,15 @@ namespace MyBeatSaberScore
 
         private async Task TaskDownloadLatestScores(Action<int, int> callback)
         {
+            _bindingSource.StatusText = "";
             var isSuccess = await _playerData.DownloadLatestScores(callback);
             if (isSuccess)
             {
                 _playerData.SaveLocalFile();
+            }
+            else
+            {
+                _bindingSource.StatusText = "最新スコアの取得に失敗しました";
             }
             callback(1, 1);
         }

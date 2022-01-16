@@ -114,6 +114,10 @@
                 <StatusBarItem>
                     <ProgressBar Width="60" Height="12" Minimum="0.0" Maximum="100.0" Value="{Binding Task3Progress}"/>
                 </StatusBarItem>
+                <Separator />
+                <StatusBarItem>
+                    <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding StatusText}"/>
+                </StatusBarItem>
             </StatusBar>
             <DataGrid x:Name="xaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader">
                 <DataGrid.Columns>
