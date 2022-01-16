@@ -39,6 +39,7 @@ namespace MyBeatSaberScore
             _profilePath = Path.Combine(_userDir, "profile.json");
 
             playedMaps.Clear();
+            playedRankHash.Clear();
 
             if (File.Exists(_scoresPath))
             {
