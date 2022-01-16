@@ -87,50 +87,77 @@ namespace MyBeatSaberScore
             File.WriteAllText(_scoresPath, jsonString);
         }
 
-        public async Task DownloadLatestScores(Action<int, int> callback)
+        /// <summary>
+        /// 最新スコアをダウンロードしてローカルのスコア一覧を更新する
+        /// </summary>
+        /// <param name="callback">進捗コールバック</param>
+        /// <returns>true:取得成功、false:取得失敗、スコア一覧は更新しない</returns>
+        public async Task<bool> DownloadLatestScores(Action<int, int> callback)
         {
-            if (PlayerId.Length == 0) return;
-
-            callback(1000, 100);
-
-            int count = 0;
-            var playerId = this.PlayerId;
-            var isAllGet = false;
-            for (var page = 1; !isAllGet; page++)
+            if (PlayerId.Length == 0)
             {
-                var collection = await ScoreSaber.GetPlayerScores(playerId, 100, page);
+                return false;
+            }
 
-                count++;
-                callback(1000, (int)(100 + (800 * count * 100) / collection.metadata.total));
+            callback(100, 1);
 
-                foreach (var score in collection.playerScores)
+            var limit = 100; // １回のAPI呼び出しで取得する件数
+            var isAllGet = false; // ローカルに保持していないデータを全て取得できたかどうか
+            var isGetSuccess = true; // スコアセイバーからの取得に成功したかどうか
+            List<ScoreSaber.PlayerScoreCollection> collections = new();
+
+            for (var page = 1; !isAllGet && isGetSuccess; page++)
+            {
+                (isGetSuccess, var collection) = await ScoreSaber.GetPlayerScores(PlayerId, limit, page);
+                if (isGetSuccess)
                 {
-                    // 更新日が同じデータであれば更新済みデータはすべて取得済み
-                    if (playedMaps.ContainsKey(score.leaderboard.id))
+                    if (collection.metadata.total > 0)
                     {
-                        isAllGet = playedMaps[score.leaderboard.id].score.timeSet == score.score.timeSet;
+                        callback((int)collection.metadata.total, page * limit);
                     }
-                    playedMaps[score.leaderboard.id] = score;
-                }
-                // 100件以下の場合は全データ取得済み
-                if (collection.playerScores.Count < 100)
-                {
-                    isAllGet = true;
+
+                    // 後でまとめて処理するために取得したデータを残しておく
+                    collections.Add(collection);
+
+                    // ローカルに保持していないデータをすべて取得できたか確認する
+                    {
+                        foreach (var score in collection.playerScores)
+                        {
+                            // 更新日が同じデータがローカルにあればすべて取得できた
+                            if (playedMaps.TryGetValue(score.leaderboard.id, out var played))
+                            {
+                                isAllGet = played.score.timeSet == score.score.timeSet;
+                            }
+                        }
+                        // limit件未満の場合はすべて取得できた
+                        if (collection.playerScores.Count < limit)
+                        {
+                            isAllGet = true;
+                        }
+                    }
                 }
             }
 
-            callback(1000, 900);
-
-            playedRankHash.Clear();
-            foreach (var score in playedMaps.Values)
+            // ローカルに保持していないデータをすべて取得できた場合はローカルデータを更新する
+            if (isGetSuccess)
             {
-                if (score.leaderboard.ranked)
+                collections.ForEach(collection =>
                 {
-                    playedRankHash.Add(score.leaderboard.songHash + score.leaderboard.difficulty.difficulty);
-                }
+                    collection.playerScores.ForEach(score =>
+                    {
+                        playedMaps[score.leaderboard.id] = score;
+
+                        if (score.leaderboard.ranked)
+                        {
+                            playedRankHash.Add(score.leaderboard.songHash + score.leaderboard.difficulty.difficulty);
+                        }
+                    });
+                });
             }
 
-            callback(1000, 950);
+            callback(100, 100);
+
+            return isGetSuccess;
         }
 
         public async Task<ScoreSaber.PlayerProfile> GetPlayerProfile()

@@ -457,8 +457,11 @@ namespace MyBeatSaberScore
 
         private async Task Task1DownloadLatestScores(Action<int, int> callback)
         {
-            await _playerData.DownloadLatestScores(callback);
-            _playerData.SaveLocalFile();
+            var isSuccess = await _playerData.DownloadLatestScores(callback);
+            if (isSuccess)
+            {
+                _playerData.SaveLocalFile();
+            }
             callback(1, 1);
         }
 

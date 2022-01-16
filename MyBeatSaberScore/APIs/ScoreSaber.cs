@@ -13,7 +13,7 @@ namespace MyBeatSaberScore.APIs
     {
         private static readonly HttpClient _client = new();
 
-        public static async Task<PlayerScoreCollection> GetPlayerScores(string playerId, int limit, int page)
+        public static async Task<(bool, PlayerScoreCollection)> GetPlayerScores(string playerId, int limit, int page)
         {
             string url = $"https://scoresaber.com/api/player/{playerId}/scores?sort=recent&limit={limit}&page={page}";
 
@@ -26,7 +26,7 @@ namespace MyBeatSaberScore.APIs
                 if (collection?.playerScores?.Count > 0)
                 {
                     collection.playerScores.ForEach(score => score.Normalize());
-                    return collection;
+                    return (true, collection);
                 }
             }
             catch (Exception ex)
@@ -35,7 +35,7 @@ namespace MyBeatSaberScore.APIs
                 System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
             }
 
-            return new PlayerScoreCollection();
+            return (false, new PlayerScoreCollection());
         }
 
         /// <summary>
