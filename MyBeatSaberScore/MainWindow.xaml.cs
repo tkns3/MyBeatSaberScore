@@ -747,22 +747,39 @@ namespace MyBeatSaberScore
         private async Task TaskDownloadUnacquiredCover(Action<int, int> callback)
         {
             int count = 0;
+            Dictionary<string, List<GridItem>> needAcquireCovers = new();
+
+            foreach (var item in _gridItems)
+            {
+                if (!MapUtil.isExistCoverAtLocal(item.Hash))
+                {
+                    if (!needAcquireCovers.ContainsKey(item.Hash))
+                    {
+                        needAcquireCovers[item.Hash] = new();
+                    }
+                    needAcquireCovers[item.Hash].Add(item);
+                }
+            }
+
             // カバー画像を並列で取得
             var parallelOptions = new ParallelOptions()
             {
                 MaxDegreeOfParallelism = 10
             };
-            await Parallel.ForEachAsync(_gridItems, parallelOptions, async (item, y) =>
+            await Parallel.ForEachAsync(needAcquireCovers, parallelOptions, async (cover, y) =>
             {
-                string cover = await MapUtil.GetCover(item.Hash, item.CoverUrl);
+                _ = await MapUtil.GetCover(cover.Key, cover.Value.First().CoverUrl);
                 xaDataGrid.Dispatcher.Invoke(new Action(() =>
                 {
-                    item.Cover = MapUtil.GetCoverLocalPath(item.Hash);
+                    cover.Value.ForEach(item =>
+                    {
+                        item.Cover = MapUtil.GetCoverLocalPath(item.Hash);
+                    });
                 }));
                 count++;
-                callback(_gridItems.Count, count);
+                callback(needAcquireCovers.Count, count);
             });
-            callback(1, 1);
+            callback(100, 100);
         }
 
         private void checkBoxRank_Checked(object sender, RoutedEventArgs e)

@@ -76,6 +76,13 @@ namespace MyBeatSaberScore
             return "";
         }
 
+        public static bool isExistCoverAtLocal(string hash)
+        {
+            hash = hash.ToLower();
+            var _localPath = System.IO.Path.Combine(System.Environment.CurrentDirectory, _coverDir, $"{hash}.png");
+            return System.IO.File.Exists(_localPath);
+        }
+
         public static string GetCoverLocalPath(ScoreSaber.PlayerScore score)
         {
             return GetCoverLocalPath(score.leaderboard.songHash);
