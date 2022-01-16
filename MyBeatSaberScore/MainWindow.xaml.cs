@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,90 +35,274 @@ namespace MyBeatSaberScore
 
         private class BindingSource : INotifyPropertyChanged
         {
-            public string Name { get; set; }
+            private string _Name = "";
+            private string _ProfilePicture = "Resources/_404.png";
+            private string _Country = "JP";
+            private double _Pp;
+            private long _GlobalRank;
+            private long _CountryRank;
+            private long _TotalScore;
+            private long _TotalRankedScore;
+            private double _AverageRankedAccuracy;
+            private long _TotalPlayCount;
+            private long _RankedPlayCount;
+            private long _ReplaysWatched;
+            private double _Task1Progress;
+            private double _Task2Progress;
+            private double _Task3Progress;
 
-            public string ProfilePicture { get; set; }
+            public event PropertyChangedEventHandler? PropertyChanged;
 
-            public string Country { get; set; }
+            public BindingSource()
+            {
+            }
 
-            public double Pp { get; set; }
+            protected void OnPropertyChanged([CallerMemberName] string? name = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
 
-            public long GlobalRank { get; set; }
-
-            public long CountryRank { get; set; }
-
-            public long TotalScore { get; set; }
-
-            public long TotalRankedScore { get; set; }
-
-            public double AverageRankedAccuracy { get; set; }
-
-            public long TotalPlayCount { get; set; }
-
-            public long RankedPlayCount { get; set; }
-
-            public long ReplaysWatched { get; set; }
-
-            private double _task1progress;
-            public double Task1Progress {
+            /// <summary>
+            /// プレイヤープロフィール：プレイヤー名
+            /// </summary>
+            public string Name
+            {
                 get
                 {
-                    return _task1progress;
+                    return _Name;
                 }
                 set
                 {
-                    _task1progress = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Task1Progress)));
-                } 
+                    _Name = value;
+                    OnPropertyChanged();
+                }
             }
 
-            private double _task2progress;
+            /// <summary>
+            /// プレイヤープロフィール：画像URL
+            /// </summary>
+            public string ProfilePicture
+            {
+                get
+                {
+                    return _ProfilePicture;
+                }
+                set
+                {
+                    _ProfilePicture = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：所属国
+            /// </summary>
+            public string Country
+            {
+                get
+                {
+                    return _Country;
+                }
+                set
+                {
+                    _Country = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：PP
+            /// </summary>
+            public double Pp
+            {
+                get
+                {
+                    return _Pp;
+                }
+                set
+                {
+                    _Pp = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：世界順位
+            /// </summary>
+            public long GlobalRank
+            {
+                get
+                {
+                    return _GlobalRank;
+                }
+                set
+                {
+                    _GlobalRank = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：国内順位
+            /// </summary>
+            public long CountryRank
+            {
+                get
+                {
+                    return _CountryRank;
+                }
+                set 
+                {
+                    _CountryRank = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：全譜面合計スコア
+            /// </summary>
+            public long TotalScore
+            {
+                get
+                {
+                    return _TotalScore;
+                }
+                set
+                {
+                    _TotalScore = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：ランク譜面合計スコア
+            /// </summary>
+            public long TotalRankedScore
+            {
+                get
+                {
+                    return _TotalRankedScore;
+                }
+                set
+                {
+                    _TotalRankedScore = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：ランク譜面平均精度
+            /// </summary>
+            public double AverageRankedAccuracy
+            {
+                get
+                {
+                    return _AverageRankedAccuracy;
+                }
+                set
+                {
+                    _AverageRankedAccuracy = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：スコアを送信した難易度の数
+            /// </summary>
+            public long TotalPlayCount
+            {
+                get
+                {
+                    return _TotalPlayCount;
+                }
+                set
+                {
+                    _TotalPlayCount = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：ランク譜面のスコアを送信した難易度の数
+            /// </summary>
+            public long RankedPlayCount
+            {
+                get
+                {
+                    return _RankedPlayCount;
+                }
+                set
+                {
+                    _RankedPlayCount = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// プレイヤープロフィール：他の人に再生されたリプレイの数
+            /// </summary>
+            public long ReplaysWatched
+            {
+                get
+                {
+                    return _ReplaysWatched;
+                }
+                set
+                {
+                    _ReplaysWatched = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// タスク１の進捗
+            /// </summary>
+            public double Task1Progress
+            {
+                get
+                {
+                    return _Task1Progress;
+                }
+                set
+                {
+                    _Task1Progress = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// タスク２の進捗
+            /// </summary>
             public double Task2Progress
             {
                 get
                 {
-                    return _task2progress;
+                    return _Task2Progress;
                 }
                 set
                 {
-                    _task2progress = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Task2Progress)));
+                    _Task2Progress = value;
+                    OnPropertyChanged();
                 }
             }
 
-            private double _task3progress;
+            /// <summary>
+            /// タスク３の進捗
+            /// </summary>
             public double Task3Progress
             {
                 get
                 {
-                    return _task3progress;
+                    return _Task3Progress;
                 }
                 set
                 {
-                    _task3progress = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Task3Progress)));
+                    _Task3Progress = value;
+                    OnPropertyChanged();
                 }
             }
 
-            public BindingSource()
-            {
-                Name = "";
-                ProfilePicture = "Resources/_404.png";
-                Country = "JP";
-                Pp = 0.0;
-                GlobalRank = 0;
-                CountryRank = 0;
-                TotalScore = 0;
-                TotalRankedScore = 0;
-                AverageRankedAccuracy = 0.0;
-                TotalPlayCount = 0;
-                RankedPlayCount = 0;
-                ReplaysWatched = 0;
-            }
-
-            public event PropertyChangedEventHandler? PropertyChanged;
-
-            public void Set(ScoreSaber.PlayerProfile profile)
+            public void SetPlayerProfile(ScoreSaber.PlayerProfile profile)
             {
                 Name = profile.name;
                 ProfilePicture = profile.profilePicture;
@@ -131,43 +316,129 @@ namespace MyBeatSaberScore
                 TotalPlayCount = profile.scoreStats.totalPlayCount;
                 RankedPlayCount = profile.scoreStats.rankedPlayCount;
                 ReplaysWatched = profile.scoreStats.replaysWatched;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProfilePicture)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Country)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pp)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GlobalRank)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CountryRank)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalScore)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalRankedScore)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AverageRankedAccuracy)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalPlayCount)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RankedPlayCount)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ReplaysWatched)));
             }
         }
 
         private class GridItem
         {
+            /// <summary>
+            /// BeatSaverのKey(bsr)。16進数のやつ。ex. "1a3fe"
+            /// </summary>
             public string Key { get; set; }
+
+            /// <summary>
+            /// Keyを10進数になおしたやつ。
+            /// </summary>
             public long NumOfKey { get; set; }
+
+            /// <summary>
+            /// ローカルに保存したカバー画像のパス。
+            /// </summary>
             public string Cover { get; set; }
+
+            /// <summary>
+            /// 曲名、曲作者、譜面作者を合成した文字列
+            /// </summary>
             public string SongFullName { get; set; }
+
+            /// <summary>
+            /// 曲名
+            /// </summary>
             public string SongName { get; set; }
+
+            /// <summary>
+            /// 曲サブ名
+            /// </summary>
             public string SongSubName { get; set; }
+
+            /// <summary>
+            /// 曲作者
+            /// </summary>
             public string SongAuthor { get; set; }
+
+            /// <summary>
+            /// 譜面作者
+            /// </summary>
             public string LevelAuthor { get; set; }
+
+            /// <summary>
+            /// スコア更新日
+            /// </summary>
             public string TimeSet { get; set; }
+
+            /// <summary>
+            /// SoloStandard, SoloLawless, SoloOneSaber, SoloLightShow, Solo90Degree, Solo360Degree, SoloNoArrows
+            /// </summary>
             public string GameMode { get; set; }
+
+            /// <summary>
+            /// 1:Easy, 3:Normal, 5:Hard, 7:Expert 9:ExpertPlus
+            /// </summary>
             public long Difficulty { get; set; }
+
+            /// <summary>
+            /// ランク譜面の星。ランク譜面以外は-1。
+            /// </summary>
             public double Stars { get; set; }
+
+            /// <summary>
+            /// スコア
+            /// </summary>
             public long ModifiedScore { get; set; }
+
+            /// <summary>
+            /// 最大スコア
+            /// </summary>
             public long MaxScore { get; set; }
+
+            /// <summary>
+            /// 精度=100*スコア/最大スコア
+            /// </summary>
             public double Acc { get; set; }
+
+            /// <summary>
+            /// PP。ランク譜面以外は0。
+            /// </summary>
             public double PP { get; set; }
+
+            /// <summary>
+            /// [[[modifire],[modifirs],...]
+            /// 略称を把握済みのmodifireは以下
+            /// BE:Battery Energy(4 Lives).
+            /// DA:Disappearing Arrows.
+            /// FS:Faster Song.
+            /// GN:Ghost Notes.
+            /// IF:Insta Fail(1 Life).
+            /// NA:No Arrows.
+            /// NB:No Bombs.
+            /// NF:No Fail.
+            /// NO:No Obstacles(No Walls).
+            /// PM:Pro Mode.
+            /// SF:Super Fast Song.
+            /// SS:Slower Song.
+            /// 略称を未確認のmodifireは以下
+            /// Small Notes, Zen Mode
+            /// </summary>
             public string Modifiers { get; set; }
+
+            /// <summary>
+            /// BeatSaverのハッシュ
+            /// </summary>
             public string Hash { get; set; }
+
+            /// <summary>
+            /// カバー画像のURL
+            /// </summary>
             public string CoverUrl { get; set; }
+
+            /// <summary>
+            /// ランク譜面かどうか
+            /// </summary>
             public bool Ranked { get; set; }
+
+            /// <summary>
+            /// ミス＋バッドカットの数
+            /// </summary>
             public long Miss { get; set; }
 
             public GridItem(string key, string cover, ScoreSaber.PlayerScore score, MapUtil mapUtil)
@@ -317,7 +588,7 @@ namespace MyBeatSaberScore
             }
         }
 
-        private List<ScoreSaber.PlayerScore> GetAllScores()
+        private void UpdateAllScores()
         {
             _allScores.Clear();
 
@@ -358,8 +629,6 @@ namespace MyBeatSaberScore
                     }
                 });
             }
-
-            return _allScores;
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -370,13 +639,13 @@ namespace MyBeatSaberScore
 
             _playerData.LoadLocalFile(profileId);
             var profile = _playerData.GetPlayerProfileFromLocal();
-            _bindingSource.Set(profile);
+            _bindingSource.SetPlayerProfile(profile);
 
             await Task.Run(() =>
             {
                 _mapUtil.LoadLocalFile();
 
-                _allScores = GetAllScores();
+                UpdateAllScores();
 
                 foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
                 {
@@ -407,28 +676,29 @@ namespace MyBeatSaberScore
             _playerData.LoadLocalFile(xaProfileId.Text);
 
             // スコアセイバーから最新スコアを取得
-            Task t1 = Task1DownloadLatestScores((max, count) =>
+            Task downloadLatestScores = TaskDownloadLatestScores((max, count) =>
             {
-                _bindingSource.Task1Progress = (double)count * 100 / max;
+                _bindingSource.Task1Progress = 100.0 * count / max;
             });
 
             // ランク譜面リストを取得
-            Task t2 = Task2DownloadRankedMaps((max, count) =>
+            Task downloadRankedMaps = TaskDownloadRankedMaps((max, count) =>
             {
-                _bindingSource.Task2Progress = (double)count * 100 / max;
+                _bindingSource.Task2Progress = 100.0 * count / max;
             });
 
-            Task t4 = Task.Run(async () =>
+            // スコアセイバーからプレイヤー情報を取得して表示を更新する
+            Task downloadPlayerProfile = Task.Run(async () =>
             {
                 var profile = await _playerData.GetPlayerProfile();
-                _bindingSource.Set(profile);
+                _bindingSource.SetPlayerProfile(profile);
             });
 
-            await Task.WhenAll(t1, t2);
+            await Task.WhenAll(downloadLatestScores, downloadRankedMaps);
 
-            _allScores = GetAllScores();
+            UpdateAllScores();
 
-            // 未取得のKey(bsr)とカバー画像はなしでGridItemを構築。
+            // GridItemを構築。未取得のカバー画像は後で取得する。
             foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
             {
                 string key = _mapUtil.GetAlleadyKey(score.leaderboard.songHash);
@@ -436,17 +706,17 @@ namespace MyBeatSaberScore
                 _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
             }
 
-            // 未取得のカバー画像を取得しながら逐次更新
-            Task t3 = Task3DownloadUnacquiredCover((max, count) =>
+            // 未取得のカバー画像を取得しながら逐次表示を更新する
+            Task downloadUnacquiredCover = TaskDownloadUnacquiredCover((max, count) =>
             {
-                _bindingSource.Task3Progress = (double)count * 100 / max;
+                _bindingSource.Task3Progress = 100.0 * count / max;
                 Dispatcher.Invoke(() =>
                 {
                     _gridItemsViewSource.View.Refresh();
                 });
             });
 
-            await Task.WhenAll(t3, t4);
+            await Task.WhenAll(downloadUnacquiredCover, downloadPlayerProfile);
 
             _gridItemsViewSource.View.Refresh();
 
@@ -455,7 +725,7 @@ namespace MyBeatSaberScore
             xaButtonGetData.IsEnabled = true;
         }
 
-        private async Task Task1DownloadLatestScores(Action<int, int> callback)
+        private async Task TaskDownloadLatestScores(Action<int, int> callback)
         {
             var isSuccess = await _playerData.DownloadLatestScores(callback);
             if (isSuccess)
@@ -465,16 +735,16 @@ namespace MyBeatSaberScore
             callback(1, 1);
         }
 
-        private async Task Task2DownloadRankedMaps(Action<int, int> callback)
+        private async Task TaskDownloadRankedMaps(Action<int, int> callback)
         {
-            callback(10, 1);
+            callback(100, 10);
             await BeatSaberScrappedData.DownlaodCombinedScrappedData();
-            callback(10, 8);
+            callback(100, 80);
             _mapUtil.LoadLocalFile();
-            callback(10, 10);
+            callback(100, 100);
         }
 
-        private async Task Task3DownloadUnacquiredCover(Action<int, int> callback)
+        private async Task TaskDownloadUnacquiredCover(Action<int, int> callback)
         {
             int count = 0;
             // カバー画像を並列で取得
