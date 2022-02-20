@@ -40,30 +40,13 @@ namespace MyBeatSaberScore
             });
         }
 
-        public int GetMaxScore(string hash, long difficultyRawInt)
+        public BeatSaberScrappedData.MapInfo GetMapInfo(string hash)
         {
-            if (!_mapDic.ContainsKey(hash))
-            {
-                return 0;
-            }
-
             if (_mapDic.TryGetValue(hash, out var map))
             {
-                var diff = map.Diffs.Find(d => d.difficultyRawInt == difficultyRawInt);
-                if (diff != null)
-                {
-                    int[] scoreArray = new int[] { 0, 115, 345, 575, 805, 1035, 1495, 1955, 2415, 2875, 3335, 3795, 4255, 4715 };
-                    if (diff.Notes < 14)
-                    {
-                        return scoreArray[diff.Notes];
-                    }
-                    else
-                    {
-                        return 4715 + (diff.Notes - 13) * 920;
-                    }
-                }
+                return map;
             }
-            return 0;
+            return new BeatSaberScrappedData.MapInfo();
         }
 
         public string GetAlleadyKey(string hash)

@@ -455,15 +455,16 @@ namespace MyBeatSaberScore
             /// </summary>
             public long Miss { get; set; }
 
-            public GridItem(string key, string cover, ScoreSaber.PlayerScore score, MapUtil mapUtil)
+            public GridItem(BeatSaberScrappedData.MapInfo map, ScoreSaber.PlayerScore score)
             {
                 string hash = score.leaderboard.songHash.ToLower();
-                long maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : mapUtil.GetMaxScore(hash, score.leaderboard.difficulty.difficultyRawInt);
+                BeatSaberScrappedData.Difficulty diff = map.GetDifficulty(score.leaderboard.difficulty.difficultyRawInt);
+                long maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : diff.GetMaxScore();
                 double acc = maxScore > 0 ? (double)score.score.modifiedScore * 100 / maxScore : 0;
 
-                Key = key.ToLower();
-                NumOfKey = (key.Length > 0) ? Convert.ToInt64(key, 16) : 0;
-                Cover = cover;
+                Key = map.Key;
+                NumOfKey = (Key.Length > 0) ? Convert.ToInt64(Key, 16) : 0;
+                Cover = MapUtil.GetCoverLocalPath(score);
                 SongFullName = $"{score.leaderboard.songName} {score.leaderboard.songSubName} / {score.leaderboard.songAuthorName} [ {score.leaderboard.levelAuthorName} ]";
                 SongName = score.leaderboard.songName;
                 SongSubName = score.leaderboard.songSubName;
@@ -663,11 +664,10 @@ namespace MyBeatSaberScore
 
                 foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
                 {
-                    string key = _mapUtil.GetAlleadyKey(score.leaderboard.songHash);
-                    string cover = MapUtil.GetCoverLocalPath(score);
+                    BeatSaberScrappedData.MapInfo map = _mapUtil.GetMapInfo(score.leaderboard.songHash);
                     xaDataGrid.Dispatcher.Invoke(() =>
                     {
-                        _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
+                        _gridItems.Add(new GridItem(map, score));
                     });
                 }
             });
@@ -715,9 +715,8 @@ namespace MyBeatSaberScore
             // GridItemを構築。未取得のカバー画像は後で取得する。
             foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
             {
-                string key = _mapUtil.GetAlleadyKey(score.leaderboard.songHash);
-                string cover = MapUtil.GetCoverLocalPath(score);
-                _gridItems.Add(new GridItem(key, cover, score, _mapUtil));
+                BeatSaberScrappedData.MapInfo map = _mapUtil.GetMapInfo(score.leaderboard.songHash);
+                _gridItems.Add(new GridItem(map, score));
             }
 
             // 未取得のカバー画像を取得しながら逐次表示を更新する
