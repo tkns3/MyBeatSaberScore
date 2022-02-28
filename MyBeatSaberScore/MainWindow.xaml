@@ -119,7 +119,7 @@
                     <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding StatusText}"/>
                 </StatusBarItem>
             </StatusBar>
-            <DataGrid x:Name="xaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader">
+            <DataGrid x:Name="xaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" RowHeight="45">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}">
                         <DataGridTextColumn.CellStyle>
@@ -128,10 +128,10 @@
                             </Style>
                         </DataGridTextColumn.CellStyle>
                     </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="カバー">
+                    <DataGridTemplateColumn Header="カバー" Width="45">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding Cover}" Height="45" Width="45" CacheMode="BitmapCache"/>
+                                <Image Source="{Binding Cover}" CacheMode="BitmapCache"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
