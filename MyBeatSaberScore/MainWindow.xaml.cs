@@ -857,8 +857,17 @@ namespace MyBeatSaberScore
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            GridItem? obj = ((FrameworkElement)sender).DataContext as GridItem;
-            Clipboard.SetData(DataFormats.Text, $"!bsr {obj?.Key}");
+            try
+            {
+                GridItem? obj = ((FrameworkElement)sender).DataContext as GridItem;
+                Clipboard.SetData(DataFormats.Text, $"!bsr {obj?.Key}");
+            }
+            catch (Exception)
+            {
+                // クリップボード監視系のアプリを使っているとエラーが出やすい？
+                // クリップボードにコピーできていてもエラーが出ることがあるので握りつぶす
+                // コピーでてきていなくてもユーザーはクリック失敗したかなと思う程度なのて問題ない
+            }
         }
 
         private void xaButtonCreatePlaylist_Click(object sender, RoutedEventArgs e)
