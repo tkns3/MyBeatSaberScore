@@ -190,10 +190,10 @@
                                                     <Setter Property="Image.Source" Value="Resources/easy.png"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Difficulty}" Value="3">
-                                                    <Setter Property="Image.Source" Value="Resources/hard.png"/>
+                                                    <Setter Property="Image.Source" Value="Resources/normal.png"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Difficulty}" Value="5">
-                                                    <Setter Property="Image.Source" Value="Resources/normal.png"/>
+                                                    <Setter Property="Image.Source" Value="Resources/hard.png"/>
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Difficulty}" Value="7">
                                                     <Setter Property="Image.Source" Value="Resources/expert.png"/>
