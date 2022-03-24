@@ -6,7 +6,7 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 未プレイのランク譜面も表示できるのでランク譜面の消化具合を確認することもできます。
 
-<img src="window_sample.png" alt="attach:window_sample" title="attach:window_sample">
+<img src="image/window_sample.png" alt="attach:window_sample" title="attach:window_sample">
 
 # インストール
 
@@ -27,6 +27,10 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 .NET 6.0のSDKまたはランタイムをインストールしていない場合は[.NET 6.0 ランタイムのダウンロード](https://dotnet.microsoft.com/ja-jp/download/dotnet/6.0/runtime)からお使いのPC環境にあわせたランタイムをダウンロードしてインストールしてください。
 
 例えばお使いのPCがWindows10の64bit版であれば「デスクトップ アプリを実行する」の項にある「X64のダウンロード」を選択します。
+
+間違えてコンソールアプリ用のランタイムをダウンロードしないように気を付けてください。
+
+<img src="image/runtime.png" alt="attach:runtime" title="attach:runtime">
 
 ## 起動
 
@@ -98,4 +102,20 @@ Modifiersに「NF」(No Fail)または「SS」(Slow Song)がついている譜�
         "NB"
       ]
     }
+
+## 本ツールとScoreSaberでppの値が違う
+
+`data/users/{プロファイルID}/scores.json`を削除して「データ取得」を行うとScoreSaberと同じppの値が表示されるようになります。
+
+ScoreSaberのpp評価方法は変更されることがあります。
+
+ただし本ツールはその変更を自動的に検知することができないため手動での対応をお願いします。
+
+## 本ツールとScoreSaberで星の値が違う
+
+数時間たってから「データ取得」を行うとScoreSaberと同じ星の値が表示されるようになります。
+
+ScoreSaberの星評価方法は変更されることがあります。
+
+「データ取得」で星情報を取得しますが取得先のデータがScoreSaberに同期するまで数時間かかります。
 
