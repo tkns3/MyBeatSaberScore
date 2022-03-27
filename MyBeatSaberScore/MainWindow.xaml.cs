@@ -615,7 +615,7 @@ namespace MyBeatSaberScore
             {
                 map.Diffs.ForEach(diff =>
                 {
-                    if (diff.Ranked && !_playerData.playedRankHash.Contains(map.Hash + diff.difficultyInt))
+                    if (diff.Ranked && diff.Char.Contains("Standard") && !_playerData.playedRankHash.Contains(map.Hash + diff.difficultyInt))
                     {
                         var score = new ScoreSaber.PlayerScore()
                         {
