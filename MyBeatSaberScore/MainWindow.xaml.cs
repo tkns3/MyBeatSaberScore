@@ -889,8 +889,11 @@ namespace MyBeatSaberScore
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + xaDataGrid.Items.Count);
-            var playlist = new PlayList();
+            System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " Create " + dialog.FileName + ", count=" + xaDataGrid.Items.Count);
+            var playlist = new PlayList
+            {
+                Title = System.IO.Path.GetFileName(dialog.FileName)
+            };
             foreach (var item in xaDataGrid.Items)
             {
                 if (item is GridItem i)
