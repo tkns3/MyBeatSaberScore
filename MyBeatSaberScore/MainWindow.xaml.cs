@@ -503,7 +503,7 @@ namespace MyBeatSaberScore
                 TimeSet = score.score.timeSet.Length > 0 ? score.score.timeSet : "";
                 GameMode = score.leaderboard.difficulty.gameMode;
                 Difficulty = score.leaderboard.difficulty.difficulty;
-                Stars = score.leaderboard.ranked ? score.leaderboard.stars : -1;
+                Stars = score.leaderboard.ranked ? diff.Stars : -1;
                 ModifiedScore = score.score.modifiedScore;
                 MaxScore = maxScore;
                 Acc = acc;
