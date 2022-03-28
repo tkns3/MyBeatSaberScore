@@ -455,6 +455,36 @@ namespace MyBeatSaberScore
             /// </summary>
             public long Miss { get; set; }
 
+            /// <summary>
+            /// BPM
+            /// </summary>
+            public double Bpm { get; set; }
+
+            /// <summary>
+            /// 曲の長さ。単位秒。
+            /// </summary>
+            public double Duration { get; set; }
+
+            /// <summary>
+            /// Notes Jump Speed
+            /// </summary>
+            public double Njs { get; set; }
+
+            /// <summary>
+            /// 秒間ノーツ数。Notes per sec.
+            /// </summary>
+            public double Nps { get; set; }
+
+            /// <summary>
+            /// ボムの数
+            /// </summary>
+            public long Bombs { get; set; }
+
+            /// <summary>
+            /// 壁の数
+            /// </summary>
+            public long Obstacles { get; set; }
+
             public GridItem(BeatSaberScrappedData.MapInfo map, ScoreSaber.PlayerScore score)
             {
                 string hash = score.leaderboard.songHash.ToLower();
@@ -483,6 +513,12 @@ namespace MyBeatSaberScore
                 CoverUrl = score.leaderboard.coverImage;
                 Ranked = score.leaderboard.ranked;
                 Miss = score.score.badCuts + score.score.missedNotes;
+                Bpm = map.Bpm;
+                Duration = map.Duration;
+                Njs = diff.Njs;
+                Nps = diff.Notes / map.Duration;
+                Bombs = diff.Bombs;
+                Obstacles = diff.Obstacles;
             }
         }
 
