@@ -535,6 +535,19 @@ namespace MyBeatSaberScore
             DataContext = _bindingSource;
         }
 
+        private void refreshGrid()
+        {
+            try
+            {
+                xaDataGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+                _gridItemsViewSource?.View?.Refresh();
+            }
+            catch (Exception)
+            {
+                // 強制終了よりはましそうなので例外を握りつぶす
+            }
+        }
+
         /// <summary>
         /// itemが曲名、BSR、HASHの指定がすべて満たしているかどうか。
         /// </summary>
@@ -708,7 +721,7 @@ namespace MyBeatSaberScore
                 }
             });
 
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
 
             xaButtonGetData.IsEnabled = true;
         }
@@ -761,13 +774,13 @@ namespace MyBeatSaberScore
                 _bindingSource.Task3Progress = 100.0 * count / max;
                 Dispatcher.Invoke(() =>
                 {
-                    _gridItemsViewSource.View.Refresh();
+                    refreshGrid();
                 });
             });
 
             await Task.WhenAll(downloadUnacquiredCover, downloadPlayerProfile);
 
-            _gridItemsViewSource.View.Refresh();
+            refreshGrid();
 
             Config.ScoreSaberProfileId = xaProfileId.Text;
 
@@ -838,57 +851,57 @@ namespace MyBeatSaberScore
 
         private void checkBoxRank_Checked(object sender, RoutedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void checkBoxRank_Unchecked(object sender, RoutedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void checkBoxUnRank_Checked(object sender, RoutedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void checkBoxUnRank_Unchecked(object sender, RoutedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void checkBoxNoPlayRank_Checked(object sender, RoutedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void checkBoxNoPlayRank_Unchecked(object sender, RoutedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void checkBoxFail_Checked(object sender, RoutedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void checkBoxFail_Unchecked(object sender, RoutedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void sliderMinStar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void sliderMaxStar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void filterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            _gridItemsViewSource?.View.Refresh();
+            refreshGrid();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
