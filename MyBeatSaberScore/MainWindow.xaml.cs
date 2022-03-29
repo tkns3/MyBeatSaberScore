@@ -476,6 +476,11 @@ namespace MyBeatSaberScore
             public double Nps { get; set; }
 
             /// <summary>
+            /// ノーツの数
+            /// </summary>
+            public long Notes { get; set; }
+
+            /// <summary>
             /// ボムの数
             /// </summary>
             public long Bombs { get; set; }
@@ -517,6 +522,7 @@ namespace MyBeatSaberScore
                 Duration = map.Duration;
                 Njs = diff.Njs;
                 Nps = diff.Notes / map.Duration;
+                Notes = diff.Notes;
                 Bombs = diff.Bombs;
                 Obstacles = diff.Obstacles;
             }

@@ -17,6 +17,12 @@
     <None Remove="Resources\hard.png" />
     <None Remove="Resources\lawless.png" />
     <None Remove="Resources\lightshow.png" />
+    <None Remove="Resources\menu_compare.png" />
+    <None Remove="Resources\menu_filter.png" />
+    <None Remove="Resources\menu_onpu.png" />
+    <None Remove="Resources\menu_playlist.png" />
+    <None Remove="Resources\menu_setting.png" />
+    <None Remove="Resources\menu_users.png" />
     <None Remove="Resources\noarrows.png" />
     <None Remove="Resources\normal.png" />
     <None Remove="Resources\onesaber.png" />
@@ -58,6 +64,12 @@
     <Resource Include="Resources\lightshow.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\menu_compare.png" />
+    <Resource Include="Resources\menu_filter.png" />
+    <Resource Include="Resources\menu_onpu.png" />
+    <Resource Include="Resources\menu_playlist.png" />
+    <Resource Include="Resources\menu_setting.png" />
+    <Resource Include="Resources\menu_users.png" />
     <Resource Include="Resources\noarrows.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -94,10 +106,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="bin\Debug\net6.0-windows\data\maps\cover\" />
   </ItemGroup>
 
 </Project>

@@ -142,6 +142,24 @@
   <data name="lightshow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\lightshow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="menu_compare" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_compare.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="menu_filter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_filter.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="menu_onpu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_onpu.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="menu_playlist" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_playlist.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="menu_setting" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_setting.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="menu_users" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_users.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="noarrows" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\noarrows.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
