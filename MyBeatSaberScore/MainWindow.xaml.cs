@@ -689,6 +689,7 @@ namespace MyBeatSaberScore
                                 }
                             }
                         };
+                        score.Normalize();
                         _allScores.Add(score);
                     }
                 });
