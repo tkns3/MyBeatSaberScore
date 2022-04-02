@@ -83,6 +83,16 @@ namespace MyBeatSaberScore.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
+        internal static byte[] cross_arrow {
+            get {
+                object obj = ResourceManager.GetObject("cross_arrow", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
         internal static byte[] easy {
             get {
                 object obj = ResourceManager.GetObject("easy", resourceCulture);
@@ -233,6 +243,26 @@ namespace MyBeatSaberScore.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
+        internal static byte[] reload1 {
+            get {
+                object obj = ResourceManager.GetObject("reload1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] reload2 {
+            get {
+                object obj = ResourceManager.GetObject("reload2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
         internal static byte[] standard {
             get {
                 object obj = ResourceManager.GetObject("standard", resourceCulture);
@@ -256,6 +286,26 @@ namespace MyBeatSaberScore.Properties {
         internal static byte[] twitch2 {
             get {
                 object obj = ResourceManager.GetObject("twitch2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] user_add {
+            get {
+                object obj = ResourceManager.GetObject("user_add", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] user_del {
+            get {
+                object obj = ResourceManager.GetObject("user_del", resourceCulture);
                 return ((byte[])(obj));
             }
         }

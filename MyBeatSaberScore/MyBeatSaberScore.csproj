@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Remove="Resources\360degree.png" />
     <None Remove="Resources\90degree.png" />
+    <None Remove="Resources\cross_arrow.png" />
     <None Remove="Resources\easy.png" />
     <None Remove="Resources\expert.png" />
     <None Remove="Resources\expertplus.png" />
@@ -26,9 +27,13 @@
     <None Remove="Resources\noarrows.png" />
     <None Remove="Resources\normal.png" />
     <None Remove="Resources\onesaber.png" />
+    <None Remove="Resources\reload1.png" />
+    <None Remove="Resources\reload2.png" />
     <None Remove="Resources\standard.png" />
     <None Remove="Resources\twitch1.png" />
     <None Remove="Resources\twitch2.png" />
+    <None Remove="Resources\user_add.png" />
+    <None Remove="Resources\user_del.png" />
     <None Remove="Resources\_404.png" />
   </ItemGroup>
 
@@ -43,6 +48,7 @@
     <Resource Include="Resources\90degree.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\cross_arrow.png" />
     <Resource Include="Resources\expert.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -79,6 +85,8 @@
     <Resource Include="Resources\onesaber.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\reload1.png" />
+    <Resource Include="Resources\reload2.png" />
     <Resource Include="Resources\standard.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -88,6 +96,8 @@
     <Resource Include="Resources\twitch2.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\user_add.png" />
+    <Resource Include="Resources\user_del.png" />
     <Resource Include="Resources\_404.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

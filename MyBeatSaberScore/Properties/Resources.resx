@@ -124,6 +124,9 @@
   <data name="90degree" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\90degree.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="cross_arrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cross_arrow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="easy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\easy.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -169,6 +172,12 @@
   <data name="onesaber" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\onesaber.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="reload1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reload1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="reload2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reload2.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="standard" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\standard.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -177,5 +186,11 @@
   </data>
   <data name="twitch2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\twitch2.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="user_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_add.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="user_del" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user_del.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

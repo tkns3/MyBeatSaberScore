@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,7 +15,6 @@ namespace MyBeatSaberScore
 {
     internal static class Config
     {
-        private static readonly HttpClient _client = new HttpClient();
         private static readonly string _dataDir = Path.Combine("data");
         private static readonly string _configPath = Path.Combine(_dataDir, "config.json");
 
@@ -29,17 +29,13 @@ namespace MyBeatSaberScore
             set
             {
                 _data.scoreSaberProfileId = value;
-                _SaveLocalFile();
+                SaveLocalFile();
             }
         }
 
-        public static List<string> Failures
-        {
-            get
-            {
-                return _data.failures;
-            }
-        }
+        public static List<string> Failures => _data.failures;
+
+        public static ObservableCollection<User> FavoriteUsers => _data.favoUsers;
 
         public static void LoadLocalFile()
         {
@@ -62,7 +58,7 @@ namespace MyBeatSaberScore
             }
         }
 
-        private static void _SaveLocalFile()
+        public static void SaveLocalFile()
         {
             try
             {
@@ -74,33 +70,63 @@ namespace MyBeatSaberScore
                 System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
             }
         }
-    }
 
-    [DataContract]
-    public class ConfigData
-    {
-        [DataMember]
-        public string scoreSaberProfileId { get; set; }
-
-        public List<string> failures { get; set; }
-
-        public ConfigData()
+        [DataContract]
+        public class ConfigData
         {
-            scoreSaberProfileId = "";
-            failures = new();
+            [DataMember]
+            public string scoreSaberProfileId { get; set; }
+
+            [DataMember]
+            public List<string> failures { get; set; }
+
+            [DataMember]
+            public ObservableCollection<User> favoUsers { get; set; }
+
+            public ConfigData()
+            {
+                scoreSaberProfileId = "";
+                failures = new();
+                favoUsers = new();
+            }
+
+            public void Normalize()
+            {
+                if (failures == null)
+                {
+                    failures = new() { "NF", "SS" };
+                }
+                if (failures.Count == 0)
+                {
+                    failures.Add("NF");
+                    failures.Add("SS");
+                }
+            }
         }
 
-        public void Normalize()
+        [DataContract]
+        public class User
         {
-            if (failures == null)
+            [DataMember]
+            public string id { get; set; }
+
+            [DataMember]
+            public string name { get; set; }
+
+            [IgnoreDataMember]
+            public string profilePicture { get { return $"https://cdn.scoresaber.com/avatars/{id}.jpg"; } }
+
+            public User()
             {
-                failures = new() { "NF", "SS" };
+                id = "";
+                name = "";
             }
-            if (failures.Count == 0)
+
+            public User(string id, string name)
             {
-                failures.Add("NF");
-                failures.Add("SS");
+                this.id = id;
+                this.name = name;
             }
         }
     }
- }
+}

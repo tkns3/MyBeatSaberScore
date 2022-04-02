@@ -29,6 +29,9 @@ namespace MyBeatSaberScore
         {
             InitializeComponent();
             Config.LoadLocalFile();
+
+            Application.Current.Properties["xaTabControl"] = xaTabControl;
+            Application.Current.Properties["xaTabMain"] = xaTabMain;
         }
     }
 }

@@ -21,7 +21,7 @@ using System.Windows.Shapes;
 namespace MyBeatSaberScore
 {
     /// <summary>
-    /// Page1.xaml の相互作用ロジック
+    /// PageMain.xaml の相互作用ロジック
     /// </summary>
     public partial class PageMain : Page
     {
@@ -702,33 +702,56 @@ namespace MyBeatSaberScore
             }
         }
 
+        /// <summary>
+        /// 起動時、タブ切り替えのときに呼び出される。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             xaButtonGetData.IsEnabled = false;
 
-            var profileId = Config.ScoreSaberProfileId;
-
-            _playerData.LoadLocalFile(profileId);
-            var profile = _playerData.GetPlayerProfileFromLocal();
-            _bindingSource.SetPlayerProfile(profile);
-
-            await Task.Run(() =>
+            if (_playerData.PlayerId.Equals(Config.ScoreSaberProfileId))
             {
-                _mapUtil.LoadLocalFile();
+                // もともと表示していたユーザを選択した場合は何もしなくてよい
+            }
+            else
+            {
+                // もともと表示していたユーザ以外を選択した場合は保持データや描画の更新が必要
+                xaProfileId.Text = Config.ScoreSaberProfileId;
+                _playerData.LoadLocalFile(Config.ScoreSaberProfileId);
+                _bindingSource.SetPlayerProfile(_playerData.GetPlayerProfileFromLocal());
 
-                UpdateAllScores();
-
-                foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
+                xaDataGrid.Dispatcher.Invoke(() =>
                 {
-                    BeatSaberScrappedData.MapInfo map = _mapUtil.GetMapInfo(score.leaderboard.songHash);
-                    xaDataGrid.Dispatcher.Invoke(() =>
-                    {
-                        _gridItems.Add(new GridItem(map, score));
-                    });
-                }
-            });
+                    _gridItems.Clear();
+                });
 
-            refreshGrid();
+                await Task.Run(async () =>
+                {
+                    if (_playerData.IsExistProfile)
+                    {
+                        // データを取得したことがあるユーザを選択した場合は取得済みデータを表示する
+                        _mapUtil.LoadLocalFile();
+                        UpdateAllScores();
+                        foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
+                        {
+                            BeatSaberScrappedData.MapInfo map = _mapUtil.GetMapInfo(score.leaderboard.songHash);
+                            xaDataGrid.Dispatcher.Invoke(() =>
+                            {
+                                _gridItems.Add(new GridItem(map, score));
+                            });
+                        }
+                    }
+                    else
+                    {
+                        // データを取得したことがないユーザを選択した場合はデータ取得を行う
+                        await DownaloadAndRefleshView();
+                    }
+                });
+
+                refreshGrid();
+            }
 
             xaButtonGetData.IsEnabled = true;
         }
@@ -736,12 +759,21 @@ namespace MyBeatSaberScore
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             xaButtonGetData.IsEnabled = false;
+            Config.ScoreSaberProfileId = xaProfileId.Text;
+            await DownaloadAndRefleshView();
+            xaButtonGetData.IsEnabled = true;
+        }
 
+        private async Task DownaloadAndRefleshView()
+        {
             _bindingSource.Task1Progress = 0.0;
             _bindingSource.Task2Progress = 0.0;
             _bindingSource.Task3Progress = 0.0;
 
-            _gridItems.Clear();
+            xaDataGrid.Dispatcher.Invoke(() =>
+            {
+                _gridItems.Clear();
+            });
 
             _playerData.LoadLocalFile(Config.ScoreSaberProfileId);
 
@@ -772,7 +804,10 @@ namespace MyBeatSaberScore
             foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
             {
                 BeatSaberScrappedData.MapInfo map = _mapUtil.GetMapInfo(score.leaderboard.songHash);
-                _gridItems.Add(new GridItem(map, score));
+                xaDataGrid.Dispatcher.Invoke(() =>
+                {
+                    _gridItems.Add(new GridItem(map, score));
+                });
             }
 
             // 未取得のカバー画像を取得しながら逐次表示を更新する
@@ -788,10 +823,6 @@ namespace MyBeatSaberScore
             await Task.WhenAll(downloadUnacquiredCover, downloadPlayerProfile);
 
             refreshGrid();
-
-            Config.ScoreSaberProfileId = Config.ScoreSaberProfileId;
-
-            xaButtonGetData.IsEnabled = true;
         }
 
         private async Task TaskDownloadLatestScores(Action<int, int> callback)
