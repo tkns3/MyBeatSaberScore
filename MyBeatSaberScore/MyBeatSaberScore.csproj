@@ -5,12 +5,13 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>hnet.com-image.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\app.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\360degree.png" />
     <None Remove="Resources\90degree.png" />
+    <None Remove="Resources\app.ico" />
     <None Remove="Resources\cross_arrow.png" />
     <None Remove="Resources\easy.png" />
     <None Remove="Resources\expert.png" />
@@ -38,10 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="hnet.com-image.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.14" />
   </ItemGroup>
 
@@ -52,6 +49,7 @@
     <Resource Include="Resources\90degree.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\app.ico" />
     <Resource Include="Resources\cross_arrow.png" />
     <Resource Include="Resources\expert.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
