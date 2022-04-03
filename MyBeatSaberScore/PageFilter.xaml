@@ -1,0 +1,40 @@
+﻿<Page x:Class="MyBeatSaberScore.PageFilter"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MyBeatSaberScore"
+      mc:Ignorable="d" 
+      d:DesignHeight="720" d:DesignWidth="1070"
+      Title="PageFilter">
+
+    <Grid>
+        <Grid Margin="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="128"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+            </Grid.RowDefinitions>
+            <Slider Grid.Column="0" Grid.Row="0" Width="200" Maximum="20" Value="{Binding MinStar}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+            <Slider Grid.Column="0" Grid.Row="1" Width="200" Maximum="20" Value="{Binding MaxStar}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+            <Slider Grid.Column="0" Grid.Row="2" Width="200" Maximum="1000" Value="{Binding MinPp}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+            <Slider Grid.Column="0" Grid.Row="3" Width="200" Maximum="1000" Value="{Binding MaxPp}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+            <Slider Grid.Column="0" Grid.Row="4" Width="200" Maximum="101" Value="{Binding MinAcc}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+            <Slider Grid.Column="0" Grid.Row="5" Width="200" Maximum="101" Value="{Binding MaxAcc}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding MinStar, StringFormat=Min ★ \{0:N0\}}" Height="16"/>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding MaxStar, StringFormat=Max ★ \{0:N0\}}" Height="16"/>
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding MinPp, StringFormat=Min PP \{0:N0\}}" Height="16"/>
+            <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding MaxPp, StringFormat=Max PP \{0:N0\}}" Height="16"/>
+            <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding MinAcc, StringFormat=Min Acc \{0:N0\} %}" Height="16"/>
+            <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding MaxAcc, StringFormat=Max Acc \{0:N0\} %}" Height="16"/>
+        </Grid>
+    </Grid>
+</Page>

@@ -32,7 +32,7 @@
                 <TabItem.Header>
                     <Image Width="26" Margin="2" Source="Resources/menu_filter.png"/>
                 </TabItem.Header>
-                <TextBlock Text="工事中" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                <Frame Source="PageFilter.xaml"></Frame>
             </TabItem>
             <TabItem x:Name="xaTabPlaylist">
                 <TabItem.Header>

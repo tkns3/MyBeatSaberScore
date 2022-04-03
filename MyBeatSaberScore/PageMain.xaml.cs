@@ -36,6 +36,16 @@ namespace MyBeatSaberScore
         static CollectionViewSource _gridItemsViewSource = new() { Source = _gridItems };
         static BindingSource _bindingSource = new();
 
+        public class FilterValue
+        {
+            public double MinStar { get; set; } = 0.0;
+            public double MaxStar { get; set; } = 20.0;
+            public double MinPp { get; set; } = 0.0;
+            public double MaxPp { get; set; } = 1000.0;
+            public double MinAcc { get; set; } = 0.0;
+            public double MaxAcc { get; set; } = 101.0;
+        }
+
         private class BindingSource : INotifyPropertyChanged
         {
             private string _Name = "";
@@ -54,6 +64,7 @@ namespace MyBeatSaberScore
             private double _Task2Progress;
             private double _Task3Progress;
             private string _StatusText = "";
+            public FilterValue _filterValue = new();
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -319,6 +330,102 @@ namespace MyBeatSaberScore
                 }
             }
 
+            /// <summary>
+            /// フィルター：星
+            /// </summary>
+            public double MinStar
+            {
+                get
+                {
+                    return _filterValue.MinStar;
+                }
+                set
+                {
+                    _filterValue.MinStar = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：星
+            /// </summary>
+            public double MaxStar
+            {
+                get
+                {
+                    return _filterValue.MaxStar;
+                }
+                set
+                {
+                    _filterValue.MaxStar = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：PP
+            /// </summary>
+            public double MinPp
+            {
+                get
+                {
+                    return _filterValue.MinPp;
+                }
+                set
+                {
+                    _filterValue.MinPp = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：PP
+            /// </summary>
+            public double MaxPp
+            {
+                get
+                {
+                    return _filterValue.MaxPp;
+                }
+                set
+                {
+                    _filterValue.MaxPp = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：ACC
+            /// </summary>
+            public double MinAcc
+            {
+                get
+                {
+                    return _filterValue.MinAcc;
+                }
+                set
+                {
+                    _filterValue.MinAcc = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：ACC
+            /// </summary>
+            public double MaxAcc
+            {
+                get
+                {
+                    return _filterValue.MaxAcc;
+                }
+                set
+                {
+                    _filterValue.MaxAcc = value;
+                    OnPropertyChanged();
+                }
+            }
+
             public void SetPlayerProfile(ScoreSaber.PlayerProfile profile)
             {
                 Name = profile.name;
@@ -333,6 +440,16 @@ namespace MyBeatSaberScore
                 TotalPlayCount = profile.scoreStats.totalPlayCount;
                 RankedPlayCount = profile.scoreStats.rankedPlayCount;
                 ReplaysWatched = profile.scoreStats.replaysWatched;
+            }
+
+            public void OnPropertyChangeFilterValue()
+            {
+                OnPropertyChanged("MinStar");
+                OnPropertyChanged("MaxStar");
+                OnPropertyChanged("MinPp");
+                OnPropertyChanged("MaxPp");
+                OnPropertyChanged("MinAcc");
+                OnPropertyChanged("MaxAcc");
             }
         }
 
@@ -542,6 +659,7 @@ namespace MyBeatSaberScore
             xaDataGrid.ItemsSource = _gridItemsViewSource.View;
             xaProfileId.Text = Config.ScoreSaberProfileId;
             DataContext = _bindingSource;
+            Application.Current.Properties["FilterValue"] = _bindingSource._filterValue;
         }
 
         private void refreshGrid()
@@ -596,7 +714,9 @@ namespace MyBeatSaberScore
         {
             if (xaCheckBoxUnRank.IsChecked == true)
             {
-                if (item.Stars < 0)
+                if (item.Stars < 0 &&
+                    _bindingSource.MinAcc <= item.Acc &&
+                    item.Acc < _bindingSource.MaxAcc)
                 {
                     return true;
                 }
@@ -604,7 +724,12 @@ namespace MyBeatSaberScore
 
             if (xaCheckBoxRank.IsChecked == true)
             {
-                if (xaSliderMinStar.Value <= item.Stars && item.Stars < xaSliderMaxStar.Value)
+                if (_bindingSource.MinStar <= item.Stars &&
+                    item.Stars < _bindingSource.MaxStar &&
+                    _bindingSource.MinPp <= item.PP &&
+                    item.PP < _bindingSource.MaxPp &&
+                    _bindingSource.MinAcc <= item.Acc &&
+                    item.Acc < _bindingSource.MaxAcc )
                 {
                     return true;
                 }
@@ -715,6 +840,8 @@ namespace MyBeatSaberScore
         {
             xaButtonGetData.IsEnabled = false;
 
+            _bindingSource.OnPropertyChangeFilterValue();
+
             if (_playerData.PlayerId.Equals(Config.ScoreSaberProfileId))
             {
                 // もともと表示していたユーザを選択した場合は何もしなくてよい
@@ -753,9 +880,9 @@ namespace MyBeatSaberScore
                         await DownaloadAndRefleshView();
                     }
                 });
-
-                refreshGrid();
             }
+
+            refreshGrid();
 
             xaButtonGetData.IsEnabled = true;
         }
