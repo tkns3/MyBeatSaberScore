@@ -13,6 +13,10 @@ namespace MyBeatSaberScore
     /// </summary>
     public partial class App : Application
     {
+#pragma warning disable CS8602 // null 参照の可能性があるものの逆参照です。
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+#pragma warning restore CS8602 // null 参照の可能性があるものの逆参照です。
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -45,6 +49,7 @@ namespace MyBeatSaberScore
 
         private void HandleException(Exception? e)
         {
+            _logger.Error(e?.ToString());
             MessageBox.Show($"エラーが発生しました\n{e?.ToString()}");
             Environment.Exit(1);
         }

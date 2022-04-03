@@ -25,6 +25,9 @@ namespace MyBeatSaberScore
     /// </summary>
     public partial class PageMain : Page
     {
+#pragma warning disable CS8602 // null 参照の可能性があるものの逆参照です。
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+#pragma warning restore CS8602 // null 参照の可能性があるものの逆参照です。
         private readonly MapUtil _mapUtil;
         private readonly PlayerData _playerData;
         private List<ScoreSaber.PlayerScore> _allScores;
@@ -548,9 +551,10 @@ namespace MyBeatSaberScore
                 xaDataGrid?.CommitEdit(DataGridEditingUnit.Row, true);
                 _gridItemsViewSource?.View?.Refresh();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // 強制終了よりはましそうなので例外を握りつぶす
+                _logger.Debug(ex.ToString());
             }
         }
 
@@ -949,11 +953,12 @@ namespace MyBeatSaberScore
                 GridItem? obj = ((FrameworkElement)sender).DataContext as GridItem;
                 Clipboard.SetData(DataFormats.Text, $"!bsr {obj?.Key}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // クリップボード監視系のアプリを使っているとエラーが出やすい？
                 // クリップボードにコピーできていてもエラーが出ることがあるので握りつぶす
                 // コピーでてきていなくてもユーザーはクリック失敗したかなと思う程度なのて問題ない
+                _logger.Debug(ex.ToString());
             }
         }
 
