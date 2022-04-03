@@ -47,11 +47,21 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 取得したデータは`MyBeatSaberScore.exe`と同じ階層の`data`フォルダに保存しています。
 
+## ユーザー切り替え
+
+ユーザータブで「お気に入りユーザーの管理」と「表示ユーザーの切り替え」ができます。
+
+<img src="image/usage_userselect.png" alt="attach:usage_userselect" title="attach:usage_userselect">
+
 ## フィルターとソート
 
 「検索」「譜面の種類」「プレイ結果」で表示対象をフィルターすることができます。
 
 列ヘッダをクリックするとソート順を変更することができます。
+
+フィルタータブで★、PP、精度のフィルター値を指定することができます。
+
+<img src="image/usage_filter.png" alt="attach:usage_filter" title="attach:usage_filter">
 
 ## Copy BSR
 
