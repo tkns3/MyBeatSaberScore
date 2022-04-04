@@ -615,7 +615,7 @@ namespace MyBeatSaberScore
                 string hash = score.leaderboard.songHash.ToLower();
                 BeatSaberScrappedData.Difficulty diff = map.GetDifficulty(score.leaderboard.difficulty.difficultyRawInt);
                 long maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : diff.GetMaxScore();
-                double acc = maxScore > 0 ? (double)score.score.modifiedScore * 100 / maxScore : 0;
+                double acc = (maxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / maxScore : 0;
 
                 Key = map.Key;
                 NumOfKey = (Key.Length > 0) ? Convert.ToInt64(Key, 16) : 0;
@@ -715,8 +715,7 @@ namespace MyBeatSaberScore
             if (xaCheckBoxUnRank.IsChecked == true)
             {
                 if (item.Stars < 0 &&
-                    _bindingSource.MinAcc <= item.Acc &&
-                    item.Acc < _bindingSource.MaxAcc)
+                    _bindingSource.MinAcc <= item.Acc && item.Acc < _bindingSource.MaxAcc)
                 {
                     return true;
                 }
@@ -724,12 +723,9 @@ namespace MyBeatSaberScore
 
             if (xaCheckBoxRank.IsChecked == true)
             {
-                if (_bindingSource.MinStar <= item.Stars &&
-                    item.Stars < _bindingSource.MaxStar &&
-                    _bindingSource.MinPp <= item.PP &&
-                    item.PP < _bindingSource.MaxPp &&
-                    _bindingSource.MinAcc <= item.Acc &&
-                    item.Acc < _bindingSource.MaxAcc )
+                if (_bindingSource.MinStar <= item.Stars && item.Stars < _bindingSource.MaxStar &&
+                    _bindingSource.MinPp <= item.PP && item.PP < _bindingSource.MaxPp &&
+                    _bindingSource.MinAcc <= item.Acc && item.Acc < _bindingSource.MaxAcc )
                 {
                     return true;
                 }
