@@ -615,7 +615,7 @@ namespace MyBeatSaberScore
             {
                 string hash = score.leaderboard.songHash.ToLower();
                 BeatSaberScrappedData.Difficulty diff = map.GetDifficulty(score.leaderboard.difficulty.difficultyRawInt);
-                long maxScore = score.leaderboard.maxScore > 0 ? score.leaderboard.maxScore : diff.GetMaxScore();
+                long maxScore = diff.GetMaxScore(); // ScoreSaberから取得したランク譜面のMaxScoreがいくつか間違っているので常にノーツ数から計算した値を使う。アークとチェインは未対応。
                 double acc = (maxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / maxScore : 0;
 
                 Key = map.Key;
