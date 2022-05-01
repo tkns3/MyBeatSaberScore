@@ -17,20 +17,36 @@ namespace MyBeatSaberScore.APIs
 
         private static readonly HttpClient _client = new();
 
-        public static async Task<(bool, PlayerScoreCollection)> GetPlayerScores(string playerId, int limit, int page)
+        public enum GetScoresResult
+        {
+            FAIL,
+            CONTINUE,
+            FINISH,
+        }
+
+        public static async Task<(GetScoresResult, PlayerScoreCollection)> GetPlayerScores(string playerId, int limit, int page)
         {
             string url = $"https://scoresaber.com/api/player/{playerId}/scores?sort=recent&limit={limit}&page={page}";
 
             try
             {
                 var httpsResponse = await _client.GetAsync(url);
+
+                // metadata.totalと取得できるデータ数が一致しないことがある。
+                // そのため全てのデータを取得できたかの判定にmetadata.totalを使えない。
+                // データがないページまで到達した(404 NotFoundが返ってくる)場合は成功扱いにする。
+                if (httpsResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return (GetScoresResult.FINISH, new PlayerScoreCollection());
+                }
+
                 var responseContent = await httpsResponse.Content.ReadAsStringAsync();
                 var collection = JsonSerializer.Deserialize<PlayerScoreCollection>(responseContent);
 
                 if (collection?.playerScores?.Count > 0)
                 {
                     collection.playerScores.ForEach(score => score.Normalize());
-                    return (true, collection);
+                    return (GetScoresResult.CONTINUE, collection);
                 }
             }
             catch (Exception ex)
@@ -38,7 +54,7 @@ namespace MyBeatSaberScore.APIs
                 _logger.Warn($"{url}: {ex}");
             }
 
-            return (false, new PlayerScoreCollection());
+            return (GetScoresResult.FAIL, new PlayerScoreCollection());
         }
 
         /// <summary>

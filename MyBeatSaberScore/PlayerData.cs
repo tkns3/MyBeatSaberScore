@@ -110,14 +110,13 @@ namespace MyBeatSaberScore
             callback(100, 1);
 
             var limit = 100; // １回のAPI呼び出しで取得する件数
-            var isAllGet = false; // ローカルに保持していないデータを全て取得できたかどうか
-            var isGetSuccess = true; // スコアセイバーからの取得に成功したかどうか
+            var getResult = ScoreSaber.GetScoresResult.CONTINUE; // スコアセイバーからの取得に成功したかどうか
             List<ScoreSaber.PlayerScoreCollection> collections = new();
 
-            for (var page = 1; !isAllGet && isGetSuccess; page++)
+            for (var page = 1; getResult == ScoreSaber.GetScoresResult.CONTINUE; page++)
             {
-                (isGetSuccess, var collection) = await ScoreSaber.GetPlayerScores(PlayerId, limit, page);
-                if (isGetSuccess)
+                (getResult, var collection) = await ScoreSaber.GetPlayerScores(PlayerId, limit, page);
+                if (getResult == ScoreSaber.GetScoresResult.CONTINUE)
                 {
                     if (collection.metadata.total > 0)
                     {
@@ -134,20 +133,18 @@ namespace MyBeatSaberScore
                             // 更新日が同じデータがローカルにあればすべて取得できた
                             if (playedMaps.TryGetValue(score.leaderboard.id, out var played))
                             {
-                                isAllGet = played.score.timeSet == score.score.timeSet;
+                                if (played.score.timeSet == score.score.timeSet)
+                                {
+                                    getResult = ScoreSaber.GetScoresResult.FINISH;
+                                }
                             }
-                        }
-                        // limit件未満の場合はすべて取得できた
-                        if (collection.playerScores.Count < limit)
-                        {
-                            isAllGet = true;
                         }
                     }
                 }
             }
 
             // ローカルに保持していないデータをすべて取得できた場合はローカルデータを更新する
-            if (isGetSuccess)
+            if (getResult == ScoreSaber.GetScoresResult.FINISH)
             {
                 collections.ForEach(collection =>
                 {
@@ -165,7 +162,7 @@ namespace MyBeatSaberScore
 
             callback(100, 100);
 
-            return isGetSuccess;
+            return true;
         }
 
         public async Task<ScoreSaber.PlayerProfile> GetPlayerProfile()
