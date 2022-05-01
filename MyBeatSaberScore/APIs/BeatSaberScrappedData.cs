@@ -28,11 +28,13 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
-                HttpResponseMessage res = await _client.GetAsync(url);
-                using var fileStream = File.Create(localPath);
-                using var httpStream = await res.Content.ReadAsStreamAsync();
-                httpStream.CopyTo(fileStream);
-                fileStream.Flush();
+                {
+                    HttpResponseMessage res = await _client.GetAsync(url);
+                    using var fileStream = File.Create(localPath);
+                    using var httpStream = await res.Content.ReadAsStreamAsync();
+                    httpStream.CopyTo(fileStream);
+                    fileStream.Flush();
+                }
                 // 同フォルダに展開
                 File.Delete(_combinedScrappedDataJsonPath);
                 ZipFile.ExtractToDirectory(localPath, _mapsDir);
