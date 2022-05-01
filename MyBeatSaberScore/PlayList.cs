@@ -146,7 +146,7 @@ namespace MyBeatSaberScore
 
             public Difficulty(string mode, long difficultyInt)
             {
-                characteristic = mode.Substring(4);
+                characteristic = mode[4..];
                 switch (difficultyInt)
                 {
                     case 1: name = "Easy"; break;

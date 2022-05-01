@@ -18,7 +18,8 @@ namespace MyBeatSaberScore
 #pragma warning disable CS8602 // null 参照の可能性があるものの逆参照です。
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 #pragma warning restore CS8602 // null 参照の可能性があるものの逆参照です。
-        private static readonly HttpClient _client = new HttpClient();
+
+        private static readonly HttpClient _client = new();
         private static readonly string _mapsDir = Path.Combine("data", "maps");
         private static readonly string _coverDir = Path.Combine(_mapsDir, "cover");
 
@@ -62,7 +63,7 @@ namespace MyBeatSaberScore
             return "";
         }
 
-        public static bool isExistCoverAtLocal(string hash)
+        public static bool IsExistCoverAtLocal(string hash)
         {
             hash = hash.ToLower();
             var _localPath = System.IO.Path.Combine(System.Environment.CurrentDirectory, _coverDir, $"{hash}.png");
@@ -107,19 +108,15 @@ namespace MyBeatSaberScore
             try
             {
                 HttpResponseMessage res = await _client.GetAsync(url);
-                using (var fileStream = File.Create(_localPath))
-                {
-                    using (var httpStream = await res.Content.ReadAsStreamAsync())
-                    {
-                        httpStream.CopyTo(fileStream);
-                        fileStream.Flush();
-                    }
-                }
+                using var fileStream = File.Create(_localPath);
+                using var httpStream = await res.Content.ReadAsStreamAsync();
+                httpStream.CopyTo(fileStream);
+                fileStream.Flush();
                 return _localPath;
             }
             catch (Exception ex)
             {
-                _logger.Warn($"{url}: {ex.ToString()}");
+                _logger.Warn($"{url}: {ex}");
                 return System.IO.Path.Combine(_coverDir, "_404.png");
             }
         }

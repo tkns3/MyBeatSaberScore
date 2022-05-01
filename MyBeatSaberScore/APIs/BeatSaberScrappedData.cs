@@ -13,6 +13,10 @@ namespace MyBeatSaberScore.APIs
 {
     public static class BeatSaberScrappedData
     {
+#pragma warning disable CS8602 // null 参照の可能性があるものの逆参照です。
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+#pragma warning restore CS8602 // null 参照の可能性があるものの逆参照です。
+
         private static readonly HttpClient _client = new();
         private static readonly string _mapsDir = Path.Combine("data", "maps");
         private static readonly string _combinedScrappedDataJsonPath = Path.Combine(_mapsDir, "combinedScrappedData.json");
@@ -25,22 +29,17 @@ namespace MyBeatSaberScore.APIs
             try
             {
                 HttpResponseMessage res = await _client.GetAsync(url);
-                using (var fileStream = File.Create(localPath))
-                {
-                    using (var httpStream = await res.Content.ReadAsStreamAsync())
-                    {
-                        httpStream.CopyTo(fileStream);
-                        fileStream.Flush();
-                    }
-                }
+                using var fileStream = File.Create(localPath);
+                using var httpStream = await res.Content.ReadAsStreamAsync();
+                httpStream.CopyTo(fileStream);
+                fileStream.Flush();
                 // 同フォルダに展開
                 File.Delete(_combinedScrappedDataJsonPath);
                 ZipFile.ExtractToDirectory(localPath, _mapsDir);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + url);
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
+                _logger.Warn($"{url}: {ex}");
             }
         }
 

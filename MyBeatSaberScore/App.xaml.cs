@@ -21,6 +21,8 @@ namespace MyBeatSaberScore
         {
             base.OnStartup(e);
 
+            _logger.Info("Start");
+
             // UIスレッドの未処理例外で発生
             DispatcherUnhandledException += OnDispatcherUnhandledException;
             // UIスレッド以外の未処理例外で発生

@@ -11,6 +11,10 @@ namespace MyBeatSaberScore.APIs
 {
     public static class ScoreSaber
     {
+#pragma warning disable CS8602 // null 参照の可能性があるものの逆参照です。
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+#pragma warning restore CS8602 // null 参照の可能性があるものの逆参照です。
+
         private static readonly HttpClient _client = new();
 
         public static async Task<(bool, PlayerScoreCollection)> GetPlayerScores(string playerId, int limit, int page)
@@ -31,8 +35,7 @@ namespace MyBeatSaberScore.APIs
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + url);
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
+                _logger.Warn($"{url}: {ex}");
             }
 
             return (false, new PlayerScoreCollection());
@@ -67,8 +70,7 @@ namespace MyBeatSaberScore.APIs
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + url);
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
+                _logger.Warn($"{url}: {ex}");
             }
 
             return new LeaderboardInfoCollection();
@@ -87,8 +89,7 @@ namespace MyBeatSaberScore.APIs
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + url);
-                System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " " + ex.ToString());
+                _logger.Warn($"{url}: {ex}");
             }
 
             return new PlayerProfile();
