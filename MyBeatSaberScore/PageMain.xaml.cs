@@ -611,6 +611,11 @@ namespace MyBeatSaberScore
             /// </summary>
             public long Obstacles { get; set; }
 
+            /// <summary>
+            /// Checked Onlyが有効なときに表示するかどうか
+            /// </summary>
+            public bool Selected { get; set; }
+
             public GridItem(BeatSaberScrappedData.MapInfo map, ScoreSaber.PlayerScore score)
             {
                 string hash = score.leaderboard.songHash.ToLower();
@@ -646,6 +651,7 @@ namespace MyBeatSaberScore
                 Notes = diff.Notes;
                 Bombs = diff.Bombs;
                 Obstacles = diff.Obstacles;
+                Selected = true;
             }
         }
 
@@ -776,11 +782,21 @@ namespace MyBeatSaberScore
             return false;
         }
 
+        private bool FilterByOther(GridItem item)
+        {
+            if (xaCheckBoxCheckedOnly.IsChecked == true)
+            {
+                return item.Selected;
+            }
+
+            return true;
+        }
+
         private void DataGridFilter(object sender, FilterEventArgs e)
         {
             if (e.Item is GridItem item)
             {
-                e.Accepted = FilterBySearch(item) && FilterByMapKind(item) && FilterByResult(item);
+                e.Accepted = FilterBySearch(item) && FilterByMapKind(item) && FilterByResult(item) && FilterByOther(item);
             }
         }
 
@@ -1015,57 +1031,17 @@ namespace MyBeatSaberScore
             callback(100, 100);
         }
 
-        private void checkBoxRank_Checked(object sender, RoutedEventArgs e)
+        private void OnFilterEnableChanged(object sender, RoutedEventArgs e)
         {
             refreshGrid();
         }
 
-        private void checkBoxRank_Unchecked(object sender, RoutedEventArgs e)
+        private void OnFilterSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             refreshGrid();
         }
 
-        private void checkBoxUnRank_Checked(object sender, RoutedEventArgs e)
-        {
-            refreshGrid();
-        }
-
-        private void checkBoxUnRank_Unchecked(object sender, RoutedEventArgs e)
-        {
-            refreshGrid();
-        }
-
-        private void checkBoxNoPlayRank_Checked(object sender, RoutedEventArgs e)
-        {
-            refreshGrid();
-        }
-
-        private void checkBoxNoPlayRank_Unchecked(object sender, RoutedEventArgs e)
-        {
-            refreshGrid();
-        }
-
-        private void checkBoxFail_Checked(object sender, RoutedEventArgs e)
-        {
-            refreshGrid();
-        }
-
-        private void checkBoxFail_Unchecked(object sender, RoutedEventArgs e)
-        {
-            refreshGrid();
-        }
-
-        private void sliderMinStar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            refreshGrid();
-        }
-
-        private void sliderMaxStar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            refreshGrid();
-        }
-
-        private void filterTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void OnFilterTextChanged(object sender, TextChangedEventArgs e)
         {
             refreshGrid();
         }
@@ -1084,6 +1060,43 @@ namespace MyBeatSaberScore
                 // コピーでてきていなくてもユーザーはクリック失敗したかなと思う程度なのて問題ない
                 _logger.Debug(ex.ToString());
             }
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)sender).DataContext is GridItem item)
+            {
+                item.Selected = !item.Selected;
+                refreshGrid();
+            }
+        }
+
+        private void OnClickCheckFiltered(object sender, RoutedEventArgs e)
+        {
+            XaButtonCheckFiltered.IsEnabled = XaButtonClearFiltered.IsEnabled = false;
+            foreach (var item in xaDataGrid.Items)
+            {
+                if (item is GridItem gridItem)
+                {
+                    gridItem.Selected = true;
+                }
+            }
+            refreshGrid();
+            XaButtonCheckFiltered.IsEnabled = XaButtonClearFiltered.IsEnabled = true;
+        }
+
+        private void OnClickClearFiltered(object sender, RoutedEventArgs e)
+        {
+            XaButtonCheckFiltered.IsEnabled = XaButtonClearFiltered.IsEnabled = false;
+            foreach (var item in xaDataGrid.Items)
+            {
+                if (item is GridItem gridItem)
+                {
+                    gridItem.Selected = false;
+                }
+            }
+            refreshGrid();
+            XaButtonCheckFiltered.IsEnabled = XaButtonClearFiltered.IsEnabled = true;
         }
 
         private void xaButtonCreatePlaylist_Click(object sender, RoutedEventArgs e)

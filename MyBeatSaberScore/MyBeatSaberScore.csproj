@@ -12,6 +12,8 @@
     <None Remove="Resources\360degree.png" />
     <None Remove="Resources\90degree.png" />
     <None Remove="Resources\app.ico" />
+    <None Remove="Resources\checkoff.png" />
+    <None Remove="Resources\checkon.png" />
     <None Remove="Resources\cross_arrow.png" />
     <None Remove="Resources\easy.png" />
     <None Remove="Resources\expert.png" />
@@ -50,6 +52,10 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\app.ico" />
+    <Resource Include="Resources\checkoff.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\checkon.png" />
     <Resource Include="Resources\cross_arrow.png" />
     <Resource Include="Resources\expert.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

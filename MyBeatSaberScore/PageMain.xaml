@@ -67,42 +67,39 @@
                         </StackPanel>
                     </Canvas>
                     <StackPanel Height="100" DockPanel.Dock="Left" Orientation="Horizontal">
-                        <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="176">
+                        <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="160">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="検索"/>
-                                <local:PlaceholderTextBox x:Name="xaSongNameFilter" Canvas.Left="8" Canvas.Top="28" Placeholder="曲名・曲作者・譜面作者" Width="160" ToolTip="曲名で検索" TextChanged="filterTextBox_TextChanged" Height="18"/>
-                                <local:PlaceholderTextBox x:Name="xaBsrFilter" Canvas.Left="8" Canvas.Top="51" Placeholder="BSR" Width="160" ToolTip="BSRで検索" TextChanged="filterTextBox_TextChanged" Height="18"/>
-                                <local:PlaceholderTextBox x:Name="xaHashFilter" Canvas.Left="8" Canvas.Top="74" Placeholder="HASH" Width="160" ToolTip="HASHで検索" TextChanged="filterTextBox_TextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="xaSongNameFilter" Canvas.Left="8" Canvas.Top="28" Placeholder="曲名・曲作者・譜面作者" Width="144" ToolTip="曲名で検索" TextChanged="OnFilterTextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="xaBsrFilter" Canvas.Left="8" Canvas.Top="51" Placeholder="BSR" Width="144" ToolTip="BSRで検索" TextChanged="OnFilterTextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="xaHashFilter" Canvas.Left="8" Canvas.Top="74" Placeholder="HASH" Width="144" ToolTip="HASHで検索" TextChanged="OnFilterTextChanged" Height="18"/>
                             </Canvas>
                         </Border>
-                        <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="240">
+                        <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="160">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="譜面の種類"/>
-                                <CheckBox x:Name="xaCheckBoxRank" Content="ランク" Canvas.Left="8" Canvas.Top="28" IsChecked="True" Checked="checkBoxRank_Checked" Unchecked="checkBoxRank_Unchecked" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
-                                <CheckBox x:Name="xaCheckBoxUnRank" Content="アンランク" Canvas.Left="8" Canvas.Top="51" IsChecked="True" Checked="checkBoxUnRank_Checked" Unchecked="checkBoxUnRank_Unchecked" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
-                                <Slider Canvas.Left="86" Canvas.Top="28" Width="92" Maximum="20" Value="{Binding MinStar}" ValueChanged="sliderMinStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                <Slider Canvas.Left="86" Canvas.Top="51" Width="92" Maximum="20" Value="{Binding MaxStar}" ValueChanged="sliderMaxStar_ValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                <TextBlock Canvas.Left="184" Canvas.Top="28" Text="{Binding MinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
-                                <TextBlock Canvas.Left="184" Canvas.Top="51" Text="{Binding MaxStar, StringFormat=Max★\{0:N0\}}" Height="16"/>
-                                <StackPanel Orientation="Horizontal" Canvas.Left="8" Canvas.Top="74">
-                                    <TextBlock Text="PP=[" Height="16"/>
-                                    <TextBlock Text="{Binding MinPp, StringFormat=\{0:N0\}}" Height="16"/>
-                                    <TextBlock Text="～" Height="16"/>
-                                    <TextBlock Text="{Binding MaxPp, StringFormat=\{0:N0\}}" Height="16"/>
-                                    <TextBlock Text=")  ACC=[" Height="16"/>
-                                    <TextBlock Text="{Binding MinAcc, StringFormat=\{0:N0\}}" Height="16"/>
-                                    <TextBlock Text="～" Height="16"/>
-                                    <TextBlock Text="{Binding MaxAcc, StringFormat=\{0:N0\}}" Height="16"/>
-                                    <TextBlock Text="%)" Height="16"/>
-                                </StackPanel>
+                                <CheckBox x:Name="xaCheckBoxRank" Content="ランク" Canvas.Left="8" Canvas.Top="28" IsChecked="True" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
+                                <CheckBox x:Name="xaCheckBoxUnRank" Content="アンランク" Canvas.Left="66" Canvas.Top="28" IsChecked="True" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
+                                <Slider Canvas.Left="8" Canvas.Top="51" Width="92" Maximum="20" Value="{Binding MinStar}" ValueChanged="OnFilterSliderValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                <Slider Canvas.Left="8" Canvas.Top="74" Width="92" Maximum="20" Value="{Binding MaxStar}" ValueChanged="OnFilterSliderValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                <TextBlock Canvas.Left="104" Canvas.Top="51" Text="{Binding MinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
+                                <TextBlock Canvas.Left="104" Canvas.Top="74" Text="{Binding MaxStar, StringFormat=Max★\{0:N0\}}" Height="16"/>
                             </Canvas>
                         </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="80">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="プレイ結果" Height="16"/>
-                                <CheckBox x:Name="xaCheckBoxClear" Content="Clear" Canvas.Left="8" Canvas.Top="28" IsChecked="True" ToolTip="クリアした譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
-                                <CheckBox x:Name="xaCheckBoxFail" Content="Failure" Canvas.Left="8" Canvas.Top="51" IsChecked="True" ToolTip="NFやSSがついた譜面を表示する" RenderTransformOrigin="0.938,0.312" Checked="checkBoxFail_Checked" Unchecked="checkBoxFail_Unchecked"/>
-                                <CheckBox x:Name="xaCheckBoxNoPlayRank" Content="未プレイ" Canvas.Left="8" Canvas.Top="74" IsChecked="True" Checked="checkBoxNoPlayRank_Checked" Unchecked="checkBoxNoPlayRank_Unchecked" ToolTip="未プレイのランク譜面を表示する"/>
+                                <CheckBox x:Name="xaCheckBoxClear" Content="Clear" Canvas.Left="8" Canvas.Top="28" IsChecked="True" ToolTip="クリアした譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
+                                <CheckBox x:Name="xaCheckBoxFail" Content="Failure" Canvas.Left="8" Canvas.Top="51" IsChecked="True" ToolTip="NFやSSがついた譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
+                                <CheckBox x:Name="xaCheckBoxNoPlayRank" Content="未プレイ" Canvas.Left="8" Canvas.Top="74" IsChecked="True" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="未プレイのランク譜面を表示する"/>
+                            </Canvas>
+                        </Border>
+                        <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="112">
+                            <Canvas>
+                                <TextBlock Canvas.Left="4" Canvas.Top="6" Text="Check" Height="16"/>
+                                <CheckBox x:Name="xaCheckBoxCheckedOnly" Content="Checked Only" Canvas.Left="8" Canvas.Top="28" IsChecked="True" ToolTip="チェックした譜面だけを表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
+                                <Button x:Name="XaButtonCheckFiltered" Canvas.Left="8" Canvas.Top="48" Content="Check Filtered" Width="96" Click="OnClickCheckFiltered"></Button>
+                                <Button x:Name="XaButtonClearFiltered" Canvas.Left="8" Canvas.Top="70" Content="Clear Filtered" Width="96" Click="OnClickClearFiltered"></Button>
                             </Canvas>
                         </Border>
                     </StackPanel>
@@ -124,11 +121,52 @@
                 </StatusBarItem>
                 <Separator />
                 <StatusBarItem>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="PP=[" Height="16"/>
+                        <TextBlock Text="{Binding MinPp, StringFormat=\{0:N0\}}" Height="16"/>
+                        <TextBlock Text="～" Height="16"/>
+                        <TextBlock Text="{Binding MaxPp, StringFormat=\{0:N0\}}" Height="16"/>
+                        <TextBlock Text=")" Height="16"/>
+                    </StackPanel>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="ACC=[" Height="16"/>
+                        <TextBlock Text="{Binding MinAcc, StringFormat=\{0:N0\}}" Height="16"/>
+                        <TextBlock Text="～" Height="16"/>
+                        <TextBlock Text="{Binding MaxAcc, StringFormat=\{0:N0\}}" Height="16"/>
+                        <TextBlock Text="%)" Height="16"/>
+                    </StackPanel>
+                </StatusBarItem>
+                <Separator />
+                <StatusBarItem>
                     <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding StatusText}"/>
                 </StatusBarItem>
             </StatusBar>
             <DataGrid x:Name="xaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" RowHeight="45">
                 <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="" Width="32">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource ImageButtonStyle}" Click="Button_Click_2" ToolTip="Copy BSR">
+                                    <Image>
+                                        <Image.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Selected}" Value="True">
+                                                        <Setter Property="Image.Source" Value="Resources/checkon.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Selected}" Value="False">
+                                                        <Setter Property="Image.Source" Value="Resources/checkoff.png"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}">
                         <DataGridTextColumn.CellStyle>
                             <Style TargetType="DataGridCell">

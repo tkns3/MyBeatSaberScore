@@ -127,6 +127,12 @@
   <data name="app" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\app.ico;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="checkoff" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\checkoff.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="checkon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\checkon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="cross_arrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cross_arrow.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
