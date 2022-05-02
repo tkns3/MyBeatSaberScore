@@ -24,13 +24,13 @@
     <Grid>
         <DockPanel LastChildFill="True">
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,4,0,0">
-                <local:PlaceholderTextBox x:Name="xaProfileId" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" Width="200" ToolTip="ScoreSaber Profile ID" Height="30" Text="" FontSize="20"/>
-                <Button Height="30" x:Name="xaButtonAddUser" Click="Button_Click_AddUser">
+                <local:PlaceholderTextBox x:Name="XaProfileId" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" Width="200" ToolTip="ScoreSaber Profile ID" Height="30" Text="" FontSize="20"/>
+                <Button Height="30" x:Name="xaButtonAddUser" Click="OnClickAddUser">
                     <Image Source="Resources/user_add.png"/>
                 </Button>
             </StackPanel>
             <DockPanel DockPanel.Dock="Bottom" >
-                <ListBox x:Name="xaListView" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox x:Name="XaListView" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel/>
@@ -49,7 +49,7 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Button Grid.Row="0" Click="Button_Click_SelectUser">
+                                <Button Grid.Row="0" Click="OnClickSelectUser">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="78" />
@@ -70,7 +70,7 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="4" Style="{StaticResource UserCardMenuButtonStyle}" Margin="4" BorderThickness="0" Click="Button_Click_DelUser">
+                                    <Button Grid.Column="4" Style="{StaticResource UserCardMenuButtonStyle}" Margin="4" BorderThickness="0" Click="OnClickDelUser">
                                         <Image Width="20" Height="20" Source="Resources/user_del.png"/>
                                     </Button>
                                 </Grid>

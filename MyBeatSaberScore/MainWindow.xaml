@@ -15,38 +15,38 @@
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
 
-        <TabControl x:Name="xaTabControl" TabStripPlacement="Left" BorderThickness="1" Grid.ColumnSpan="2">
-            <TabItem x:Name="xaTabMain">
+        <TabControl x:Name="XaTabControl" TabStripPlacement="Left" BorderThickness="1" Grid.ColumnSpan="2">
+            <TabItem x:Name="XaTabMain">
                 <TabItem.Header>
                     <Image Width="26" Margin="2" Source="Resources/menu_onpu.png"/>
                 </TabItem.Header>
                 <Frame Source="PageMain.xaml"></Frame>
             </TabItem>
-            <TabItem x:Name="xaTabUsers">
+            <TabItem x:Name="XaTabUsers">
                 <TabItem.Header>
                     <Image Width="26" Margin="2" Source="Resources/menu_users.png"/>
                 </TabItem.Header>
                 <Frame Source="PageUserSelector.xaml"></Frame>
             </TabItem>
-            <TabItem x:Name="xaTabFilter">
+            <TabItem x:Name="XaTabFilter">
                 <TabItem.Header>
                     <Image Width="26" Margin="2" Source="Resources/menu_filter.png"/>
                 </TabItem.Header>
                 <Frame Source="PageFilter.xaml"></Frame>
             </TabItem>
-            <TabItem x:Name="xaTabPlaylist">
+            <TabItem x:Name="XaTabPlaylist">
                 <TabItem.Header>
                     <Image Width="26" Margin="2" Source="Resources/menu_playlist.png"/>
                 </TabItem.Header>
                 <TextBlock Text="工事中" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
             </TabItem>
-            <TabItem x:Name="xaTabCompare">
+            <TabItem x:Name="XaTabCompare">
                 <TabItem.Header>
                     <Image Width="26" Margin="2" Source="Resources/menu_compare.png"/>
                 </TabItem.Header>
                 <TextBlock Text="工事中" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
             </TabItem>
-            <TabItem x:Name="xaTabSetting">
+            <TabItem x:Name="XaTabSetting">
                 <TabItem.Header>
                     <Image Width="26" Margin="2" Source="Resources/menu_setting.png"/>
                 </TabItem.Header>

@@ -29,13 +29,12 @@ namespace MyBeatSaberScore
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 #pragma warning restore CS8602 // null 参照の可能性があるものの逆参照です。
 
-        private readonly MapUtil _mapUtil;
         private readonly PlayerData _playerData;
-        private List<ScoreSaber.PlayerScore> _allScores;
+        private readonly List<ScoreSaber.PlayerScore> _allScores;
 
-        static ObservableCollection<GridItem> _gridItems = new();
-        static CollectionViewSource _gridItemsViewSource = new() { Source = _gridItems };
-        static BindingSource _bindingSource = new();
+        static readonly ObservableCollection<GridItem> _gridItems = new();
+        static readonly CollectionViewSource _gridItemsViewSource = new() { Source = _gridItems };
+        static readonly BindingSource _bindingSource = new();
 
         public class FilterValue
         {
@@ -659,21 +658,21 @@ namespace MyBeatSaberScore
         {
             InitializeComponent();
 
-            _mapUtil = new MapUtil();
+            MapUtil.Initialize();
             _playerData = new PlayerData();
             _allScores = new();
             _gridItemsViewSource.Filter += new FilterEventHandler(DataGridFilter);
-            xaDataGrid.ItemsSource = _gridItemsViewSource.View;
-            xaProfileId.Text = Config.ScoreSaberProfileId;
+            XaDataGrid.ItemsSource = _gridItemsViewSource.View;
+            XaProfileId.Text = Config.ScoreSaberProfileId;
             DataContext = _bindingSource;
             Application.Current.Properties["FilterValue"] = _bindingSource._filterValue;
         }
 
-        private void refreshGrid()
+        private void RefreshGrid()
         {
             try
             {
-                xaDataGrid?.CommitEdit(DataGridEditingUnit.Row, true);
+                XaDataGrid?.CommitEdit(DataGridEditingUnit.Row, true);
                 _gridItemsViewSource?.View?.Refresh();
             }
             catch (Exception ex)
@@ -690,25 +689,25 @@ namespace MyBeatSaberScore
         /// <returns>曲名、BSR、HASHの指定をすべて満たしたitemである場合にtrue</returns>
         private bool FilterBySearch(GridItem item)
         {
-            if (xaSongNameFilter.Text.Length > 0)
+            if (XaSongNameFilter.Text.Length > 0)
             {
-                if (!item.SongFullName.Contains(xaSongNameFilter.Text, StringComparison.OrdinalIgnoreCase))
+                if (!item.SongFullName.Contains(XaSongNameFilter.Text, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
             }
 
-            if (xaBsrFilter.Text.Length > 0)
+            if (XaBsrFilter.Text.Length > 0)
             {
-                if (!item.Key.Contains(xaBsrFilter.Text, StringComparison.OrdinalIgnoreCase))
+                if (!item.Key.Contains(XaBsrFilter.Text, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
             }
 
-            if (xaHashFilter.Text.Length > 0)
+            if (XaHashFilter.Text.Length > 0)
             {
-                if (!item.Hash.Contains(xaHashFilter.Text, StringComparison.OrdinalIgnoreCase))
+                if (!item.Hash.Contains(XaHashFilter.Text, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
@@ -719,7 +718,7 @@ namespace MyBeatSaberScore
 
         private bool FilterByMapKind(GridItem item)
         {
-            if (xaCheckBoxUnRank.IsChecked == true)
+            if (XaCheckBoxUnRank.IsChecked == true)
             {
                 if (item.Stars < 0 &&
                     _bindingSource.MinAcc <= item.Acc && item.Acc < _bindingSource.MaxAcc)
@@ -728,7 +727,7 @@ namespace MyBeatSaberScore
                 }
             }
 
-            if (xaCheckBoxRank.IsChecked == true)
+            if (XaCheckBoxRank.IsChecked == true)
             {
                 if (_bindingSource.MinStar <= item.Stars && item.Stars < _bindingSource.MaxStar &&
                     _bindingSource.MinPp <= item.PP && item.PP < _bindingSource.MaxPp &&
@@ -755,7 +754,7 @@ namespace MyBeatSaberScore
 
         private bool FilterByResult(GridItem item)
         {
-            if (xaCheckBoxClear.IsChecked == true)
+            if (XaCheckBoxClear.IsChecked == true)
             {
                 if (item.ModifiedScore >= 0 && !IsFailureByConfig(item.Modifiers))
                 {
@@ -763,7 +762,7 @@ namespace MyBeatSaberScore
                 }
             }
 
-            if (xaCheckBoxFail.IsChecked == true)
+            if (XaCheckBoxFail.IsChecked == true)
             {
                 if (item.ModifiedScore >= 0 && IsFailureByConfig(item.Modifiers))
                 {
@@ -771,7 +770,7 @@ namespace MyBeatSaberScore
                 }
             }
 
-            if (xaCheckBoxNoPlayRank.IsChecked == true)
+            if (XaCheckBoxNoPlayRank.IsChecked == true)
             {
                 if (item.ModifiedScore < 0)
                 {
@@ -784,7 +783,7 @@ namespace MyBeatSaberScore
 
         private bool FilterByOther(GridItem item)
         {
-            if (xaCheckBoxCheckedOnly.IsChecked == true)
+            if (XaCheckBoxCheckedOnly.IsChecked == true)
             {
                 return item.Selected;
             }
@@ -808,7 +807,7 @@ namespace MyBeatSaberScore
             _allScores.AddRange(_playerData.playedMaps.Values);
 
             // 未プレイランク譜面を追加
-            foreach (var map in _mapUtil._mapList)
+            foreach (var map in MapUtil._mapList)
             {
                 map.Diffs.ForEach(diff =>
                 {
@@ -851,7 +850,7 @@ namespace MyBeatSaberScore
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            xaButtonGetData.IsEnabled = false;
+            XaButtonGetData.IsEnabled = false;
 
             _bindingSource.OnPropertyChangeFilterValue();
 
@@ -862,11 +861,11 @@ namespace MyBeatSaberScore
             else
             {
                 // もともと表示していたユーザ以外を選択した場合は保持データや描画の更新が必要
-                xaProfileId.Text = Config.ScoreSaberProfileId;
+                XaProfileId.Text = Config.ScoreSaberProfileId;
                 _playerData.LoadLocalFile(Config.ScoreSaberProfileId);
                 _bindingSource.SetPlayerProfile(_playerData.GetPlayerProfileFromLocal());
 
-                xaDataGrid.Dispatcher.Invoke(() =>
+                XaDataGrid.Dispatcher.Invoke(() =>
                 {
                     _gridItems.Clear();
                 });
@@ -876,12 +875,11 @@ namespace MyBeatSaberScore
                     if (_playerData.IsExistProfile)
                     {
                         // データを取得したことがあるユーザを選択した場合は取得済みデータを表示する
-                        _mapUtil.LoadLocalFile();
                         UpdateAllScores();
                         foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
                         {
-                            BeatSaberScrappedData.MapInfo map = _mapUtil.GetMapInfo(score.leaderboard.songHash);
-                            xaDataGrid.Dispatcher.Invoke(() =>
+                            BeatSaberScrappedData.MapInfo map = MapUtil.GetMapInfo(score.leaderboard.songHash);
+                            XaDataGrid.Dispatcher.Invoke(() =>
                             {
                                 _gridItems.Add(new GridItem(map, score));
                             });
@@ -895,17 +893,17 @@ namespace MyBeatSaberScore
                 });
             }
 
-            refreshGrid();
+            RefreshGrid();
 
-            xaButtonGetData.IsEnabled = true;
+            XaButtonGetData.IsEnabled = true;
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            xaButtonGetData.IsEnabled = false;
-            Config.ScoreSaberProfileId = xaProfileId.Text;
+            XaButtonGetData.IsEnabled = false;
+            Config.ScoreSaberProfileId = XaProfileId.Text;
             await DownaloadAndRefleshView();
-            xaButtonGetData.IsEnabled = true;
+            XaButtonGetData.IsEnabled = true;
         }
 
         private async Task DownaloadAndRefleshView()
@@ -914,7 +912,7 @@ namespace MyBeatSaberScore
             _bindingSource.Task2Progress = 0.0;
             _bindingSource.Task3Progress = 0.0;
 
-            xaDataGrid.Dispatcher.Invoke(() =>
+            XaDataGrid.Dispatcher.Invoke(() =>
             {
                 _gridItems.Clear();
             });
@@ -928,7 +926,7 @@ namespace MyBeatSaberScore
             });
 
             // ランク譜面リストを取得
-            Task downloadRankedMaps = TaskDownloadRankedMaps((max, count) =>
+            Task downloadRankedMaps = TaskDownloadMapList((max, count) =>
             {
                 _bindingSource.Task2Progress = 100.0 * count / max;
             });
@@ -947,8 +945,8 @@ namespace MyBeatSaberScore
             // GridItemを構築。未取得のカバー画像は後で取得する。
             foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
             {
-                BeatSaberScrappedData.MapInfo map = _mapUtil.GetMapInfo(score.leaderboard.songHash);
-                xaDataGrid.Dispatcher.Invoke(() =>
+                BeatSaberScrappedData.MapInfo map = MapUtil.GetMapInfo(score.leaderboard.songHash);
+                XaDataGrid.Dispatcher.Invoke(() =>
                 {
                     _gridItems.Add(new GridItem(map, score));
                 });
@@ -960,13 +958,13 @@ namespace MyBeatSaberScore
                 _bindingSource.Task3Progress = 100.0 * count / max;
                 Dispatcher.Invoke(() =>
                 {
-                    refreshGrid();
+                    RefreshGrid();
                 });
             });
 
             await Task.WhenAll(downloadUnacquiredCover, downloadPlayerProfile);
 
-            refreshGrid();
+            RefreshGrid();
         }
 
         private async Task TaskDownloadLatestScores(Action<int, int> callback)
@@ -984,12 +982,12 @@ namespace MyBeatSaberScore
             callback(1, 1);
         }
 
-        private async Task TaskDownloadRankedMaps(Action<int, int> callback)
+        private async Task TaskDownloadMapList(Action<int, int> callback)
         {
             callback(100, 10);
             await BeatSaberScrappedData.DownlaodCombinedScrappedData();
             callback(100, 80);
-            _mapUtil.LoadLocalFile();
+            MapUtil.UpdateMapListByScrappedData();
             callback(100, 100);
         }
 
@@ -1018,7 +1016,7 @@ namespace MyBeatSaberScore
             await Parallel.ForEachAsync(needAcquireCovers, parallelOptions, async (cover, y) =>
             {
                 _ = await MapUtil.GetCover(cover.Key, cover.Value.First().CoverUrl);
-                xaDataGrid.Dispatcher.Invoke(new Action(() =>
+                XaDataGrid.Dispatcher.Invoke(new Action(() =>
                 {
                     cover.Value.ForEach(item =>
                     {
@@ -1033,20 +1031,20 @@ namespace MyBeatSaberScore
 
         private void OnFilterEnableChanged(object sender, RoutedEventArgs e)
         {
-            refreshGrid();
+            RefreshGrid();
         }
 
         private void OnFilterSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            refreshGrid();
+            RefreshGrid();
         }
 
         private void OnFilterTextChanged(object sender, TextChangedEventArgs e)
         {
-            refreshGrid();
+            RefreshGrid();
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void OnClickCopyBSR(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -1062,68 +1060,64 @@ namespace MyBeatSaberScore
             }
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void OnClickGridItemCheckBox(object sender, RoutedEventArgs e)
         {
             if (((FrameworkElement)sender).DataContext is GridItem item)
             {
                 item.Selected = !item.Selected;
-                refreshGrid();
+                RefreshGrid();
             }
         }
 
         private void OnClickCheckFiltered(object sender, RoutedEventArgs e)
         {
             XaButtonCheckFiltered.IsEnabled = XaButtonClearFiltered.IsEnabled = false;
-            foreach (var item in xaDataGrid.Items)
+            foreach (var item in XaDataGrid.Items)
             {
                 if (item is GridItem gridItem)
                 {
                     gridItem.Selected = true;
                 }
             }
-            refreshGrid();
+            RefreshGrid();
             XaButtonCheckFiltered.IsEnabled = XaButtonClearFiltered.IsEnabled = true;
         }
 
         private void OnClickClearFiltered(object sender, RoutedEventArgs e)
         {
             XaButtonCheckFiltered.IsEnabled = XaButtonClearFiltered.IsEnabled = false;
-            foreach (var item in xaDataGrid.Items)
+            foreach (var item in XaDataGrid.Items)
             {
                 if (item is GridItem gridItem)
                 {
                     gridItem.Selected = false;
                 }
             }
-            refreshGrid();
+            RefreshGrid();
             XaButtonCheckFiltered.IsEnabled = XaButtonClearFiltered.IsEnabled = true;
         }
 
-        private void xaButtonCreatePlaylist_Click(object sender, RoutedEventArgs e)
+        private void OnClickCreatePlaylist(object sender, RoutedEventArgs e)
         {
-            // ファイル保存ダイアログを生成します。
-            var dialog = new SaveFileDialog();
+            var dialog = new SaveFileDialog
+            {
+                Filter = "JSONファイル(*.json)|*.json|プレイリストファイル(*.bplist)|*.bplist|全てのファイル(*.*)|*.*"
+            };
 
-            // フィルターを設定します。
-            // この設定は任意です。
-            dialog.Filter = "JSONファイル(*.json)|*.json|プレイリストファイル(*.bplist)|*.bplist|全てのファイル(*.*)|*.*";
-
-            // ファイル保存ダイアログを表示します。
             var result = dialog.ShowDialog() ?? false;
 
             // 保存ボタン以外が押下された場合
             if (!result)
             {
-                // 終了します。
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine(DateTime.Now.ToString("yyyy/MM/dd/ hh:mm:ss.fff tt") + " Create " + dialog.FileName + ", count=" + xaDataGrid.Items.Count);
+            _logger.Info($"Create {dialog.FileName}, count={XaDataGrid.Items.Count}");
             var playlist = new PlayList
             {
                 Title = System.IO.Path.GetFileName(dialog.FileName)
             };
-            foreach (var item in xaDataGrid.Items)
+            foreach (var item in XaDataGrid.Items)
             {
                 if (item is GridItem i)
                 {

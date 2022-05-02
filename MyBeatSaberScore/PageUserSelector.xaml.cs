@@ -22,18 +22,18 @@ namespace MyBeatSaberScore
     /// </summary>
     public partial class PageUserSelector : Page
     {
-        static CollectionViewSource _usersSource = new() { Source = Config.FavoriteUsers };
+        static readonly CollectionViewSource _usersSource = new() { Source = Config.FavoriteUsers };
 
         public PageUserSelector()
         {
             InitializeComponent();
 
-            xaListView.ItemsSource = _usersSource.View;
+            XaListView.ItemsSource = _usersSource.View;
         }
 
-        private async void Button_Click_AddUser(object sender, RoutedEventArgs e)
+        private async void OnClickAddUser(object sender, RoutedEventArgs e)
         {
-            var profile = await ScoreSaber.GetPlayerInfo(xaProfileId.Text);
+            var profile = await ScoreSaber.GetPlayerInfo(XaProfileId.Text);
             if (profile.id.Length > 0)
             {
                 Config.FavoriteUsers.Add(new Config.User(profile.id, profile.name));
@@ -45,7 +45,7 @@ namespace MyBeatSaberScore
             }
         }
 
-        private void Button_Click_DelUser(object sender, RoutedEventArgs e)
+        private void OnClickDelUser(object sender, RoutedEventArgs e)
         {
             if (((FrameworkElement)sender).DataContext is Config.User obj)
             {
@@ -54,13 +54,13 @@ namespace MyBeatSaberScore
             }
         }
 
-        private void Button_Click_SelectUser(object sender, RoutedEventArgs e)
+        private void OnClickSelectUser(object sender, RoutedEventArgs e)
         {
             if (((FrameworkElement)sender).DataContext is Config.User obj)
             {
                 Config.ScoreSaberProfileId = obj.id;
 
-                if (Application.Current.Properties["xaTabMain"] is TabItem tabItem)
+                if (Application.Current.Properties["XaTabMain"] is TabItem tabItem)
                 {
                     tabItem.IsSelected = true;
                 }

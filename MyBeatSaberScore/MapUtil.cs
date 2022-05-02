@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace MyBeatSaberScore
 {
-    internal class MapUtil
+    internal static class MapUtil
     {
 #pragma warning disable CS8602 // null 参照の可能性があるものの逆参照です。
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -23,16 +23,17 @@ namespace MyBeatSaberScore
         private static readonly string _mapsDir = Path.Combine("data", "maps");
         private static readonly string _coverDir = Path.Combine(_mapsDir, "cover");
 
-        public List<BeatSaberScrappedData.MapInfo> _mapList = new();
-        private readonly Dictionary<string, BeatSaberScrappedData.MapInfo> _mapDic = new();
+        public static List<BeatSaberScrappedData.MapInfo> _mapList = new();
+        private static readonly Dictionary<string, BeatSaberScrappedData.MapInfo> _mapDic = new(); // KeyはHASH
 
-        public MapUtil()
+        public static void Initialize()
         {
             Directory.CreateDirectory(_mapsDir);
             Directory.CreateDirectory(_coverDir);
+            UpdateMapListByScrappedData();
         }
 
-        public void LoadLocalFile()
+        public static void UpdateMapListByScrappedData()
         {
             _mapList = BeatSaberScrappedData.DeserializeCombinedScrappedData();
             _mapList.ForEach(map =>
@@ -44,7 +45,7 @@ namespace MyBeatSaberScore
             });
         }
 
-        public BeatSaberScrappedData.MapInfo GetMapInfo(string hash)
+        public static BeatSaberScrappedData.MapInfo GetMapInfo(string hash)
         {
             if (_mapDic.TryGetValue(hash, out var map))
             {
@@ -53,7 +54,7 @@ namespace MyBeatSaberScore
             return new BeatSaberScrappedData.MapInfo();
         }
 
-        public string GetAlleadyKey(string hash)
+        public static string GetAlleadyKey(string hash)
         {
             if (_mapDic.TryGetValue(hash.ToLower(), out var map))
             {
@@ -105,14 +106,19 @@ namespace MyBeatSaberScore
                 return _localPath;
             }
 
+            return await DownloadCover(_localPath, url);
+        }
+
+        private static async Task<string> DownloadCover(string url, string localPath)
+        {
             try
             {
                 HttpResponseMessage res = await _client.GetAsync(url);
-                using var fileStream = File.Create(_localPath);
+                using var fileStream = File.Create(localPath);
                 using var httpStream = await res.Content.ReadAsStreamAsync();
                 httpStream.CopyTo(fileStream);
                 fileStream.Flush();
-                return _localPath;
+                return localPath;
             }
             catch (Exception ex)
             {
