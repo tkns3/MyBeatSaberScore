@@ -55,17 +55,23 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 ## フィルターとソート
 
-「検索」「譜面の種類」「プレイ結果」で表示対象をフィルターすることができます。
+メインページの「検索」「譜面の種類」「プレイ結果」で表示対象をフィルターすることができます。
 
-列ヘッダをクリックするとソート順を変更することができます。
-
-フィルタータブで★、PP、精度のフィルター値を指定することができます。
+メインページの列ヘッダをクリックするとソート順を変更することができます。
 
 <img src="image/usage_filter.png" alt="attach:usage_filter" title="attach:usage_filter">
+
+フィルタータブでは色々なフィルターを指定することができます。
+
+<img src="image/usage_filter2.png" alt="attach:usage_filter" title="attach:usage_filter">
 
 ## Copy BSR
 
 Twitchのアイコンをクリックすると「!bsr key」をクリップボードにコピーします。
+
+## BeatSaver、ScoreSaberをひらく
+
+BeatSaver、ScoreSaberのアイコンをクリックすると譜面のページをブラウザでひらきます。
 
 ## プレイリスト作成
 
