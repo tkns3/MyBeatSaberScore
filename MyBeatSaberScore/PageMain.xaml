@@ -84,8 +84,8 @@
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="160">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="譜面の種類"/>
-                                <CheckBox x:Name="XaCheckBoxRank" Content="ランク" Canvas.Left="8" Canvas.Top="28" IsChecked="True" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
-                                <CheckBox x:Name="XaCheckBoxUnRank" Content="アンランク" Canvas.Left="66" Canvas.Top="28" IsChecked="True" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
+                                <CheckBox x:Name="XaCheckBoxRank" Content="ランク" Canvas.Left="8" Canvas.Top="28" IsChecked="{Binding IsShowRank}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
+                                <CheckBox x:Name="XaCheckBoxUnRank" Content="アンランク" Canvas.Left="66" Canvas.Top="28" IsChecked="{Binding IsShowUnRank}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
                                 <Slider Canvas.Left="8" Canvas.Top="51" Width="92" Maximum="20" Value="{Binding MinStar}" ValueChanged="OnFilterSliderValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
                                 <Slider Canvas.Left="8" Canvas.Top="74" Width="92" Maximum="20" Value="{Binding MaxStar}" ValueChanged="OnFilterSliderValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
                                 <TextBlock Canvas.Left="104" Canvas.Top="51" Text="{Binding MinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
@@ -95,9 +95,9 @@
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="80">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="プレイ結果" Height="16"/>
-                                <CheckBox x:Name="XaCheckBoxClear" Content="Clear" Canvas.Left="8" Canvas.Top="28" IsChecked="True" ToolTip="クリアした譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
-                                <CheckBox x:Name="XaCheckBoxFail" Content="Failure" Canvas.Left="8" Canvas.Top="51" IsChecked="True" ToolTip="NFやSSがついた譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
-                                <CheckBox x:Name="XaCheckBoxNoPlayRank" Content="未プレイ" Canvas.Left="8" Canvas.Top="74" IsChecked="True" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="未プレイのランク譜面を表示する"/>
+                                <CheckBox x:Name="XaCheckBoxClear" Content="Clear" Canvas.Left="8" Canvas.Top="28" IsChecked="{Binding IsShowClear}" ToolTip="クリアした譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
+                                <CheckBox x:Name="XaCheckBoxFail" Content="Failure" Canvas.Left="8" Canvas.Top="51" IsChecked="{Binding IsShowFailure}" ToolTip="NFやSSがついた譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
+                                <CheckBox x:Name="XaCheckBoxNoPlayRank" Content="未プレイ" Canvas.Left="8" Canvas.Top="74" IsChecked="{Binding IsShowNotPlay}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="未プレイのランク譜面を表示する"/>
                             </Canvas>
                         </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="112">

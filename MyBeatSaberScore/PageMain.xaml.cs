@@ -36,14 +36,66 @@ namespace MyBeatSaberScore
         static readonly CollectionViewSource _gridItemsViewSource = new() { Source = _gridItems };
         static readonly BindingSource _bindingSource = new();
 
-        public class FilterValue
+        public class FilterValue : INotifyPropertyChanged
         {
-            public double MinStar { get; set; } = 0.0;
-            public double MaxStar { get; set; } = 20.0;
-            public double MinPp { get; set; } = 0.0;
-            public double MaxPp { get; set; } = 1000.0;
-            public double MinAcc { get; set; } = 0.0;
-            public double MaxAcc { get; set; } = 101.0;
+            private bool _IsShowRank = true;
+            private bool _IsShowUnRank = true;
+            private bool _IsShowClear = true;
+            private bool _IsShowFailure = true;
+            private bool _IsShowNotPlay = true;
+            private bool _IsShowFullCombo = true;
+            private bool _IsShowNotFullCombo = true;
+            private bool _IsShowStandard = true;
+            private bool _IsShowLawless = true;
+            private bool _IsShowOneSaber = true;
+            private bool _IsShowLightShow = true;
+            private bool _IsShow90Degree = true;
+            private bool _IsShow360Degree = true;
+            private bool _IsShowNoArrows = true;
+            private bool _IsShowEasy = true;
+            private bool _IsShowNormal = true;
+            private bool _IsShowHard = true;
+            private bool _IsShowExpert = true;
+            private bool _IsShowExpertPlus = true;
+            private double _MinStar = 0.0;
+            private double _MaxStar = 20.0;
+            private double _MinPp = 0.0;
+            private double _MaxPp = 1000.0;
+            private double _MinAcc = 0.0;
+            private double _MaxAcc = 101.0;
+
+            public bool IsShowRank { get { return _IsShowRank; } set { _IsShowRank = value; OnPropertyChanged(); } }
+            public bool IsShowUnRank { get { return _IsShowUnRank; } set { _IsShowUnRank = value; OnPropertyChanged(); } }
+            public bool IsShowClear { get { return _IsShowClear; } set { _IsShowClear = value; OnPropertyChanged(); } }
+            public bool IsShowFailure { get { return _IsShowFailure; } set { _IsShowFailure = value; OnPropertyChanged(); } }
+            public bool IsShowNotPlay { get { return _IsShowNotPlay; } set { _IsShowNotPlay = value; OnPropertyChanged(); } }
+            public bool IsShowFullCombo { get { return _IsShowFullCombo; } set { _IsShowFullCombo = value; OnPropertyChanged(); } }
+            public bool IsShowNotFullCombo { get { return _IsShowNotFullCombo; } set { _IsShowNotFullCombo = value; OnPropertyChanged(); } }
+            public bool IsShowStandard { get { return _IsShowStandard; } set { _IsShowStandard = value; OnPropertyChanged(); } }
+            public bool IsShowLawless { get { return _IsShowLawless; } set { _IsShowLawless = value; OnPropertyChanged(); } }
+            public bool IsShowOneSaber { get { return _IsShowOneSaber; } set { _IsShowOneSaber = value; OnPropertyChanged(); } }
+            public bool IsShowLightShow { get { return _IsShowLightShow; } set { _IsShowLightShow = value; OnPropertyChanged(); } }
+            public bool IsShow90Degree { get { return _IsShow90Degree; } set { _IsShow90Degree = value; OnPropertyChanged(); } }
+            public bool IsShow360Degree { get { return _IsShow360Degree; } set { _IsShow360Degree = value; OnPropertyChanged(); } }
+            public bool IsShowNoArrows { get { return _IsShowNoArrows; } set { _IsShowNoArrows = value; OnPropertyChanged(); } }
+            public bool IsShowEasy { get { return _IsShowEasy; } set { _IsShowEasy = value; OnPropertyChanged(); } }
+            public bool IsShowNormal { get { return _IsShowNormal; } set { _IsShowNormal = value; OnPropertyChanged(); } }
+            public bool IsShowHard { get { return _IsShowHard; } set { _IsShowHard = value; OnPropertyChanged(); } }
+            public bool IsShowExpert { get { return _IsShowExpert; } set { _IsShowExpert = value; OnPropertyChanged(); } }
+            public bool IsShowExpertPlus { get { return _IsShowExpertPlus; } set { _IsShowExpertPlus = value; OnPropertyChanged(); } }
+            public double MinStar { get { return _MinStar; } set { _MinStar = value; OnPropertyChanged(); } }
+            public double MaxStar { get { return _MaxStar; } set { _MaxStar = value; OnPropertyChanged(); } }
+            public double MinPp { get { return _MinPp; } set { _MinPp = value; OnPropertyChanged(); } }
+            public double MaxPp { get { return _MaxPp; } set { _MaxPp = value; OnPropertyChanged(); } }
+            public double MinAcc { get { return _MinAcc; } set { _MinAcc = value; OnPropertyChanged(); } }
+            public double MaxAcc { get { return _MaxAcc; } set { _MaxAcc = value; OnPropertyChanged(); } }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
+
+            protected void OnPropertyChanged([CallerMemberName] string? name = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
         }
 
         private class BindingSource : INotifyPropertyChanged
@@ -331,6 +383,86 @@ namespace MyBeatSaberScore
             }
 
             /// <summary>
+            /// フィルター：ランク
+            /// </summary>
+            public bool IsShowRank
+            {
+                get
+                {
+                    return _filterValue.IsShowRank;
+                }
+                set
+                {
+                    _filterValue.IsShowRank = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：アンランク
+            /// </summary>
+            public bool IsShowUnRank
+            {
+                get
+                {
+                    return _filterValue.IsShowUnRank;
+                }
+                set
+                {
+                    _filterValue.IsShowUnRank = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：Clear
+            /// </summary>
+            public bool IsShowClear
+            {
+                get
+                {
+                    return _filterValue.IsShowClear;
+                }
+                set
+                {
+                    _filterValue.IsShowClear = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：Failure
+            /// </summary>
+            public bool IsShowFailure
+            {
+                get
+                {
+                    return _filterValue.IsShowFailure;
+                }
+                set
+                {
+                    _filterValue.IsShowFailure = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：NotPlay
+            /// </summary>
+            public bool IsShowNotPlay
+            {
+                get
+                {
+                    return _filterValue.IsShowNotPlay;
+                }
+                set
+                {
+                    _filterValue.IsShowNotPlay = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
             /// フィルター：星
             /// </summary>
             public double MinStar
@@ -444,6 +576,11 @@ namespace MyBeatSaberScore
 
             public void OnPropertyChangeFilterValue()
             {
+                OnPropertyChanged("IsShowRank");
+                OnPropertyChanged("IsShowUnRank");
+                OnPropertyChanged("IsShowClear");
+                OnPropertyChanged("IsShowFailure");
+                OnPropertyChanged("IsShowNotPlay");
                 OnPropertyChanged("MinStar");
                 OnPropertyChanged("MaxStar");
                 OnPropertyChanged("MinPp");
@@ -743,6 +880,90 @@ namespace MyBeatSaberScore
 
         private bool FilterByMapKind(GridItem item)
         {
+            switch (item.GameMode)
+            {
+                case "SoloStandard":
+                    if (!_bindingSource._filterValue.IsShowStandard)
+                    {
+                        return false;
+                    }
+                    break;
+                case "SoloLawless":
+                    if (!_bindingSource._filterValue.IsShowLawless)
+                    {
+                        return false;
+                    }
+                    break;
+                case "SoloOneSaber":
+                    if (!_bindingSource._filterValue.IsShowOneSaber)
+                    {
+                        return false;
+                    }
+                    break;
+                case "SoloLightShow":
+                    if (!_bindingSource._filterValue.IsShowLightShow)
+                    {
+                        return false;
+                    }
+                    break;
+                case "Solo90Degree":
+                    if (!_bindingSource._filterValue.IsShow90Degree)
+                    {
+                        return false;
+                    }
+                    break;
+                case "Solo360Degree":
+                    if (!_bindingSource._filterValue.IsShow360Degree)
+                    {
+                        return false;
+                    }
+                    break;
+                case "SoloNoArrows":
+                    if (!_bindingSource._filterValue.IsShowNoArrows)
+                    {
+                        return false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            switch (item.Difficulty)
+            {
+                case 1:
+                    if (!_bindingSource._filterValue.IsShowEasy)
+                    {
+                        return false;
+                    }
+                    break;
+                case 3:
+                    if (!_bindingSource._filterValue.IsShowNormal)
+                    {
+                        return false;
+                    }
+                    break;
+                case 5:
+                    if (!_bindingSource._filterValue.IsShowHard)
+                    {
+                        return false;
+                    }
+                    break;
+                case 7:
+                    if (!_bindingSource._filterValue.IsShowExpert)
+                    {
+                        return false;
+                    }
+                    break;
+                case 9:
+                    if (!_bindingSource._filterValue.IsShowExpertPlus)
+                    {
+                        return false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
             if (XaCheckBoxUnRank.IsChecked == true)
             {
                 if (item.Stars < 0 &&
@@ -779,6 +1000,21 @@ namespace MyBeatSaberScore
 
         private bool FilterByResult(GridItem item)
         {
+            if (item.FullCombo.Length > 0)
+            {
+                if (!_bindingSource._filterValue.IsShowFullCombo)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!_bindingSource._filterValue.IsShowNotFullCombo)
+                {
+                    return false;
+                }
+            }
+
             if (XaCheckBoxClear.IsChecked == true)
             {
                 if (item.ModifiedScore >= 0 && !IsFailureByConfig(item.Modifiers))
