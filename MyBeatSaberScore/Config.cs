@@ -23,6 +23,34 @@ namespace MyBeatSaberScore
 
         private static ConfigData _data = new();
 
+        #region 列のタグ名
+        public const string ColumnTagCheckBox = "CheckBox";
+        public const string ColumnTagBsr = "Bsr";
+        public const string ColumnTagCover = "Cover";
+        public const string ColumnTagSongName = "SongName";
+        public const string ColumnTagDate = "Date";
+        public const string ColumnTagMode = "Mode";
+        public const string ColumnTagDifficulty = "Difficulty";
+        public const string ColumnTagStars = "Stars";
+        public const string ColumnTagScore = "Score";
+        public const string ColumnTagAcc = "Acc";
+        public const string ColumnTagMissPlusBad = "MissPlusBad";
+        public const string ColumnTagFullCombo = "FullCombo";
+        public const string ColumnTagPp = "Pp";
+        public const string ColumnTagModifiers = "Modifiers";
+        public const string ColumnTagCopyBsr = "CopyBsr";
+        public const string ColumnTagDuration = "Duration";
+        public const string ColumnTagBpm = "Bpm";
+        public const string ColumnTagNotes = "Notes";
+        public const string ColumnTagNps = "Nps";
+        public const string ColumnTagNjs = "Njs";
+        public const string ColumnTagBombs = "Bombs";
+        public const string ColumnTagObstacles = "Obstacles";
+        public const string ColumnTagMiss = "Miss";
+        public const string ColumnTagBad = "Bad";
+        public const string ColumnTagHash = "Hash";
+        #endregion
+
         public static string ScoreSaberProfileId
         {
             get
@@ -39,6 +67,8 @@ namespace MyBeatSaberScore
         public static List<string> Failures => _data.failures;
 
         public static ObservableCollection<User> FavoriteUsers => _data.favoUsers;
+
+        public static Grid GridSetting => _data.grid;
 
         public static void LoadLocalFile()
         {
@@ -86,11 +116,15 @@ namespace MyBeatSaberScore
             [DataMember]
             public ObservableCollection<User> favoUsers { get; set; }
 
+            [DataMember]
+            public Grid grid { get; set; }
+
             public ConfigData()
             {
                 scoreSaberProfileId = "";
                 failures = new();
                 favoUsers = new();
+                grid = new Grid();
             }
 
             public void Normalize()
@@ -129,6 +163,22 @@ namespace MyBeatSaberScore
             {
                 this.id = id;
                 this.name = name;
+            }
+        }
+
+        [DataContract]
+        public class Grid
+        {
+            [DataMember]
+            public int rowHeight { get; set; }
+
+            [DataMember]
+            public List<String> notDisplayColumns { get; set; }
+
+            public Grid()
+            {
+                rowHeight = 45;
+                notDisplayColumns = new List<String>();
             }
         }
     }

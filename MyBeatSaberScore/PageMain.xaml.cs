@@ -573,7 +573,17 @@ namespace MyBeatSaberScore
             /// <summary>
             /// ミス＋バッドカットの数
             /// </summary>
+            public long MissPlusBad { get; set; }
+
+            /// <summary>
+            /// ミスカットの数
+            /// </summary>
             public long Miss { get; set; }
+
+            /// <summary>
+            /// バッドカットの数
+            /// </summary>
+            public long Bad { get; set; }
 
             /// <summary>
             /// BPM
@@ -611,6 +621,11 @@ namespace MyBeatSaberScore
             public long Obstacles { get; set; }
 
             /// <summary>
+            /// フルコン
+            /// </summary>
+            public string FullCombo { get; set; }
+
+            /// <summary>
             /// Checked Onlyが有効なときに表示するかどうか
             /// </summary>
             public bool Selected { get; set; }
@@ -642,7 +657,9 @@ namespace MyBeatSaberScore
                 Hash = hash;
                 CoverUrl = score.leaderboard.coverImage;
                 Ranked = score.leaderboard.ranked;
-                Miss = score.score.badCuts + score.score.missedNotes;
+                MissPlusBad = score.score.badCuts + score.score.missedNotes;
+                Miss = score.score.missedNotes;
+                Bad = score.score.badCuts;
                 Bpm = map.Bpm;
                 Duration = map.Duration;
                 Njs = diff.Njs;
@@ -650,6 +667,7 @@ namespace MyBeatSaberScore
                 Notes = diff.Notes;
                 Bombs = diff.Bombs;
                 Obstacles = diff.Obstacles;
+                FullCombo = (score.score.fullCombo) ? "FC" : "";
                 Selected = true;
             }
         }
@@ -666,6 +684,7 @@ namespace MyBeatSaberScore
             XaProfileId.Text = Config.ScoreSaberProfileId;
             DataContext = _bindingSource;
             Application.Current.Properties["FilterValue"] = _bindingSource._filterValue;
+            Application.Current.Properties["XaDataGrid"] = XaDataGrid;
         }
 
         private void RefreshGrid()

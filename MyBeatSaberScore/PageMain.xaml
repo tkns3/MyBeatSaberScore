@@ -24,6 +24,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="{x:Type DataGridCell}" x:Key="RightText">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+        <Style TargetType="{x:Type TextBlock}" x:Key="WrapText">
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
     </Page.Resources>
 
     <Grid>
@@ -145,7 +151,7 @@
             </StatusBar>
             <DataGrid x:Name="XaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" RowHeight="45">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="" Width="32">
+                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="CheckBox" Width="32">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickGridItemCheckBox">
@@ -167,30 +173,22 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="カバー" Width="45">
+                    
+                    <DataGridTextColumn Header="bsr" local:TagBehavior.Tag="Bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}" CellStyle="{StaticResource RightText}"/>
+                    
+                    <DataGridTemplateColumn Header="カバー" local:TagBehavior.Tag="Cover" Width="45">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Source="{Binding Cover}" CacheMode="BitmapCache"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" Width="350" Binding="{Binding SongFullName}">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="TextWrapping"
-                                Value="Wrap" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="更新日"  Width="150" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
-                    <DataGridTemplateColumn Header="モード">
+                    
+                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" local:TagBehavior.Tag="SongName" Width="320" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
+                    
+                    <DataGridTextColumn Header="更新日" local:TagBehavior.Tag="Date"  Width="140" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
+
+                    <DataGridTemplateColumn Header="モード" local:TagBehavior.Tag="Mode">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Width="32">
@@ -225,7 +223,8 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="難易度">
+
+                    <DataGridTemplateColumn Header="難易度" local:TagBehavior.Tag="Difficulty">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Width="32">
@@ -254,50 +253,22 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="★" Binding="{Binding Stars, Converter={StaticResource StarConverter}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="スコア" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="精度" Binding="{Binding Acc, Converter={StaticResource AccConverter}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="ミス" Binding="{Binding Miss}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="PP" Binding="{Binding PP, Converter={StaticResource PPConverter}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Modifiers" Width="70"  Binding="{Binding Modifiers}">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="TextWrapping"
-                                Value="Wrap" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="">
+
+                    <DataGridTextColumn Header="★" local:TagBehavior.Tag="Stars" Binding="{Binding Stars, Converter={StaticResource StarConverter}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="スコア" local:TagBehavior.Tag="Score" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="精度" local:TagBehavior.Tag="Acc" Binding="{Binding Acc, Converter={StaticResource AccConverter}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="✖" local:TagBehavior.Tag="MissPlusBad" Binding="{Binding MissPlusBad}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="FC" local:TagBehavior.Tag="FullCombo" Binding="{Binding FullCombo, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="PP" local:TagBehavior.Tag="Pp" Binding="{Binding PP, Converter={StaticResource PPConverter}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="Modifiers" local:TagBehavior.Tag="Modifiers" Width="70"  Binding="{Binding Modifiers}" ElementStyle="{StaticResource WrapText}"/>
+
+                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="CopyBsr">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickCopyBSR" ToolTip="Copy BSR">
@@ -319,57 +290,27 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="⌛" Binding="{Binding Duration, Converter={StaticResource TimeConverter}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="BPM" Binding="{Binding Bpm, StringFormat=\{0:0.0\}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="ノーツ" Binding="{Binding Notes, StringFormat=\{0:#\,0\}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="NPS" Binding="{Binding Nps, StringFormat=\{0:0.0\}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="NJS" Binding="{Binding Njs, StringFormat=\{0:0.0\}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="💣" Binding="{Binding Bombs, StringFormat=\{0:0\}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="壁" Binding="{Binding Obstacles, StringFormat=\{0:0\}}">
-                        <DataGridTextColumn.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="HorizontalAlignment" Value="Right" />
-                            </Style>
-                        </DataGridTextColumn.CellStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Hash" Width="64" Binding="{Binding Hash}">
-                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="⌛" local:TagBehavior.Tag="Duration" Binding="{Binding Duration, Converter={StaticResource TimeConverter}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="BPM" local:TagBehavior.Tag="Bpm" Binding="{Binding Bpm, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="ノーツ" local:TagBehavior.Tag="Notes" Binding="{Binding Notes, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="NPS" local:TagBehavior.Tag="Nps" Binding="{Binding Nps, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="NJS" local:TagBehavior.Tag="Njs" Binding="{Binding Njs, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="💣" local:TagBehavior.Tag="Bombs" Binding="{Binding Bombs, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="壁" local:TagBehavior.Tag="Obstacles" Binding="{Binding Obstacles, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="Miss" local:TagBehavior.Tag="Miss" Binding="{Binding Miss, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="Bad" local:TagBehavior.Tag="Bad" Binding="{Binding Bad, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="Hash" local:TagBehavior.Tag="Hash" Width="64" Binding="{Binding Hash}"/>
+
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
