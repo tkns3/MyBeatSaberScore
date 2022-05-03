@@ -105,13 +105,23 @@
                             <TextBlock Text="プレイ結果" FontWeight="Bold"/>
                             <StackPanel Grid.Column="1">
                                 <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="スコア更新日時" FontWeight="Bold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="指定した範囲のスコア更新日の譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,0"/>
+                                    <TextBlock Text="日付をBackSpaceまたはDeleteで削除すると未選択に戻すことができる。" Foreground="Gray" Margin="0,0,0,4"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <DatePicker SelectedDate="{Binding DateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <TextBlock Text="～" Foreground="Gray" Margin="4,4,4,0"/>
+                                        <DatePicker SelectedDate="{Binding DateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="プレイ状況" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="譜面のプレイ状況ごとに表示有無を指定する。" Foreground="Gray" Margin="0,0,0,4"/>
                                     <CheckBox IsChecked="{Binding IsShowClear}">
                                         <TextBlock Text="Clear：クリアした譜面を表示する。" Width="200"/>
                                     </CheckBox>
                                     <CheckBox IsChecked="{Binding IsShowFailure}">
-                                        <TextBlock Text="Failure：クリアしていない譜面を表示する。" Width="200"/>
+                                        <TextBlock Text="Failure：NoFailかSlowSongがついた譜面を表示する。" Width="300"/>
                                     </CheckBox>
                                     <CheckBox IsChecked="{Binding IsShowNotPlay}">
                                         <TextBlock Text="未プレイ：プレイしていないランク譜面を表示する。" Width="240"/>

@@ -63,6 +63,8 @@ namespace MyBeatSaberScore
             private double _MaxPp = 1000.0;
             private double _MinAcc = 0.0;
             private double _MaxAcc = 101.0;
+            private string _DateStart = "";
+            private string _DateEnd = "";
 
             public bool IsShowRank { get { return _IsShowRank; } set { _IsShowRank = value; OnPropertyChanged(); } }
             public bool IsShowUnRank { get { return _IsShowUnRank; } set { _IsShowUnRank = value; OnPropertyChanged(); } }
@@ -89,6 +91,8 @@ namespace MyBeatSaberScore
             public double MaxPp { get { return _MaxPp; } set { _MaxPp = value; OnPropertyChanged(); } }
             public double MinAcc { get { return _MinAcc; } set { _MinAcc = value; OnPropertyChanged(); } }
             public double MaxAcc { get { return _MaxAcc; } set { _MaxAcc = value; OnPropertyChanged(); } }
+            public string DateStart { get { return _DateStart; } set { _DateStart = value; OnPropertyChanged(); } }
+            public string DateEnd { get { return _DateEnd; } set { _DateEnd = value; OnPropertyChanged(); } }
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -1012,6 +1016,32 @@ namespace MyBeatSaberScore
                 if (!_bindingSource._filterValue.IsShowNotFullCombo)
                 {
                     return false;
+                }
+            }
+
+            if (_bindingSource._filterValue.DateStart != null && _bindingSource._filterValue.DateStart.Length > 0)
+            {
+                var r1 = DateTime.TryParse(item.TimeSet, out DateTime d1);
+                var r2 = DateTime.TryParse(_bindingSource._filterValue.DateStart, out DateTime d2);
+                if (r1 && r2)
+                {
+                    if (d1.ToLocalTime() < d2)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (_bindingSource._filterValue.DateEnd != null && _bindingSource._filterValue.DateEnd.Length > 0)
+            {
+                var r1 = DateTime.TryParse(item.TimeSet, out DateTime d1);
+                var r2 = DateTime.TryParse(_bindingSource._filterValue.DateEnd, out DateTime d2);
+                if (r1 && r2)
+                {
+                    if (d1.ToLocalTime() > d2)
+                    {
+                        return false;
+                    }
                 }
             }
 
