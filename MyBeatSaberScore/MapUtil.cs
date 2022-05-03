@@ -106,7 +106,7 @@ namespace MyBeatSaberScore
                 return _localPath;
             }
 
-            return await DownloadCover(_localPath, url);
+            return await DownloadCover(url, _localPath);
         }
 
         private static async Task<string> DownloadCover(string url, string localPath)
