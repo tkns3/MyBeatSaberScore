@@ -291,6 +291,26 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
+                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="JumpBeatSaver">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickJumpBeatSaver" ToolTip="Open Beat Saver in your browser">
+                                    <Image Width="32" Height="32" Source="Resources/beatsaver.png"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="JumpScoreSaber">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickJumpScoreSaber" ToolTip="Open Score Saber in your browser">
+                                    <Image Width="32" Height="32" Source="Resources/scoresaber.png"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                     <DataGridTextColumn Header="⌛" local:TagBehavior.Tag="Duration" Binding="{Binding Duration, Converter={StaticResource TimeConverter}}" CellStyle="{StaticResource RightText}"/>
 
                     <DataGridTextColumn Header="BPM" local:TagBehavior.Tag="Bpm" Binding="{Binding Bpm, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>

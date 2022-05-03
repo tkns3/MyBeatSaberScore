@@ -39,6 +39,8 @@ namespace MyBeatSaberScore
         public const string ColumnTagPp = "Pp";
         public const string ColumnTagModifiers = "Modifiers";
         public const string ColumnTagCopyBsr = "CopyBsr";
+        public const string ColumnTagJumpBeatSaver = "JumpBeatSaver";
+        public const string ColumnTagJumpScoreSaber = "JumpScoreSaber";
         public const string ColumnTagDuration = "Duration";
         public const string ColumnTagBpm = "Bpm";
         public const string ColumnTagNotes = "Notes";

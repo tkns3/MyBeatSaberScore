@@ -23,7 +23,7 @@
     <Grid>
         <ScrollViewer>
             <StackPanel>
-                <Canvas Height="798">
+                <Canvas Height="822">
                     <StackPanel Orientation="Horizontal" Canvas.Left="18" Canvas.Top="7">
                         <Image Height="20" Source="Resources/menu_onpu.png" Margin="2,4,8,0"></Image>
                         <TextBlock Text="メインページ" FontWeight="Bold" FontSize="22"/>
@@ -66,7 +66,10 @@
                             <TextBlock Text="列の表示" FontWeight="Bold" Margin="0,0,0,4"/>
                             <TextBlock Text="グリッドに表示する列を選択します。" Foreground="Gray"  Margin="0,0,0,4"/>
                             <CheckBox x:Name="XaDispCheckBox" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                <TextBlock Text="チェックボックス" Width="200"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="16" Source="Resources/checkon.png"></Image>
+                                    <TextBlock Text=" (チェックボックス)" Width="200"/>
+                                </StackPanel>
                             </CheckBox>
                             <CheckBox x:Name="XaDispBsr" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                 <TextBlock Text="bsr" Width="200"/>
@@ -108,7 +111,22 @@
                                 <TextBlock Text="Modifiers" Width="200"/>
                             </CheckBox>
                             <CheckBox x:Name="XaDispCopyBsr" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                <TextBlock Text="Copy BSR" Width="200"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="16" Source="Resources/twitch1.png"></Image>
+                                    <TextBlock Text=" (Copy BSR)" Width="200"/>
+                                </StackPanel>
+                            </CheckBox>
+                            <CheckBox x:Name="XaDispJumpBeatSaver" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="16" Source="Resources/beatsaver.png"></Image>
+                                    <TextBlock Text=" (Open Beat Saver in your browser)" Width="200"/>
+                                </StackPanel>
+                            </CheckBox>
+                            <CheckBox x:Name="XaDispJumpScoreSaber" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="16" Source="Resources/scoresaber.png"></Image>
+                                    <TextBlock Text=" (Open Score Saber in your browser)" Width="200"/>
+                                </StackPanel>
                             </CheckBox>
                             <CheckBox x:Name="XaDispDuration" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                 <TextBlock Text="⌛ (Song Duration)" Width="200"/>

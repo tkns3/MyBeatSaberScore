@@ -12,6 +12,7 @@
     <None Remove="Resources\360degree.png" />
     <None Remove="Resources\90degree.png" />
     <None Remove="Resources\app.ico" />
+    <None Remove="Resources\beatsaver.png" />
     <None Remove="Resources\checkoff.png" />
     <None Remove="Resources\checkon.png" />
     <None Remove="Resources\cross_arrow.png" />
@@ -32,6 +33,7 @@
     <None Remove="Resources\onesaber.png" />
     <None Remove="Resources\reload1.png" />
     <None Remove="Resources\reload2.png" />
+    <None Remove="Resources\scoresaber.png" />
     <None Remove="Resources\standard.png" />
     <None Remove="Resources\twitch1.png" />
     <None Remove="Resources\twitch2.png" />
@@ -52,6 +54,7 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\app.ico" />
+    <Resource Include="Resources\beatsaver.png" />
     <Resource Include="Resources\checkoff.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -95,6 +98,7 @@
     </Resource>
     <Resource Include="Resources\reload1.png" />
     <Resource Include="Resources\reload2.png" />
+    <Resource Include="Resources\scoresaber.png" />
     <Resource Include="Resources\standard.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

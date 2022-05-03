@@ -92,6 +92,36 @@ namespace MyBeatSaberScore.APIs
             return new LeaderboardInfoCollection();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hash">Hash</param>
+        /// <param name="difficulty">1:Easy, 3:Normal, 5:Hard, 7:Expert 9:ExpertPlus</param>
+        /// <param name="mode">SoloStandard, SoloLawless, SoloOneSaber, SoloLightShow, Solo90Degree, Solo360Degree, SoloNoArrows</param>
+        /// <returns></returns>
+        public static async Task<LeaderboardInfo> GetLeaderboard(string hash, int difficulty, string mode)
+        {
+            string url = $"https://scoresaber.com/api/leaderboard/by-hash/{hash}/info?difficulty={difficulty}&mode={mode}";
+
+            try
+            {
+                var httpsResponse = await _client.GetAsync(url);
+                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
+                var info = JsonSerializer.Deserialize<LeaderboardInfo>(responseContent);
+                if (info != null)
+                {
+                    info.Normalize();
+                    return info;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn($"{url}: {ex}");
+            }
+
+            return new LeaderboardInfo();
+        }
+
         public static async Task<PlayerProfile> GetPlayerInfo(string playerId)
         {
             string url = $"https://scoresaber.com/api/player/{playerId}/full";

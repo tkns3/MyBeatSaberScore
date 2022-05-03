@@ -630,6 +630,11 @@ namespace MyBeatSaberScore
             /// </summary>
             public bool Selected { get; set; }
 
+            /// <summary>
+            /// ScoreSaberのリーダーボードID (ハッシュ＋難易度に対してユニークなID)
+            /// </summary>
+            public long LeaderbordId { get; set; }
+
             public GridItem(BeatSaberScrappedData.MapInfo map, ScoreSaber.PlayerScore score)
             {
                 string hash = score.leaderboard.songHash.ToLower();
@@ -669,6 +674,7 @@ namespace MyBeatSaberScore
                 Obstacles = diff.Obstacles;
                 FullCombo = (score.score.fullCombo) ? "FC" : "";
                 Selected = true;
+                LeaderbordId = score.leaderboard.id;
             }
         }
 
@@ -1076,6 +1082,68 @@ namespace MyBeatSaberScore
                 // クリップボードにコピーできていてもエラーが出ることがあるので握りつぶす
                 // コピーでてきていなくてもユーザーはクリック失敗したかなと思う程度なのて問題ない
                 _logger.Debug(ex.ToString());
+            }
+        }
+
+        private System.Diagnostics.Process? OpenUrl(string url)
+        {
+            System.Diagnostics.ProcessStartInfo pi = new()
+            {
+                FileName = url,
+                UseShellExecute = true,
+            };
+            return System.Diagnostics.Process.Start(pi);
+        }
+
+        private void OnClickJumpBeatSaver(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (((FrameworkElement)sender).DataContext is GridItem item)
+                {
+                    if (item.Key.Length > 0)
+                    {
+                        var url = $"https://beatsaver.com/maps/{item.Key}";
+                        _ = OpenUrl(url);
+                    }
+                    else
+                    {
+                        // リパブされた譜面のKeyはScrappedDataに含まれていないのでHashで検索する。
+                        // 古いHashで検索するとリパブ後のページがヒットする。
+                        var url = $"https://beatsaver.com/?q={item.Hash.ToLower()}";
+                        _ = OpenUrl(url);
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.Warn(ex);
+            }
+        }
+
+        private async void OnClickJumpScoreSaber(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (((FrameworkElement)sender).DataContext is GridItem item)
+                {
+                    if (item.LeaderbordId > 0)
+                    {
+                        var url = $"https://scoresaber.com/leaderboard/{item.LeaderbordId}";
+                        _ = OpenUrl(url);
+                    }
+                    else
+                    {
+                        // 未プレイランク譜面のLeaderbordIdはScrappedDataに含まれていないので取得してくる必要がある
+                        var info = await ScoreSaber.GetLeaderboard(item.Hash, (int)item.Difficulty, item.GameMode);
+                        var url = $"https://scoresaber.com/leaderboard/{info.difficulty.leaderboardId}";
+                        _ = OpenUrl(url);
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.Warn(ex);
             }
         }
 
