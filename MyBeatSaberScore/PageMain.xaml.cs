@@ -1479,5 +1479,90 @@ namespace MyBeatSaberScore
             }
             playlist.Save(dialog.FileName);
         }
+
+        private void OnClickCreateCSV(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = "CSVファイル(*.csv)|*.csv|全てのファイル(*.*)|*.*"
+            };
+
+            var result = dialog.ShowDialog() ?? false;
+
+            // 保存ボタン以外が押下された場合
+            if (!result)
+            {
+                return;
+            }
+
+            String delmiter = ",";
+            StringBuilder sb = new();
+            sb.Append("bsr").Append(delmiter);
+            sb.Append("曲名").Append(delmiter);
+            sb.Append("サブ曲名").Append(delmiter);
+            sb.Append("曲作者").Append(delmiter);
+            sb.Append("譜面作者").Append(delmiter);
+            sb.Append("更新日").Append(delmiter);
+            sb.Append("モード").Append(delmiter);
+            sb.Append("難易度").Append(delmiter);
+            sb.Append("✖").Append(delmiter);
+            sb.Append("FC").Append(delmiter);
+            sb.Append("スコア").Append(delmiter);
+            sb.Append("精度").Append(delmiter);
+            sb.Append("ミス").Append(delmiter);
+            sb.Append("PP").Append(delmiter);
+            sb.Append("Modifiers").Append(delmiter);
+            sb.Append("Miss").Append(delmiter);
+            sb.Append("Bad");
+            sb.Append(Environment.NewLine);
+
+            foreach (var item in XaDataGrid.Items)
+            {
+                if (item is GridItem i)
+                {
+                    sb.Append(i.Key).Append(delmiter);
+                    sb.Append($"\"{TrimDoubleQuotationMarks(i.SongName)}\"").Append(delmiter);
+                    sb.Append($"\"{TrimDoubleQuotationMarks(i.SongSubName)}\"").Append(delmiter);
+                    sb.Append($"\"{TrimDoubleQuotationMarks(i.SongAuthor)}\"").Append(delmiter);
+                    sb.Append($"\"{TrimDoubleQuotationMarks(i.LevelAuthor)}\"").Append(delmiter);
+                    if (i.TimeSet.Length > 0)
+                    {
+                        sb.Append(DateTime.Parse(i.TimeSet).ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)")).Append(delmiter);
+                    }
+                    else
+                    {
+                        sb.Append("").Append(delmiter);
+                    }
+                    sb.Append(i.GameMode).Append(delmiter);
+                    sb.Append(i.Difficulty).Append(delmiter);
+                    sb.Append(i.Stars).Append(delmiter);
+                    sb.Append(i.ModifiedScore).Append(delmiter);
+                    sb.Append(i.Acc).Append(delmiter);
+                    sb.Append(i.MissPlusBad).Append(delmiter);
+                    sb.Append(i.FullCombo).Append(delmiter);
+                    sb.Append(i.PP).Append(delmiter);
+                    sb.Append($"\"{i.Modifiers}\"").Append(delmiter);
+                    sb.Append(i.Miss).Append(delmiter);
+                    sb.Append(i.Bad);
+                    sb.Append(Environment.NewLine);
+                }
+            }
+
+            try
+            {
+                using var st = dialog.OpenFile();
+                using var sw = new System.IO.StreamWriter(st, Encoding.GetEncoding("UTF-8"));
+                sw.Write(sb.ToString());
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex.ToString());
+            }
+        }
+
+        private static string TrimDoubleQuotationMarks(string target)
+        {
+            return target.Trim(new char[] { '"' });
+        }
     }
 }
