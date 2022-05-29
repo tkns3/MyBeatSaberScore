@@ -63,8 +63,8 @@ namespace MyBeatSaberScore
             private double _MaxPp = 1000.0;
             private double _MinAcc = 0.0;
             private double _MaxAcc = 101.0;
-            private string _DateStart = "";
-            private string _DateEnd = "";
+            private DateTime? _DateStart;
+            private DateTime? _DateEnd;
 
             public bool IsShowRank { get { return _IsShowRank; } set { _IsShowRank = value; OnPropertyChanged(); } }
             public bool IsShowUnRank { get { return _IsShowUnRank; } set { _IsShowUnRank = value; OnPropertyChanged(); } }
@@ -91,8 +91,8 @@ namespace MyBeatSaberScore
             public double MaxPp { get { return _MaxPp; } set { _MaxPp = value; OnPropertyChanged(); } }
             public double MinAcc { get { return _MinAcc; } set { _MinAcc = value; OnPropertyChanged(); } }
             public double MaxAcc { get { return _MaxAcc; } set { _MaxAcc = value; OnPropertyChanged(); } }
-            public string DateStart { get { return _DateStart; } set { _DateStart = value; OnPropertyChanged(); } }
-            public string DateEnd { get { return _DateEnd; } set { _DateEnd = value; OnPropertyChanged(); } }
+            public DateTime? DateStart { get { return _DateStart; } set { _DateStart = value; OnPropertyChanged(); } }
+            public DateTime? DateEnd { get { return _DateEnd; } set { _DateEnd = value; OnPropertyChanged(); } }
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -672,6 +672,16 @@ namespace MyBeatSaberScore
             public double Acc { get; set; }
 
             /// <summary>
+            /// 最新の精度 - 前回の精度
+            /// </summary>
+            public double AccDifference { get; set; }
+
+            /// <summary>
+            /// 初スコアかどうか
+            /// </summary>
+            public bool IsNew { get; set; }
+
+            /// <summary>
             /// PP。ランク譜面以外は0。
             /// </summary>
             public double PP { get; set; }
@@ -695,6 +705,11 @@ namespace MyBeatSaberScore
             /// Small Notes, Zen Mode
             /// </summary>
             public string Modifiers { get; set; }
+
+            /// <summary>
+            /// スコア更新回数
+            /// </summary>
+            public long ScoreCount { get; set; }
 
             /// <summary>
             /// BeatSaverのハッシュ
@@ -776,12 +791,11 @@ namespace MyBeatSaberScore
             /// </summary>
             public long LeaderbordId { get; set; }
 
-            public GridItem(BeatSaberScrappedData.MapInfo map, ScoreSaber.PlayerScore score)
+            public GridItem(BeatSaberScrappedData.MapInfo map, ScoreSaber.PlayerScore score, PlayerData.DifficultyResults results)
             {
                 string hash = score.leaderboard.songHash.ToLower();
                 BeatSaberScrappedData.Difficulty diff = map.GetDifficulty(score.leaderboard.difficulty.difficultyRawInt);
-                long maxScore = diff.GetMaxScore(); // ScoreSaberから取得したランク譜面のMaxScoreがいくつか間違っているので常にノーツ数から計算した値を使う。アークとチェインは未対応。
-                double acc = (maxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / maxScore : 0;
+                long maxScore = MapUtil.MaxScore(diff.Notes); // ScoreSaberから取得したランク譜面のMaxScoreがいくつか間違っているので常にノーツ数から計算した値を使う。アークとチェインは未対応。
 
                 Key = map.Key;
                 NumOfKey = (Key.Length > 0) ? Convert.ToInt64(Key, 16) : 0;
@@ -797,9 +811,12 @@ namespace MyBeatSaberScore
                 Stars = score.leaderboard.ranked ? diff.Stars : -1;
                 ModifiedScore = score.score.modifiedScore;
                 MaxScore = maxScore;
-                Acc = acc;
+                Acc = (maxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / maxScore : 0;
+                AccDifference = (maxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / maxScore : 0;
+                IsNew = (maxScore > 0) && (results.Count == 1);
                 PP = score.leaderboard.ranked ? score.score.pp : 0;
                 Modifiers = score.score.modifiers;
+                ScoreCount = results.Count;
                 Hash = hash;
                 CoverUrl = score.leaderboard.coverImage;
                 Ranked = score.leaderboard.ranked;
@@ -1019,26 +1036,22 @@ namespace MyBeatSaberScore
                 }
             }
 
-            if (_bindingSource._filterValue.DateStart != null && _bindingSource._filterValue.DateStart.Length > 0)
+            if (_bindingSource._filterValue.DateStart != null)
             {
-                var r1 = DateTime.TryParse(item.TimeSet, out DateTime d1);
-                var r2 = DateTime.TryParse(_bindingSource._filterValue.DateStart, out DateTime d2);
-                if (r1 && r2)
+                if (DateTime.TryParse(item.TimeSet, out DateTime d1))
                 {
-                    if (d1.ToLocalTime() < d2)
+                    if (d1.ToLocalTime() < _bindingSource._filterValue.DateStart)
                     {
                         return false;
                     }
                 }
             }
 
-            if (_bindingSource._filterValue.DateEnd != null && _bindingSource._filterValue.DateEnd.Length > 0)
+            if (_bindingSource._filterValue.DateEnd != null)
             {
-                var r1 = DateTime.TryParse(item.TimeSet, out DateTime d1);
-                var r2 = DateTime.TryParse(_bindingSource._filterValue.DateEnd, out DateTime d2);
-                if (r1 && r2)
+                if (DateTime.TryParse(item.TimeSet, out DateTime d1))
                 {
-                    if (d1.ToLocalTime() > d2)
+                    if (d1.ToLocalTime() > _bindingSource._filterValue.DateEnd)
                     {
                         return false;
                     }
@@ -1172,7 +1185,8 @@ namespace MyBeatSaberScore
                             BeatSaberScrappedData.MapInfo map = MapUtil.GetMapInfo(score.leaderboard.songHash);
                             XaDataGrid.Dispatcher.Invoke(() =>
                             {
-                                _gridItems.Add(new GridItem(map, score));
+                                var results = _playerData.History.GetDifficultyResults(score.leaderboard.id);
+                                _gridItems.Add(new GridItem(map, score, results));
                             });
                         }
                     }
@@ -1239,7 +1253,8 @@ namespace MyBeatSaberScore
                 BeatSaberScrappedData.MapInfo map = MapUtil.GetMapInfo(score.leaderboard.songHash);
                 XaDataGrid.Dispatcher.Invoke(() =>
                 {
-                    _gridItems.Add(new GridItem(map, score));
+                    var reuslts = _playerData.History.GetDifficultyResults(score.leaderboard.id);
+                    _gridItems.Add(new GridItem(map, score, reuslts));
                 });
             }
 

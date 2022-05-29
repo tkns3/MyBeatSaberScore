@@ -17,6 +17,7 @@ namespace MyBeatSaberScore
     {
         private string _userDir = "";
         private string _scoresPath = "";
+        private string _historyPath = "";
         private string _profilePath = "";
 
         public string PlayerId = "";
@@ -24,6 +25,7 @@ namespace MyBeatSaberScore
         public Dictionary<long, ScoreSaber.PlayerScore> playedMaps = new(); // プレイ済みマップ。キー「PlayerScore.leaderboard.id」
         public ScoreSaber.PlayerProfile profile = new();
         public bool IsExistProfile = false;
+        public AllHistory History = new();
 
         public PlayerData()
         {
@@ -37,10 +39,13 @@ namespace MyBeatSaberScore
             Directory.CreateDirectory(_userDir);
 
             _scoresPath = Path.Combine(_userDir, "scores.json");
+            _historyPath = Path.Combine(_userDir, "history.json");
             _profilePath = Path.Combine(_userDir, "profile.json");
 
             playedMaps.Clear();
             playedRankHash.Clear();
+
+            History.Load(_historyPath);
 
             if (File.Exists(_scoresPath))
             {
@@ -52,6 +57,7 @@ namespace MyBeatSaberScore
                     collection.playerScores.ForEach(score =>
                     {
                         playedMaps[score.leaderboard.id] = score;
+                        History.Add(score);
                     });
                 }
             }
@@ -93,6 +99,8 @@ namespace MyBeatSaberScore
 
             var jsonString = JsonSerializer.Serialize(collection, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(_scoresPath, jsonString);
+
+            History.Save(_historyPath);
         }
 
         /// <summary>
@@ -151,6 +159,7 @@ namespace MyBeatSaberScore
                     collection.playerScores.ForEach(score =>
                     {
                         playedMaps[score.leaderboard.id] = score;
+                        History.Add(score);
 
                         if (score.leaderboard.ranked)
                         {
@@ -177,6 +186,136 @@ namespace MyBeatSaberScore
         public ScoreSaber.PlayerProfile GetPlayerProfileFromLocal()
         {
             return profile;
+        }
+
+        public class PlayResult
+        {
+            public long id { get; set; }
+
+            public long leaderboardId { get; set; }
+
+            public long rank { get; set; }
+
+            public long baseScore { get; set; }
+
+            public long modifiedScore { get; set; }
+
+            public double pp { get; set; }
+
+            public double weight { get; set; }
+
+            public string modifiers { get; set; } = "";
+
+            public double multiplier { get; set; }
+
+            public long badCuts { get; set; }
+
+            public long missedNotes { get; set; }
+
+            public long maxCombo { get; set; }
+
+            public bool fullCombo { get; set; }
+
+            public long hmd { get; set; }
+
+            public bool hasReplay { get; set; }
+
+            public string timeSet { get; set; } = "";
+        }
+
+        public class DifficultyResults
+        {
+            readonly SortedList<DateTime, PlayResult> _results = new();
+
+            public void Add(PlayResult result)
+            {
+                _ = _results.TryAdd(DateTime.Parse(result.timeSet), result);
+            }
+
+            public int Count { get { return _results.Count; } }
+
+            public long LatestChange()
+            {
+                if (_results.Count > 1)
+                {
+                    return _results.Values[^1].modifiedScore - _results.Values[^2].modifiedScore;
+                }
+                else if (_results.Count == 1)
+                {
+                    return _results.Values[0].modifiedScore;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public class AllHistory
+        {
+            readonly Dictionary<long, DifficultyResults> _resultsByLeaderboardId = new();
+            readonly SortedList<DateTime, PlayResult> _allResults = new();
+
+            public void Load(string path)
+            {
+                if (File.Exists(path))
+                {
+                    string jsonString = File.ReadAllText(path, Encoding.UTF8);
+                    var list = JsonSerializer.Deserialize<List<PlayResult>>(jsonString);
+                    if (list != null)
+                    {
+                        list.ForEach(result => Add(result));
+                    }
+                }
+            }
+
+            public void Save(string path)
+            {
+                var jsonString = JsonSerializer.Serialize(_allResults.Values, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(path, jsonString);
+            }
+
+            public void Add(PlayResult result)
+            {
+                if (!_resultsByLeaderboardId.ContainsKey(result.leaderboardId))
+                {
+                    _resultsByLeaderboardId[result.leaderboardId] = new();
+                }
+                _resultsByLeaderboardId[result.leaderboardId].Add(result);
+                _ = _allResults.TryAdd(DateTime.Parse(result.timeSet), result);
+            }
+
+            public void Add(ScoreSaber.PlayerScore score)
+            {
+                Add(new PlayResult
+                {
+                    id = score.score.id,
+                    leaderboardId = score.leaderboard.id,
+                    rank = score.score.rank,
+                    baseScore = score.score.baseScore,
+                    modifiedScore = score.score.modifiedScore,
+                    pp = score.score.pp,
+                    weight = score.score.weight,
+                    modifiers = score.score.modifiers,
+                    multiplier = score.score.multiplier,
+                    badCuts = score.score.badCuts,
+                    missedNotes = score.score.missedNotes,
+                    maxCombo = score.score.maxCombo,
+                    fullCombo = score.score.fullCombo,
+                    hmd = score.score.hmd,
+                    hasReplay = score.score.hasReplay,
+                    timeSet = score.score.timeSet
+                });
+            }
+
+            public DifficultyResults GetDifficultyResults(long leaderboardId)
+            {
+                if (_resultsByLeaderboardId.ContainsKey(leaderboardId))
+                {
+                    return _resultsByLeaderboardId[leaderboardId];
+                }
+                return new();
+            }
         }
     }
 }

@@ -109,6 +109,9 @@
                                 <CheckBox x:Name="XaDispAcc" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                     <TextBlock Text="精度" Width="200"/>
                                 </CheckBox>
+                                <CheckBox x:Name="XaDispAccDiff" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
+                                    <TextBlock Text="Diff" Width="200"/>
+                                </CheckBox>
                                 <CheckBox x:Name="XaDispMissPlusBad" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                     <TextBlock Text="✖ (Miss Notes + Bad Cuts)" Width="200"/>
                                 </CheckBox>
@@ -120,6 +123,9 @@
                                 </CheckBox>
                                 <CheckBox x:Name="XaDispModifiers" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                     <TextBlock Text="Modifiers" Width="200"/>
+                                </CheckBox>
+                                <CheckBox x:Name="XaDispScoreCount" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
+                                    <TextBlock Text="回数" Width="200"/>
                                 </CheckBox>
                                 <CheckBox x:Name="XaDispCopyBsr" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                     <StackPanel Orientation="Horizontal">

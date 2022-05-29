@@ -126,5 +126,18 @@ namespace MyBeatSaberScore
                 return System.IO.Path.Combine(_coverDir, "_404.png");
             }
         }
+
+        public static long MaxScore(int notes)
+        {
+            int[] scoreArray = new int[] { 0, 115, 345, 575, 805, 1035, 1495, 1955, 2415, 2875, 3335, 3795, 4255, 4715 };
+            if (notes < 14)
+            {
+                return scoreArray[notes];
+            }
+            else
+            {
+                return 4715 + (notes - 13) * 920;
+            }
+        }
     }
 }

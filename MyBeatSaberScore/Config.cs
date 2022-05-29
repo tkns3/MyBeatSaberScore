@@ -34,10 +34,12 @@ namespace MyBeatSaberScore
         public const string ColumnTagStars = "Stars";
         public const string ColumnTagScore = "Score";
         public const string ColumnTagAcc = "Acc";
+        public const string ColumnTagAccDiff = "AccDiff";
         public const string ColumnTagMissPlusBad = "MissPlusBad";
         public const string ColumnTagFullCombo = "FullCombo";
         public const string ColumnTagPp = "Pp";
         public const string ColumnTagModifiers = "Modifiers";
+        public const string ColumnTagScoreCount = "ScoreCount";
         public const string ColumnTagCopyBsr = "CopyBsr";
         public const string ColumnTagJumpBeatSaver = "JumpBeatSaver";
         public const string ColumnTagJumpScoreSaber = "JumpScoreSaber";

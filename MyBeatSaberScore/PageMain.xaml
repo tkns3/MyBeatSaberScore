@@ -10,6 +10,7 @@
       Title="PageMain" Loaded="Page_Loaded">
     <Page.Resources>
         <convert:AccConverter x:Key="AccConverter"/>
+        <convert:AccDiffConverter x:Key="AccDiffConverter"/>
         <convert:BsrConverter x:Key="BsrConverter"/>
         <convert:DateConverter x:Key="DateConverter"/>
         <convert:PPConverter x:Key="PPConverter"/>
@@ -29,6 +30,19 @@
         </Style>
         <Style TargetType="{x:Type TextBlock}" x:Key="WrapText">
             <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style TargetType="{x:Type DataGridCell}" x:Key="AccDiff">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsNew}" Value="True">
+                    <Setter Property="Foreground" Value="royalblue"/>
+                    <Setter Property="Background" Value="lightcyan"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsNew}" Value="False">
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </Page.Resources>
 
@@ -185,7 +199,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     
-                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" local:TagBehavior.Tag="SongName" Width="320" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
+                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" local:TagBehavior.Tag="SongName" Width="260" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
                     
                     <DataGridTextColumn Header="更新日" local:TagBehavior.Tag="Date"  Width="140" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
 
@@ -261,13 +275,17 @@
 
                     <DataGridTextColumn Header="精度" local:TagBehavior.Tag="Acc" Binding="{Binding Acc, Converter={StaticResource AccConverter}}" CellStyle="{StaticResource RightText}"/>
 
+                    <DataGridTextColumn Header="Diff" local:TagBehavior.Tag="AccDiff" Binding="{Binding AccDifference, Converter={StaticResource AccDiffConverter}}" CellStyle="{StaticResource AccDiff}"/>
+
                     <DataGridTextColumn Header="✖" local:TagBehavior.Tag="MissPlusBad" Binding="{Binding MissPlusBad}" CellStyle="{StaticResource RightText}"/>
 
                     <DataGridTextColumn Header="FC" local:TagBehavior.Tag="FullCombo" Binding="{Binding FullCombo, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
 
                     <DataGridTextColumn Header="PP" local:TagBehavior.Tag="Pp" Binding="{Binding PP, Converter={StaticResource PPConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="Modifiers" local:TagBehavior.Tag="Modifiers" Width="70"  Binding="{Binding Modifiers}" ElementStyle="{StaticResource WrapText}"/>
+                    <DataGridTextColumn Header="Modifiers" local:TagBehavior.Tag="Modifiers" Width="40"  Binding="{Binding Modifiers}" ElementStyle="{StaticResource WrapText}"/>
+
+                    <DataGridTextColumn Header="回数" local:TagBehavior.Tag="ScoreCount" Binding="{Binding ScoreCount, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
 
                     <DataGridTemplateColumn Header="" local:TagBehavior.Tag="CopyBsr">
                         <DataGridTemplateColumn.CellTemplate>

@@ -40,10 +40,12 @@ namespace MyBeatSaberScore
             DispCheckBoxInitialize(XaDispStars, Config.ColumnTagStars);
             DispCheckBoxInitialize(XaDispScore, Config.ColumnTagScore);
             DispCheckBoxInitialize(XaDispAcc, Config.ColumnTagAcc);
+            DispCheckBoxInitialize(XaDispAccDiff, Config.ColumnTagAccDiff);
             DispCheckBoxInitialize(XaDispMissPlusBad, Config.ColumnTagMissPlusBad);
             DispCheckBoxInitialize(XaDispFullCombo, Config.ColumnTagFullCombo);
             DispCheckBoxInitialize(XaDispPp, Config.ColumnTagPp);
             DispCheckBoxInitialize(XaDispModifiers, Config.ColumnTagModifiers);
+            DispCheckBoxInitialize(XaDispScoreCount, Config.ColumnTagScoreCount);
             DispCheckBoxInitialize(XaDispCopyBsr, Config.ColumnTagCopyBsr);
             DispCheckBoxInitialize(XaDispJumpBeatSaver, Config.ColumnTagJumpBeatSaver);
             DispCheckBoxInitialize(XaDispJumpScoreSaber, Config.ColumnTagJumpScoreSaber);
@@ -133,10 +135,12 @@ namespace MyBeatSaberScore
             DispCheckBoxChanged(XaDispStars, Config.ColumnTagStars);
             DispCheckBoxChanged(XaDispScore, Config.ColumnTagScore);
             DispCheckBoxChanged(XaDispAcc, Config.ColumnTagAcc);
+            DispCheckBoxChanged(XaDispAccDiff, Config.ColumnTagAccDiff);
             DispCheckBoxChanged(XaDispMissPlusBad, Config.ColumnTagMissPlusBad);
             DispCheckBoxChanged(XaDispFullCombo, Config.ColumnTagFullCombo);
             DispCheckBoxChanged(XaDispPp, Config.ColumnTagPp);
             DispCheckBoxChanged(XaDispModifiers, Config.ColumnTagModifiers);
+            DispCheckBoxChanged(XaDispScoreCount, Config.ColumnTagScoreCount);
             DispCheckBoxChanged(XaDispCopyBsr, Config.ColumnTagCopyBsr);
             DispCheckBoxChanged(XaDispJumpBeatSaver, Config.ColumnTagJumpBeatSaver);
             DispCheckBoxChanged(XaDispJumpScoreSaber, Config.ColumnTagJumpScoreSaber);

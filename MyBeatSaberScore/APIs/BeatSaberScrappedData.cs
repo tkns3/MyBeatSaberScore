@@ -247,19 +247,6 @@ namespace MyBeatSaberScore.APIs
 
                 return (int)ec * 32 + (int)ed;
             }
-
-            public int GetMaxScore()
-            {
-                int[] scoreArray = new int[] { 0, 115, 345, 575, 805, 1035, 1495, 1955, 2415, 2875, 3335, 3795, 4255, 4715 };
-                if (Notes < 14)
-                {
-                    return scoreArray[Notes];
-                }
-                else
-                {
-                    return 4715 + (Notes - 13) * 920;
-                }
-            }
         }
     }
 }
