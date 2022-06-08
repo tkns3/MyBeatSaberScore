@@ -258,6 +258,9 @@ namespace MyBeatSaberScore
 
             public void Load(string path)
             {
+                _resultsByLeaderboardId.Clear();
+                _allResults.Clear();
+
                 if (File.Exists(path))
                 {
                     string jsonString = File.ReadAllText(path, Encoding.UTF8);
