@@ -114,6 +114,11 @@ namespace MyBeatSaberScore
             try
             {
                 HttpResponseMessage res = await _client.GetAsync(url);
+                if (!res.IsSuccessStatusCode)
+                {
+                    _logger.Warn($"{url}: StatusCode={res.StatusCode}");
+                    return System.IO.Path.Combine(_coverDir, "_404.png");
+                }
                 using var fileStream = File.Create(localPath);
                 using var httpStream = await res.Content.ReadAsStreamAsync();
                 httpStream.CopyTo(fileStream);
