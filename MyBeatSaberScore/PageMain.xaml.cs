@@ -1327,7 +1327,7 @@ namespace MyBeatSaberScore
                     else
                     {
                         // データを取得したことがないユーザを選択した場合はデータ取得を行う
-                        await DownaloadAndRefleshView();
+                        await DownaloadAndRefleshView(true);
                     }
                 });
             }
@@ -1341,11 +1341,11 @@ namespace MyBeatSaberScore
         {
             XaButtonGetData.IsEnabled = false;
             Config.ScoreSaberProfileId = XaProfileId.Text;
-            await DownaloadAndRefleshView();
+            await DownaloadAndRefleshView(XaRadioGetModeAll.IsChecked ?? false);
             XaButtonGetData.IsEnabled = true;
         }
 
-        private async Task DownaloadAndRefleshView()
+        private async Task DownaloadAndRefleshView(bool isGetAll)
         {
             _bindingSource.Task1Progress = 0.0;
             _bindingSource.Task2Progress = 0.0;
@@ -1359,7 +1359,7 @@ namespace MyBeatSaberScore
             _playerData.LoadLocalFile(Config.ScoreSaberProfileId);
 
             // スコアセイバーから最新スコアを取得
-            Task downloadLatestScores = TaskDownloadLatestScores((max, count) =>
+            Task downloadLatestScores = TaskDownloadLatestScores(isGetAll, (max, count) =>
             {
                 _bindingSource.Task1Progress = 100.0 * count / max;
             });
@@ -1407,10 +1407,10 @@ namespace MyBeatSaberScore
             RefreshGrid();
         }
 
-        private async Task TaskDownloadLatestScores(Action<int, int> callback)
+        private async Task TaskDownloadLatestScores(bool isGetAll, Action<int, int> callback)
         {
             _bindingSource.StatusText = "";
-            var isSuccess = await _playerData.DownloadLatestScores(callback);
+            var isSuccess = await _playerData.DownloadLatestScores(isGetAll, callback);
             if (isSuccess)
             {
                 _playerData.SaveLocalFile();

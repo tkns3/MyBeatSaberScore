@@ -106,9 +106,10 @@ namespace MyBeatSaberScore
         /// <summary>
         /// 最新スコアをダウンロードしてローカルのスコア一覧を更新する
         /// </summary>
+        /// <param name="isGetAll">取得対象 false:差分 true:全て</param>
         /// <param name="callback">進捗コールバック</param>
         /// <returns>true:取得成功、false:取得失敗、スコア一覧は更新しない</returns>
-        public async Task<bool> DownloadLatestScores(Action<int, int> callback)
+        public async Task<bool> DownloadLatestScores(bool isGetAll, Action<int, int> callback)
         {
             if (PlayerId.Length == 0)
             {
@@ -134,8 +135,9 @@ namespace MyBeatSaberScore
                     // 後でまとめて処理するために取得したデータを残しておく
                     collections.Add(collection);
 
-                    // ローカルに保持していないデータをすべて取得できたか確認する
+                    if (!isGetAll)
                     {
+                        // ローカルに保持していないデータをすべて取得できたか確認する
                         foreach (var score in collection.playerScores)
                         {
                             // 更新日が同じデータがローカルにあればすべて取得できた
@@ -151,7 +153,7 @@ namespace MyBeatSaberScore
                 }
             }
 
-            // ローカルに保持していないデータをすべて取得できた場合はローカルデータを更新する
+            // 取得対象のデータをすべて取得できた場合はローカルデータを更新する
             if (getResult == ScoreSaber.GetScoresResult.FINISH)
             {
                 collections.ForEach(collection =>
