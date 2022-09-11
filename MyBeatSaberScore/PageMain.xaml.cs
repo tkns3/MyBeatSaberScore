@@ -65,6 +65,8 @@ namespace MyBeatSaberScore
             private double _MaxAcc = 101.0;
             private DateTime? _DateStart;
             private DateTime? _DateEnd;
+            private DateTime? _RankedDateStart;
+            private DateTime? _RankedDateEnd;
 
             public bool IsShowRank { get { return _IsShowRank; } set { _IsShowRank = value; OnPropertyChanged(); } }
             public bool IsShowUnRank { get { return _IsShowUnRank; } set { _IsShowUnRank = value; OnPropertyChanged(); } }
@@ -93,6 +95,8 @@ namespace MyBeatSaberScore
             public double MaxAcc { get { return _MaxAcc; } set { _MaxAcc = value; OnPropertyChanged(); } }
             public DateTime? DateStart { get { return _DateStart; } set { _DateStart = value; OnPropertyChanged(); } }
             public DateTime? DateEnd { get { return _DateEnd; } set { _DateEnd = value; OnPropertyChanged(); } }
+            public DateTime? RankedDateStart { get { return _RankedDateStart; } set { _RankedDateStart = value; OnPropertyChanged(); } }
+            public DateTime? RankedDateEnd { get { return _RankedDateEnd; } set { _RankedDateEnd = value; OnPropertyChanged(); } }
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -642,6 +646,21 @@ namespace MyBeatSaberScore
             public string TimeSet { get; set; }
 
             /// <summary>
+            /// スコア更新日
+            /// </summary>
+            public DateTime? TimeSetDT { get; set; }
+
+            /// <summary>
+            /// Ranked Date
+            /// </summary>
+            public string RankedDate { get; set; }
+
+            /// <summary>
+            /// Ranked Date
+            /// </summary>
+            public DateTime? RankedDateDT { get; set; }
+
+            /// <summary>
             /// SoloStandard, SoloLawless, SoloOneSaber, SoloLightShow, Solo90Degree, Solo360Degree, SoloNoArrows
             /// </summary>
             public string GameMode { get; set; }
@@ -805,7 +824,26 @@ namespace MyBeatSaberScore
                 SongSubName = score.leaderboard.songSubName;
                 SongAuthor = score.leaderboard.songAuthorName;
                 LevelAuthor = score.leaderboard.levelAuthorName;
-                TimeSet = score.score.timeSet.Length > 0 ? score.score.timeSet : "";
+                if (score.score.timeSet.Length > 0)
+                {
+                    TimeSet = score.score.timeSet;
+                    TimeSetDT = DateTime.Parse(TimeSet).ToLocalTime();
+                }
+                else
+                {
+                    TimeSet = "";
+                    TimeSetDT = null;
+                }
+                if (diff.Char.Contains("Standard") && diff.Ranked)
+                {
+                    RankedDate = diff.RankedUpdateTime;
+                    RankedDateDT = DateTime.Parse(RankedDate).ToLocalTime();
+                }
+                else
+                {
+                    RankedDate = "";
+                    RankedDateDT = null;
+                }
                 GameMode = score.leaderboard.difficulty.gameMode;
                 Difficulty = score.leaderboard.difficulty.difficulty;
                 Stars = score.leaderboard.ranked ? diff.Stars : -1;
@@ -899,7 +937,7 @@ namespace MyBeatSaberScore
             return true;
         }
 
-        private bool FilterByMapKind(GridItem item)
+        private bool FilterByMapGameMode(GridItem item)
         {
             switch (item.GameMode)
             {
@@ -949,6 +987,11 @@ namespace MyBeatSaberScore
                     break;
             }
 
+            return true;
+        }
+
+        private bool FilterByMapGameDifficulty(GridItem item)
+        {
             switch (item.Difficulty)
             {
                 case 1:
@@ -985,104 +1028,135 @@ namespace MyBeatSaberScore
                     break;
             }
 
-            if (XaCheckBoxUnRank.IsChecked == true)
+            return true;
+        }
+
+        private bool FilterByMapStatus(GridItem item)
+        {
+            if (item.Ranked)
             {
-                if (item.Stars < 0 &&
-                    _bindingSource.MinAcc <= item.Acc && item.Acc < _bindingSource.MaxAcc)
+                return (XaCheckBoxRank.IsChecked == true);
+            }
+            else
+            {
+                return (XaCheckBoxUnRank.IsChecked == true);
+            }
+        }
+
+        private bool FilterByMapStar(GridItem item)
+        {
+            if (item.Ranked)
+            {
+                return (_bindingSource.MinStar <= item.Stars && item.Stars < _bindingSource.MaxStar);
+            }
+
+            return true;
+        }
+
+        private bool FilterByMapRankedDate(GridItem item)
+        {
+            if (item.RankedDateDT != null)
+            {
+                if (_bindingSource._filterValue.RankedDateStart != null)
                 {
-                    return true;
+                    if (item.RankedDateDT < _bindingSource._filterValue.RankedDateStart)
+                    {
+                        return false;
+                    }
+                }
+
+                if (_bindingSource._filterValue.RankedDateEnd != null)
+                {
+                    if (item.RankedDateDT > _bindingSource._filterValue.RankedDateEnd)
+                    {
+                        return false;
+                    }
                 }
             }
 
-            if (XaCheckBoxRank.IsChecked == true)
+            return true;
+        }
+
+        private bool FilterByResultPp(GridItem item)
+        {
+            if (item.Ranked)
             {
-                if (_bindingSource.MinStar <= item.Stars && item.Stars < _bindingSource.MaxStar &&
-                    _bindingSource.MinPp <= item.PP && item.PP < _bindingSource.MaxPp &&
-                    _bindingSource.MinAcc <= item.Acc && item.Acc < _bindingSource.MaxAcc )
-                {
-                    return true;
-                }
+                return (_bindingSource.MinPp <= item.PP && item.PP < _bindingSource.MaxPp);
             }
 
-            return false;
+            return true;
         }
 
         private bool IsFailureByConfig(string modifiers)
         {
-            foreach (var f in Config.Failures)
+            if (modifiers.Length > 0)
             {
-                if (modifiers.Contains(f))
+                foreach (var f in Config.Failures)
                 {
-                    return true;
+                    if (modifiers.Contains(f))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
         }
 
-        private bool FilterByResult(GridItem item)
+        private bool FilterByResultFullCombo(GridItem item)
         {
             if (item.FullCombo.Length > 0)
             {
-                if (!_bindingSource._filterValue.IsShowFullCombo)
-                {
-                    return false;
-                }
+                return _bindingSource._filterValue.IsShowFullCombo;
             }
             else
             {
-                if (!_bindingSource._filterValue.IsShowNotFullCombo)
-                {
-                    return false;
-                }
+                return _bindingSource._filterValue.IsShowNotFullCombo;
             }
+        }
 
-            if (_bindingSource._filterValue.DateStart != null)
+        private bool FilterByResultScoreUpdateDate(GridItem item)
+        {
+            if (item.TimeSetDT != null)
             {
-                if (DateTime.TryParse(item.TimeSet, out DateTime d1))
+                if (_bindingSource._filterValue.DateStart != null)
                 {
-                    if (d1.ToLocalTime() < _bindingSource._filterValue.DateStart)
+                    if (item.TimeSetDT < _bindingSource._filterValue.DateStart)
+                    {
+                        return false;
+                    }
+                }
+
+                if (_bindingSource._filterValue.DateEnd != null)
+                {
+                    if (item.TimeSetDT > _bindingSource._filterValue.DateEnd)
                     {
                         return false;
                     }
                 }
             }
 
-            if (_bindingSource._filterValue.DateEnd != null)
-            {
-                if (DateTime.TryParse(item.TimeSet, out DateTime d1))
-                {
-                    if (d1.ToLocalTime() > _bindingSource._filterValue.DateEnd)
-                    {
-                        return false;
-                    }
-                }
-            }
+            return true;
+        }
 
-            if (XaCheckBoxClear.IsChecked == true)
+        private bool FilterByResultPlayStatus(GridItem item)
+        {
+            if (item.ModifiedScore < 0) // スコアなし＝プレイしていない
             {
-                if (item.ModifiedScore >= 0 && !IsFailureByConfig(item.Modifiers))
-                {
-                    return true;
-                }
+                return (XaCheckBoxNoPlayRank.IsChecked == true);
             }
-
-            if (XaCheckBoxFail.IsChecked == true)
+            else if (IsFailureByConfig(item.Modifiers)) // モディファイに失敗相当の文字列あり＝フェイルしている
             {
-                if (item.ModifiedScore >= 0 && IsFailureByConfig(item.Modifiers))
-                {
-                    return true;
-                }
+                return (XaCheckBoxFail.IsChecked == true);
             }
-
-            if (XaCheckBoxNoPlayRank.IsChecked == true)
+            else // 上記以外＝クリアしている
             {
-                if (item.ModifiedScore < 0)
-                {
-                    return true;
-                }
+                return (XaCheckBoxClear.IsChecked == true);
             }
+        }
 
-            return false;
+        private bool FilterByResultAcc(GridItem item)
+        {
+            return (_bindingSource.MinAcc <= item.Acc && item.Acc < _bindingSource.MaxAcc);
         }
 
         private bool FilterByOther(GridItem item)
@@ -1099,7 +1173,19 @@ namespace MyBeatSaberScore
         {
             if (e.Item is GridItem item)
             {
-                e.Accepted = FilterBySearch(item) && FilterByMapKind(item) && FilterByResult(item) && FilterByOther(item);
+                e.Accepted =
+                    FilterBySearch(item) &&
+                    FilterByMapStatus(item) &&
+                    FilterByMapGameMode(item) &&
+                    FilterByMapGameDifficulty(item) &&
+                    FilterByMapStar(item) &&
+                    FilterByMapRankedDate(item) &&
+                    FilterByResultFullCombo(item) &&
+                    FilterByResultScoreUpdateDate(item) &&
+                    FilterByResultPlayStatus(item) &&
+                    FilterByResultAcc(item) &&
+                    FilterByResultPp(item) &&
+                    FilterByOther(item);
             }
         }
 

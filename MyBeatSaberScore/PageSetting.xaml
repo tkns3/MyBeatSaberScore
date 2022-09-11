@@ -175,6 +175,9 @@
                                 <CheckBox x:Name="XaDispHash" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                     <TextBlock Text="Hash" Width="200"/>
                                 </CheckBox>
+                                <CheckBox x:Name="XaDispRankedDate" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
+                                    <TextBlock Text="Ranked Date" Width="200"/>
+                                </CheckBox>
                             </StackPanel>
                         </StackPanel>
                     </Grid>

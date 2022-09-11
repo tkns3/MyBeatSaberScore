@@ -350,6 +350,8 @@
 
                     <DataGridTextColumn Header="Hash" local:TagBehavior.Tag="Hash" Width="64" Binding="{Binding Hash}"/>
 
+                    <DataGridTextColumn Header="Ranked Date" local:TagBehavior.Tag="RankedDate"  Width="140" Binding="{Binding RankedDate, Converter={StaticResource DateConverter}}"/>
+
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>

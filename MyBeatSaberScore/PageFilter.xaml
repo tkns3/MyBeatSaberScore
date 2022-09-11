@@ -94,6 +94,16 @@
                                         <TextBlock Text="ExpertPlus" Width="200"/>
                                     </CheckBox>
                                 </StackPanel>
+                                <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="Ranked Date" FontWeight="Bold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="指定した範囲のRanked Dateの譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,0"/>
+                                    <TextBlock Text="日付をBackSpaceまたはDeleteで削除すると未選択に戻すことができる。" Foreground="Gray" Margin="0,0,0,4"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <DatePicker SelectedDate="{Binding RankedDateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <TextBlock Text="～" Foreground="Gray" Margin="4,4,4,0"/>
+                                        <DatePicker SelectedDate="{Binding RankedDateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                    </StackPanel>
+                                </StackPanel>
                             </StackPanel>
                         </Grid>
 
