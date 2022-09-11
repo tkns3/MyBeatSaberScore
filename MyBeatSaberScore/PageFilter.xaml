@@ -148,6 +148,15 @@
                                     </CheckBox>
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="# (順位)" FontWeight="Bold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="指定した#(順位)の範囲のランク譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,4"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox Width="64" Text="{Binding MinScoreRank}" />
+                                        <TextBlock Text="～" Foreground="Gray" Margin="4,4,4,0"/>
+                                        <TextBox Width="64" Text="{Binding MaxScoreRank}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="PP" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="指定したPPの範囲のランク譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,4"/>
                                     <StackPanel Orientation="Horizontal">

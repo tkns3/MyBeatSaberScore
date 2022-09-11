@@ -60,6 +60,7 @@ namespace MyBeatSaberScore
             DispCheckBoxInitialize(XaDispBad, Config.ColumnTagBad);
             DispCheckBoxInitialize(XaDispHash, Config.ColumnTagHash);
             DispCheckBoxInitialize(XaDispRankedDate, Config.ColumnTagRankedDate);
+            DispCheckBoxInitialize(XaDispScoreRank, Config.ColumnTagScoreRank);
 
             _InitializeFinished = true;
         }
@@ -156,6 +157,7 @@ namespace MyBeatSaberScore
             DispCheckBoxChanged(XaDispBad, Config.ColumnTagBad);
             DispCheckBoxChanged(XaDispHash, Config.ColumnTagHash);
             DispCheckBoxChanged(XaDispRankedDate, Config.ColumnTagRankedDate);
+            DispCheckBoxChanged(XaDispScoreRank, Config.ColumnTagScoreRank);
 
             Config.SaveLocalFile();
         }

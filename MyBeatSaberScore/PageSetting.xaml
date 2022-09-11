@@ -103,6 +103,9 @@
                                 <CheckBox x:Name="XaDispStars" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                     <TextBlock Text="★" Width="200"/>
                                 </CheckBox>
+                                <CheckBox x:Name="XaDispScoreRank" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
+                                    <TextBlock Text="# (順位)" Width="200"/>
+                                </CheckBox>
                                 <CheckBox x:Name="XaDispScore" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                     <TextBlock Text="スコア" Width="200"/>
                                 </CheckBox>

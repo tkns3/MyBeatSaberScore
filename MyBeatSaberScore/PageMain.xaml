@@ -190,7 +190,7 @@
                     </DataGridTemplateColumn>
                     
                     <DataGridTextColumn Header="bsr" local:TagBehavior.Tag="Bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}" CellStyle="{StaticResource RightText}"/>
-                    
+
                     <DataGridTemplateColumn Header="カバー" local:TagBehavior.Tag="Cover" Width="45">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -198,8 +198,8 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    
-                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" local:TagBehavior.Tag="SongName" Width="260" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
+
+                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" local:TagBehavior.Tag="SongName" Width="220" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
                     
                     <DataGridTextColumn Header="更新日" local:TagBehavior.Tag="Date"  Width="140" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
 
@@ -270,6 +270,8 @@
                     </DataGridTemplateColumn>
 
                     <DataGridTextColumn Header="★" local:TagBehavior.Tag="Stars" Binding="{Binding Stars, Converter={StaticResource StarConverter}}" CellStyle="{StaticResource RightText}"/>
+
+                    <DataGridTextColumn Header="#" local:TagBehavior.Tag="ScoreRank" Binding="{Binding ScoreRank, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
 
                     <DataGridTextColumn Header="スコア" local:TagBehavior.Tag="Score" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
 

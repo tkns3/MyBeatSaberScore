@@ -54,6 +54,7 @@ namespace MyBeatSaberScore
         public const string ColumnTagBad = "Bad";
         public const string ColumnTagHash = "Hash";
         public const string ColumnTagRankedDate = "RankedDate";
+        public const string ColumnTagScoreRank = "ScoreRank";
         #endregion
 
         public static string ScoreSaberProfileId

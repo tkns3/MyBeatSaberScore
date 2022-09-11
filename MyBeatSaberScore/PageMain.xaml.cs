@@ -63,6 +63,8 @@ namespace MyBeatSaberScore
             private double _MaxPp = 1000.0;
             private double _MinAcc = 0.0;
             private double _MaxAcc = 101.0;
+            private long _MinScoreRank = 0;
+            private long _MaxScoreRank = 9999999;
             private DateTime? _DateStart;
             private DateTime? _DateEnd;
             private DateTime? _RankedDateStart;
@@ -93,6 +95,8 @@ namespace MyBeatSaberScore
             public double MaxPp { get { return _MaxPp; } set { _MaxPp = value; OnPropertyChanged(); } }
             public double MinAcc { get { return _MinAcc; } set { _MinAcc = value; OnPropertyChanged(); } }
             public double MaxAcc { get { return _MaxAcc; } set { _MaxAcc = value; OnPropertyChanged(); } }
+            public long MinScoreRank { get { return _MinScoreRank; } set { _MinScoreRank = value; OnPropertyChanged(); } }
+            public long MaxScoreRank { get { return _MaxScoreRank; } set { _MaxScoreRank = value; OnPropertyChanged(); } }
             public DateTime? DateStart { get { return _DateStart; } set { _DateStart = value; OnPropertyChanged(); } }
             public DateTime? DateEnd { get { return _DateEnd; } set { _DateEnd = value; OnPropertyChanged(); } }
             public DateTime? RankedDateStart { get { return _RankedDateStart; } set { _RankedDateStart = value; OnPropertyChanged(); } }
@@ -566,6 +570,38 @@ namespace MyBeatSaberScore
                 }
             }
 
+            /// <summary>
+            /// フィルター：MinScoreRank
+            /// </summary>
+            public long MinScoreRank
+            {
+                get
+                {
+                    return _filterValue.MinScoreRank;
+                }
+                set
+                {
+                    _filterValue.MinScoreRank = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            /// <summary>
+            /// フィルター：MaxScoreRank
+            /// </summary>
+            public long MaxScoreRank
+            {
+                get
+                {
+                    return _filterValue.MaxScoreRank;
+                }
+                set
+                {
+                    _filterValue.MaxScoreRank = value;
+                    OnPropertyChanged();
+                }
+            }
+
             public void SetPlayerProfile(ScoreSaber.PlayerProfile profile)
             {
                 Name = profile.name;
@@ -614,6 +650,11 @@ namespace MyBeatSaberScore
             /// ローカルに保存したカバー画像のパス。
             /// </summary>
             public string Cover { get; set; }
+
+            /// <summary>
+            /// 順位
+            /// </summary>
+            public long ScoreRank { get; set; }
 
             /// <summary>
             /// 曲名、曲作者、譜面作者を合成した文字列
@@ -818,6 +859,7 @@ namespace MyBeatSaberScore
 
                 Key = map.Key;
                 NumOfKey = (Key.Length > 0) ? Convert.ToInt64(Key, 16) : 0;
+                ScoreRank = score.score.rank;
                 Cover = MapUtil.GetCoverLocalPath(score);
                 SongFullName = $"{score.leaderboard.songName} {score.leaderboard.songSubName} / {score.leaderboard.songAuthorName} [ {score.leaderboard.levelAuthorName} ]";
                 SongName = score.leaderboard.songName;
@@ -1159,6 +1201,11 @@ namespace MyBeatSaberScore
             return (_bindingSource.MinAcc <= item.Acc && item.Acc < _bindingSource.MaxAcc);
         }
 
+        private bool FilterByResultScoreRank(GridItem item)
+        {
+            return (_bindingSource.MinScoreRank <= item.ScoreRank && item.ScoreRank < _bindingSource.MaxScoreRank);
+        }
+
         private bool FilterByOther(GridItem item)
         {
             if (XaCheckBoxCheckedOnly.IsChecked == true)
@@ -1185,6 +1232,7 @@ namespace MyBeatSaberScore
                     FilterByResultPlayStatus(item) &&
                     FilterByResultAcc(item) &&
                     FilterByResultPp(item) &&
+                    FilterByResultScoreRank(item) &&
                     FilterByOther(item);
             }
         }
