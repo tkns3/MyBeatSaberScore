@@ -739,7 +739,20 @@ namespace MyBeatSaberScore
             /// <summary>
             /// 初スコアかどうか
             /// </summary>
-            public bool IsNew { get; set; }
+            public bool IsFirstScore { get; set; }
+
+            /// <summary>
+            /// 初クリアかどうか
+            /// </summary>
+            public bool IsFirstClear { get; set; }
+
+            /// <summary>
+            /// 0:スコア回数>1＆初クリア=false
+            /// 1:スコア回数=1＆初クリア=false
+            /// 2:スコア回数>1＆初クリア=true
+            /// 3:スコア回数=1＆初クリア=true
+            /// </summary>
+            public int ClearStatus { get; set; }
 
             /// <summary>
             /// PP。ランク譜面以外は0。
@@ -893,7 +906,9 @@ namespace MyBeatSaberScore
                 MaxScore = maxScore;
                 Acc = (maxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / maxScore : 0;
                 AccDifference = (maxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / maxScore : 0;
-                IsNew = (maxScore > 0) && (results.Count == 1);
+                IsFirstScore = (maxScore > 0) && (results.Count == 1);
+                IsFirstClear = (maxScore > 0) && results.IsFirstClear();
+                ClearStatus = (IsFirstScore ? 1 : 0)  + (IsFirstClear ? 2 : 0);
                 PP = score.leaderboard.ranked ? score.score.pp : 0;
                 Modifiers = score.score.modifiers;
                 ScoreCount = results.Count;

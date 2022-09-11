@@ -251,6 +251,38 @@ namespace MyBeatSaberScore
                     return 0;
                 }
             }
+
+            public bool IsFirstClear()
+            {
+                if (_results.Count > 1)
+                {
+                    return (!IsFailre(_results.Values[^1].modifiers) && IsFailre(_results.Values[^2].modifiers));
+                }
+                else if (_results.Count == 1)
+                {
+                    return !IsFailre(_results.Values[0].modifiers);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            private bool IsFailre(string modifiers)
+            {
+                if (modifiers.Length > 0)
+                {
+                    foreach (var f in Config.Failures)
+                    {
+                        if (modifiers.Contains(f))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+
+            }
         }
 
         public class AllHistory

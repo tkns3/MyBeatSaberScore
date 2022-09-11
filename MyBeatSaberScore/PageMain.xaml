@@ -31,16 +31,37 @@
         <Style TargetType="{x:Type TextBlock}" x:Key="WrapText">
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
-        <Style TargetType="{x:Type DataGridCell}" x:Key="AccDiff">
+        <Style TargetType="{x:Type DataGridCell}" x:Key="IsFirstScore">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsNew}" Value="True">
+                <DataTrigger Binding="{Binding IsFirstScore}" Value="True">
                     <Setter Property="Foreground" Value="royalblue"/>
                     <Setter Property="Background" Value="lightcyan"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding IsNew}" Value="False">
+                <DataTrigger Binding="{Binding IsFirstScore}" Value="False">
                     <Setter Property="Foreground" Value="Black"/>
                     <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type DataGridCell}" x:Key="ClearStatus">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ClearStatus}" Value="0">
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ClearStatus}" Value="1">
+                    <Setter Property="Foreground" Value="royalblue"/>
+                    <Setter Property="Background" Value="WhiteSmoke"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ClearStatus}" Value="2">
+                    <Setter Property="Foreground" Value="royalblue"/>
+                    <Setter Property="Background" Value="LightYellow"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ClearStatus}" Value="3">
+                    <Setter Property="Foreground" Value="royalblue"/>
+                    <Setter Property="Background" Value="lightcyan"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -275,11 +296,11 @@
 
                     <DataGridTextColumn Header="#" local:TagBehavior.Tag="ScoreRank" Binding="{Binding ScoreRank, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="スコア" local:TagBehavior.Tag="Score" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="スコア" local:TagBehavior.Tag="Score" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource ClearStatus}"/>
 
                     <DataGridTextColumn Header="精度" local:TagBehavior.Tag="Acc" Binding="{Binding Acc, Converter={StaticResource AccConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="Diff" local:TagBehavior.Tag="AccDiff" Binding="{Binding AccDifference, Converter={StaticResource AccDiffConverter}}" CellStyle="{StaticResource AccDiff}"/>
+                    <DataGridTextColumn Header="Diff" local:TagBehavior.Tag="AccDiff" Binding="{Binding AccDifference, Converter={StaticResource AccDiffConverter}}" CellStyle="{StaticResource RightText}"/>
 
                     <DataGridTextColumn Header="✖" local:TagBehavior.Tag="MissPlusBad" Binding="{Binding MissPlusBad}" CellStyle="{StaticResource RightText}"/>
 
