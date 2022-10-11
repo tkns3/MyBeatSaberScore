@@ -48,6 +48,14 @@ namespace MyBeatSaberScore.APIs
                     collection.playerScores.ForEach(score => score.Normalize());
                     return (GetScoresResult.CONTINUE, collection);
                 }
+
+                // [2022/10/12]
+                // APIの仕様が変わったのか最終ページの次を指定すると404 Not Foundではなく200 OKのCount=0が返ってくるようになっている
+                // 200 OKのCount=0も終了扱いにする
+                if (collection?.playerScores?.Count == 0)
+                {
+                    return (GetScoresResult.FINISH, new PlayerScoreCollection());
+                }
             }
             catch (Exception ex)
             {
