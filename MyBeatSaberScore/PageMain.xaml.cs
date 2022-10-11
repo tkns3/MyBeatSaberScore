@@ -906,8 +906,8 @@ namespace MyBeatSaberScore
                 MaxScore = maxScore;
                 Acc = (maxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / maxScore : 0;
                 AccDifference = (maxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / maxScore : 0;
-                IsFirstScore = (maxScore > 0) && (results.Count == 1);
-                IsFirstClear = (maxScore > 0) && results.IsFirstClear();
+                IsFirstScore = results.Count == 1;
+                IsFirstClear = results.IsFirstClear();
                 ClearStatus = (IsFirstScore ? 1 : 0)  + (IsFirstClear ? 2 : 0);
                 PP = score.leaderboard.ranked ? score.score.pp : 0;
                 Modifiers = score.score.modifiers;
