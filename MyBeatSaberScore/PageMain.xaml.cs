@@ -914,6 +914,10 @@ namespace MyBeatSaberScore
                 ScoreCount = results.Count;
                 Hash = hash;
                 CoverUrl = score.leaderboard.coverImage;
+                if (score.leaderboard.coverImage.Contains("steam.png"))
+                {
+                    CoverUrl = $"https://eu.cdn.beatsaver.com/{hash}.jpg";
+                }
                 Ranked = score.leaderboard.ranked;
                 MissPlusBad = score.score.badCuts + score.score.missedNotes;
                 Miss = score.score.missedNotes;
