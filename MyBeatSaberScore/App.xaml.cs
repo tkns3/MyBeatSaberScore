@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -16,6 +17,18 @@ namespace MyBeatSaberScore
 #pragma warning disable CS8602 // null 参照の可能性があるものの逆参照です。
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 #pragma warning restore CS8602 // null 参照の可能性があるものの逆参照です。
+
+        public App()
+        {
+            // 埋め込みリソースからロガーの設定を取得する
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = assembly.GetManifes‌​tResourceNames().FirstOrDefault(x => x.EndsWith("log4net.config"));
+            if (resourceName != null)
+            {
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                log4net.Config.XmlConfigurator.Configure(stream);
+            }
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {

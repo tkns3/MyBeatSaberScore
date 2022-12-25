@@ -6,9 +6,15 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="log4net.config" />
     <None Remove="Resources\360degree.png" />
     <None Remove="Resources\90degree.png" />
     <None Remove="Resources\app.ico" />
@@ -40,6 +46,10 @@
     <None Remove="Resources\user_add.png" />
     <None Remove="Resources\user_del.png" />
     <None Remove="Resources\_404.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="log4net.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -128,12 +138,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
