@@ -80,7 +80,7 @@ namespace MyBeatSaberScore
                 return;
             }
             //設定された文言をプレースホルダにいれます
-            var placeHolder = e.NewValue as string;
+            var placeHolder = e.NewValue as string ?? "";
             var handler = CreateEventHandler(placeHolder);
             if (string.IsNullOrEmpty(placeHolder))
             {
@@ -164,7 +164,7 @@ namespace MyBeatSaberScore
         /// <returns>プレースホルダーで設定された文字を返します</returns>
         public static string GetPlaceHolderText(TextBox textBox)
         {
-            return textBox.GetValue(PlaceholderProperty) as string;
+            return textBox.GetValue(PlaceholderProperty) as string ?? "";
         }
     }
 }
