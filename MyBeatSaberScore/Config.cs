@@ -15,9 +15,7 @@ namespace MyBeatSaberScore
 {
     internal static class Config
     {
-#pragma warning disable CS8602 // null 参照の可能性があるものの逆参照です。
-        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-#pragma warning restore CS8602 // null 参照の可能性があるものの逆参照です。
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
         private static readonly string _dataDir = Path.Combine("data");
         private static readonly string _configPath = Path.Combine(_dataDir, "config.json");
 
