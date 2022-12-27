@@ -1410,13 +1410,19 @@ namespace MyBeatSaberScore
             }
 
             // 未取得のカバー画像を取得しながら逐次表示を更新する
+            int next = 100;
             Task downloadUnacquiredCover = TaskDownloadUnacquiredCover((max, count) =>
             {
                 _bindingSource.Task3Progress = 100.0 * count / max;
-                Dispatcher.Invoke(() =>
+
+                if (count >= next || count == max)
                 {
-                    RefreshGrid();
-                });
+                    next += 100;
+                    Dispatcher.Invoke(() =>
+                    {
+                        RefreshGrid();
+                    });
+                }
             });
 
             await Task.WhenAll(downloadUnacquiredCover, downloadPlayerProfile);
