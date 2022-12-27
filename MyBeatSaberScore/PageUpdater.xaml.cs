@@ -42,7 +42,7 @@ namespace MyBeatSaberScore
             dlg.Image = MessageBoxImage.Question;
             dlg.Result = MessageBoxResult.No;
             dlg.ShowDialog();
-            if (dlg.Result == MessageBoxResult.Yes)
+            if (dlg.Result == MessageBoxResult.OK)
             {
                 await Updater.StartUpdate();
             }

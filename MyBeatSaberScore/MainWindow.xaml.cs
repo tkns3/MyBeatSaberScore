@@ -61,7 +61,7 @@ namespace MyBeatSaberScore
                     dlg.ButtonTextOK = "アップデート";
                     dlg.ButtonTextCancel = "スキップ";
                     dlg.ShowDialog();
-                    if (dlg.Result == MessageBoxResult.Yes)
+                    if (dlg.Result == MessageBoxResult.OK)
                     {
                         await Updater.StartUpdate();
                     }
