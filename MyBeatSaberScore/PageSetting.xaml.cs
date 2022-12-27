@@ -49,6 +49,7 @@ namespace MyBeatSaberScore
             DispCheckBoxInitialize(XaDispCopyBsr, Config.ColumnTagCopyBsr);
             DispCheckBoxInitialize(XaDispJumpBeatSaver, Config.ColumnTagJumpBeatSaver);
             DispCheckBoxInitialize(XaDispJumpScoreSaber, Config.ColumnTagJumpScoreSaber);
+            DispCheckBoxInitialize(XaDispJumpBeatLeader, Config.ColumnTagJumpBeatLeader);
             DispCheckBoxInitialize(XaDispDuration, Config.ColumnTagDuration);
             DispCheckBoxInitialize(XaDispBpm, Config.ColumnTagBpm);
             DispCheckBoxInitialize(XaDispNotes, Config.ColumnTagNotes);
@@ -146,6 +147,7 @@ namespace MyBeatSaberScore
             DispCheckBoxChanged(XaDispCopyBsr, Config.ColumnTagCopyBsr);
             DispCheckBoxChanged(XaDispJumpBeatSaver, Config.ColumnTagJumpBeatSaver);
             DispCheckBoxChanged(XaDispJumpScoreSaber, Config.ColumnTagJumpScoreSaber);
+            DispCheckBoxChanged(XaDispJumpBeatLeader, Config.ColumnTagJumpBeatLeader);
             DispCheckBoxChanged(XaDispDuration, Config.ColumnTagDuration);
             DispCheckBoxChanged(XaDispBpm, Config.ColumnTagBpm);
             DispCheckBoxChanged(XaDispNotes, Config.ColumnTagNotes);

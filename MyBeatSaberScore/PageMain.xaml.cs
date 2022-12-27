@@ -1579,6 +1579,24 @@ namespace MyBeatSaberScore
             }
         }
 
+        private async void OnClickJumpBeatLeader(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (((FrameworkElement)sender).DataContext is GridItem item)
+                {
+                    var leaderboards = await BeatLeader.GetLeaderboardsByHash(item.Hash);
+                    var leaderboardId = BeatLeader.GetLeaderboardId(leaderboards, (int)item.Difficulty, item.GameMode);
+                    var url = $"https://www.beatleader.xyz/leaderboard/global/{leaderboardId}";
+                    _ = OpenUrl(url);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.Warn(ex);
+            }
+        }
+
         private void OnClickGridItemCheckBox(object sender, RoutedEventArgs e)
         {
             if (((FrameworkElement)sender).DataContext is GridItem item)

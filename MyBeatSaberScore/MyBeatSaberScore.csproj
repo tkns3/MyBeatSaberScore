@@ -18,6 +18,7 @@
     <None Remove="Resources\360degree.png" />
     <None Remove="Resources\90degree.png" />
     <None Remove="Resources\app.ico" />
+    <None Remove="Resources\beatleader.png" />
     <None Remove="Resources\beatsaver.png" />
     <None Remove="Resources\checkoff.png" />
     <None Remove="Resources\checkon.png" />
@@ -66,6 +67,7 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\app.ico" />
+    <Resource Include="Resources\beatleader.png" />
     <Resource Include="Resources\beatsaver.png" />
     <Resource Include="Resources\checkoff.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

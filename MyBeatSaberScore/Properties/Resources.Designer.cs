@@ -93,6 +93,16 @@ namespace MyBeatSaberScore.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
+        internal static byte[] beatleader {
+            get {
+                object obj = ResourceManager.GetObject("beatleader", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
         internal static byte[] beatsaver {
             get {
                 object obj = ResourceManager.GetObject("beatsaver", resourceCulture);

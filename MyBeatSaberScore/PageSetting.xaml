@@ -148,6 +148,12 @@
                                         <TextBlock Text=" (Open Score Saber in your browser)" Width="200"/>
                                     </StackPanel>
                                 </CheckBox>
+                                <CheckBox x:Name="XaDispJumpBeatLeader" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Width="16" Source="Resources/beatleader.png"></Image>
+                                        <TextBlock Text=" (Open BeatLeader in your browser)" Width="200"/>
+                                    </StackPanel>
+                                </CheckBox>
                                 <CheckBox x:Name="XaDispDuration" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
                                     <TextBlock Text="⌛ (Song Duration)" Width="200"/>
                                 </CheckBox>
