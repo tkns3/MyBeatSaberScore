@@ -28,6 +28,11 @@ namespace MyBeatSaberScore
             }
         }
 
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            Updater.Initialize(e.Args);
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);

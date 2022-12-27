@@ -74,6 +74,17 @@ namespace MyBeatSaberScore
 
         public static Grid GridSetting => _data.grid;
 
+        public static Version SkipVersion
+        {
+            get {
+                return _data.skipVersion;
+            }
+            set {
+                _data.skipVersion = value;
+                SaveLocalFile();
+            }
+        }
+
         public static void LoadLocalFile()
         {
             try
@@ -123,12 +134,16 @@ namespace MyBeatSaberScore
             [DataMember]
             public Grid grid { get; set; }
 
+            [DataMember]
+            public Version skipVersion { get; set; }
+
             public ConfigData()
             {
                 scoreSaberProfileId = "";
                 failures = new();
                 favoUsers = new();
                 grid = new Grid();
+                skipVersion = new Version();
             }
 
             public void Normalize()

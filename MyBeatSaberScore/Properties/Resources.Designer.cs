@@ -243,6 +243,26 @@ namespace MyBeatSaberScore.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
+        internal static byte[] menu_update {
+            get {
+                object obj = ResourceManager.GetObject("menu_update", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] menu_update_none {
+            get {
+                object obj = ResourceManager.GetObject("menu_update_none", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
         internal static byte[] menu_users {
             get {
                 object obj = ResourceManager.GetObject("menu_users", resourceCulture);

@@ -33,6 +33,8 @@
     <None Remove="Resources\menu_onpu.png" />
     <None Remove="Resources\menu_playlist.png" />
     <None Remove="Resources\menu_setting.png" />
+    <None Remove="Resources\menu_update.png" />
+    <None Remove="Resources\menu_update_none.png" />
     <None Remove="Resources\menu_users.png" />
     <None Remove="Resources\noarrows.png" />
     <None Remove="Resources\normal.png" />
@@ -96,6 +98,8 @@
     <Resource Include="Resources\menu_onpu.png" />
     <Resource Include="Resources\menu_playlist.png" />
     <Resource Include="Resources\menu_setting.png" />
+    <Resource Include="Resources\menu_update.png" />
+    <Resource Include="Resources\menu_update_none.png" />
     <Resource Include="Resources\menu_users.png" />
     <Resource Include="Resources\noarrows.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

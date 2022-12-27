@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyBeatSaberScore"
         mc:Ignorable="d"
-        Title="MyBeatSaberScore" Height="720" Width="1100" Icon="/Resources/app.ico">
+        Title="MyBeatSaberScore" Height="720" Width="1100" Icon="/Resources/app.ico" Initialized="Window_Initialized">
     <Window.Resources>
     </Window.Resources>
     <Grid>
@@ -51,6 +51,12 @@
                     <Image Width="26" Margin="2" Source="Resources/menu_setting.png"/>
                 </TabItem.Header>
                 <Frame Source="PageSetting.xaml"></Frame>
+            </TabItem>
+            <TabItem x:Name="XaTabUpdater">
+                <TabItem.Header>
+                    <Image x:Name="XaImageMenuUpdate" Width="26" Margin="2" Source="Resources/menu_update_none.png"/>
+                </TabItem.Header>
+                <Frame Source="PageUpdater.xaml"></Frame>
             </TabItem>
         </TabControl>
     </Grid>

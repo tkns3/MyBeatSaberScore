@@ -172,6 +172,12 @@
   <data name="menu_setting" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\menu_setting.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="menu_update" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_update.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="menu_update_none" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\menu_update_none.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="menu_users" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\menu_users.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
