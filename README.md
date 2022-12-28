@@ -10,19 +10,49 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 # インストール
 
-[latest](https://github.com/tkns3/MyBeatSaberScore/releases/latest)から`MyBeatSaberScore-vX.X.X.zip`をダウンロードして任意のフォルダに展開してください。
+[latest](https://github.com/tkns3/MyBeatSaberScore/releases/latest)から`MyBeatSaberScore.exe`をダウンロードします。
+
+任意の場所に`MyBeatSaberScore`フォルダを作成してその中にダウンロードした`MyBeatSaberScore.exe`を配置してください。
+
+<img src="image/install.png" alt="attach:install" title="attach:install">
+
+※`MyBeatSaberScore`フォルダのフォルダ名は変更しても問題ありません。
+
+※以降はインストールで作成したフォルダのことをインストールフォルダと記載します。
 
 # アンインストール
 
-インストールしたフォルダを丸ごと削除してください。
+インストールフォルダを削除してください。
 
 # アップデート
 
-[latest](https://github.com/tkns3/MyBeatSaberScore/releases/latest)から`MyBeatSaberScore-vX.X.X.zip`をダウンロードして展開したフォルダに含まれている全ファイルをインストールフォルダに上書きしてください。
+## v0.6.0以上のバージョンを使用している場合
+
+アプリ内でアップデートボタン（画像内①）をクリックすると最新の実行ファイルをダウウンロードして自動的に再起動します。
+
+<img src="image/usage_update.png" alt="attach:usage_update" title="attach:usage_update">
+
+現在のバージョンが最新の場合はアップデートボタンはクリックできません。
+
+## v0.6.0未満のバージョンを使用している場合
+
+インストールフォルダから`data`フォルダ、`log`フォルダ以外を削除します。
+
+<img src="image/update_from_old.png" alt="attach:update_from_old" title="attach:update_from_old">
+
+[latest](https://github.com/tkns3/MyBeatSaberScore/releases/latest)から`MyBeatSaberScore.exe`をダウンロードしてインストールフォルダに配置します。
 
 # 使い方
 
-## .Netランタイムのインストール（一度だけ）
+## 起動
+
+`MyBeatSaberScore.exe`を実行してください。
+
+「WindowsによってPCが保護されました」と表示された場合、メッセージ内の「詳細情報」をクリックすると現れる「実行」ボタンをクリックしてください。
+
+英語で「.NETが必要」の旨のメッセージが表示された場合、次の「.NETランタイムのインストール（一度だけ）」を行ってください。
+
+### .NETランタイムのインストール
 
 .NET 6.0のSDKまたはランタイムをインストールしていない場合は[.NET 6.0 ランタイムのダウンロード](https://dotnet.microsoft.com/ja-jp/download/dotnet/6.0/runtime)からお使いのPC環境にあわせたランタイムをダウンロードしてインストールしてください。
 
@@ -32,26 +62,43 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 <img src="image/runtime.png" alt="attach:runtime" title="attach:runtime">
 
-## 起動
-
-`MyBeatSaberScore.exe`を実行してください。
-
 ## データ取得
 
-起動したら左上のテキストボックスにスコアセイバーのプロファイルIDを入力し「データ取得」ボタンをクリックします。
+左上のテキストボックス（画像内①）にスコアセイバーのプロファイルIDを入力し「データ取得」（画像内②）ボタンをクリックします。
+
+<img src="image/usage_get.png" alt="attach:usage_get" title="attach:usage_get">
+
 スコアセイバーの個人ページURLが`https://scoresaber.com/u/76561198003035723`であれば`76561198003035723`の部分がプロファイルIDです。
 
 初回は全プレイ履歴やカバー画像を取得するためダウンロードに時間がかかります。気長に待ってください。
 
-次回以降は差分データのみを取得するため比較的短い時間で終わります。
-
 取得したデータは`MyBeatSaberScore.exe`と同じ階層の`data`フォルダに保存しています。
+
+「差分」（デフォルト）を指定した場合、取得済みデータより新しいデータのみを取得します。
+
+「全部」を指定した場合、取得済みデータについてもスコアを取得しなおします。
+
+通常は通信量が少ない「差分」がおすすめです。
+
+次のようなケースは「全部」を試してください。
+
+- 譜面ごとの順位の最新情報が欲しい。
+- リウェイトや星変化によって譜面のppがScoreSaberと一致しなくなっている。
+- アンランク時代にプレイ済みの譜面がランク化されたが、ランク譜面としてプレイ済みになっていない。
 
 ## ユーザー切り替え
 
-ユーザータブで「お気に入りユーザーの管理」と「表示ユーザーの切り替え」ができます。
+ユーザーページで「お気に入りユーザーの管理」と「表示ユーザーの切り替え」ができます。
 
 <img src="image/usage_userselect.png" alt="attach:usage_userselect" title="attach:usage_userselect">
+
+スコアセイバーのプロファイルIDを入力（画像内①）してプラスボタン（画像内②）をクリックするとユーザを追加します。
+
+ユーザごとのマイナスボタン（画像内③）をクリックするとそのユーザを削除します。
+
+ユーザをクリック（画像内④）するとメインページに遷移しそのユーザのスコアを表示します。
+
+この画面からユーザを削除しても取得済みのスコアは削除されません。
 
 ## フィルターとソート
 
@@ -61,7 +108,7 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 <img src="image/usage_filter.png" alt="attach:usage_filter" title="attach:usage_filter">
 
-フィルタータブでは色々なフィルターを指定することができます。
+フィルターページでは色々なフィルターを指定することができます。
 
 <img src="image/usage_filter2.png" alt="attach:usage_filter" title="attach:usage_filter">
 
@@ -69,9 +116,13 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 Twitchのアイコンをクリックすると「!bsr key」をクリップボードにコピーします。
 
-## BeatSaver、ScoreSaberをひらく
+<img src="image/usage_CopyBSR.png" alt="attach:usage_CopyBSR" title="attach:usage_CopyBSR">
 
-BeatSaver、ScoreSaberのアイコンをクリックすると譜面のページをブラウザでひらきます。
+## BeatSaver、ScoreSaber、BeatLeaderをひらく
+
+BeatSaverアイコン（画像内①）、ScoreSaberアイコン（画像内②）、BeatLeadrアイコン（画像内③）をクリックすると譜面のページをブラウザでひらきます。
+
+<img src="image/usage_JumpBSSSBL.png" alt="attach:usage_JumpBSSSBL" title="attach:usage_JumpBSSSBL">
 
 ## プレイリスト作成
 
@@ -85,11 +136,7 @@ BeatSaver、ScoreSaberのアイコンをクリックすると譜面のページ�
 
 .NET 6.0のSDKまたはランタイムがインストールできていない可能性があります。
 
-「使い方」の「.Netランタイムのインストール（一度だけ）」を参考に.NET 6.0のランタイムをインストールしてください。
-
-## アップデートしたら未プレイのランク譜面が表示されなくなった
-
-「データ取得」を行うと表示されます。
+「使い方」の「.NETランタイムのインストール」を参考に.NET 6.0のランタイムをインストールしてください。
 
 ## bsr、精度が表示されない譜面があります
 
