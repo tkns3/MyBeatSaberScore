@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyBeatSaberScore.Utility;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -28,7 +29,6 @@ namespace MyBeatSaberScore
         private static readonly string OriginalExeName = "MyBeatSaberScore.exe";
         private static readonly string ApiReleasesURL = $"https://api.github.com/repos/{Owner}/{Repo}/releases";
 
-        private static HttpClient _client = new();
         private static string[] _arguments = Array.Empty<string>();
 
         public static Version? CurrentVersion { get; private set; }
@@ -106,19 +106,6 @@ namespace MyBeatSaberScore
                     }
                 }
             }
-
-            var handler = new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-            };
-
-            _client = new HttpClient(handler)
-            {
-                Timeout = TimeSpan.FromSeconds(240),
-            };
-
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            _client.DefaultRequestHeaders.Add("User-Agent", $"{Repo}/" + CurrentVersion);
         }
 
         public static async Task FetchReleasesAsync()
@@ -128,7 +115,7 @@ namespace MyBeatSaberScore
 
             try
             {
-                var resp = await _client.GetAsync(ApiReleasesURL);
+                var resp = await HttpTool.Client.GetAsync(ApiReleasesURL);
                 var body = await resp.Content.ReadAsStringAsync();
                 var releases = JsonSerializer.Deserialize<List<Release>>(body);
                 if (releases != null)
@@ -208,7 +195,7 @@ namespace MyBeatSaberScore
 
         private static async Task<bool> Download(string link, string output)
         {
-            HttpResponseMessage res = await _client.GetAsync(link);
+            HttpResponseMessage res = await HttpTool.Client.GetAsync(link);
             if (res.StatusCode != HttpStatusCode.OK)
             {
                 return false;

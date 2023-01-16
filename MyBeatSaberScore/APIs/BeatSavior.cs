@@ -1,6 +1,6 @@
-﻿using System;
+﻿using MyBeatSaberScore.Utility;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
@@ -13,8 +13,6 @@ namespace MyBeatSaberScore.APIs
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
 
-        private static readonly HttpClient _client = new();
-
         public static async Task<RankedMapCollection> GetRankedMaps()
         {
             string url = @"https://www.beatsavior.io/api/maps/ranked";
@@ -22,7 +20,7 @@ namespace MyBeatSaberScore.APIs
             try
             {
                 HttpContent requestContent = new StringContent("{\"minStar\":0,\"maxStar\":20,\"playlist\":true}", Encoding.UTF8, "application/json");
-                var httpsResponse = await _client.PostAsync(url, requestContent);
+                var httpsResponse = await HttpTool.Client.PostAsync(url, requestContent);
                 var responseContent = await httpsResponse.Content.ReadAsStringAsync();
                 var collection = JsonSerializer.Deserialize<RankedMapCollection>(responseContent);
                 

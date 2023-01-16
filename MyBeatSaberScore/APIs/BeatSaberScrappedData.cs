@@ -1,9 +1,8 @@
-﻿using System;
+﻿using MyBeatSaberScore.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
@@ -15,7 +14,6 @@ namespace MyBeatSaberScore.APIs
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
 
-        private static readonly HttpClient _client = new();
         private static readonly string _mapsDir = Path.Combine("data", "maps");
         private static readonly string _combinedScrappedDataJsonPath = Path.Combine(_mapsDir, "combinedScrappedData.json");
 
@@ -27,7 +25,7 @@ namespace MyBeatSaberScore.APIs
             try
             {
                 {
-                    HttpResponseMessage res = await _client.GetAsync(url);
+                    var res = await HttpTool.Client.GetAsync(url);
                     using var fileStream = File.Create(localPath);
                     using var httpStream = await res.Content.ReadAsStreamAsync();
                     httpStream.CopyTo(fileStream);

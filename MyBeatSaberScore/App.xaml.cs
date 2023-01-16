@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -31,6 +28,7 @@ namespace MyBeatSaberScore
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Updater.Initialize(e.Args);
+            Utility.HttpTool.Client.DefaultRequestHeaders.Add("User-Agent", $"MyBeatSaberScore/" + Updater.CurrentVersion);
         }
 
         protected override void OnStartup(StartupEventArgs e)

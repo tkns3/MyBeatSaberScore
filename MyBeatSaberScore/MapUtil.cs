@@ -1,14 +1,9 @@
 ﻿using MyBeatSaberScore.APIs;
+using MyBeatSaberScore.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Net.Http;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MyBeatSaberScore
@@ -17,7 +12,6 @@ namespace MyBeatSaberScore
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
 
-        private static readonly HttpClient _client = new();
         private static readonly string _mapsDir = Path.Combine("data", "maps");
         private static readonly string _coverDir = Path.Combine(_mapsDir, "cover");
 
@@ -111,7 +105,7 @@ namespace MyBeatSaberScore
         {
             try
             {
-                HttpResponseMessage res = await _client.GetAsync(url);
+                HttpResponseMessage res = await HttpTool.Client.GetAsync(url);
                 if (!res.IsSuccessStatusCode)
                 {
                     _logger.Warn($"{url}: StatusCode={res.StatusCode}");

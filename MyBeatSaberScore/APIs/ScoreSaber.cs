@@ -1,9 +1,7 @@
-﻿using System;
+﻿using MyBeatSaberScore.Utility;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -12,8 +10,6 @@ namespace MyBeatSaberScore.APIs
     public static class ScoreSaber
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
-
-        private static readonly HttpClient _client = new();
 
         public enum GetScoresResult
         {
@@ -28,7 +24,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
-                var httpsResponse = await _client.GetAsync(url);
+                var httpsResponse = await HttpTool.Client.GetAsync(url);
 
                 // metadata.totalと取得できるデータ数が一致しないことがある。
                 // そのため全てのデータを取得できたかの判定にmetadata.totalを使えない。
@@ -80,7 +76,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
-                var httpsResponse = await _client.GetAsync(url);
+                var httpsResponse = await HttpTool.Client.GetAsync(url);
                 var responseContent = await httpsResponse.Content.ReadAsStringAsync();
                 var collection = JsonSerializer.Deserialize<LeaderboardInfoCollection>(responseContent);
 
@@ -111,7 +107,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
-                var httpsResponse = await _client.GetAsync(url);
+                var httpsResponse = await HttpTool.Client.GetAsync(url);
                 var responseContent = await httpsResponse.Content.ReadAsStringAsync();
                 var info = JsonSerializer.Deserialize<LeaderboardInfo>(responseContent);
                 if (info != null)
@@ -134,7 +130,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
-                var httpsResponse = await _client.GetAsync(url);
+                var httpsResponse = await HttpTool.Client.GetAsync(url);
                 var responseContent = await httpsResponse.Content.ReadAsStringAsync();
                 var collection = JsonSerializer.Deserialize<PlayerProfile>(responseContent);
                 return collection ?? new PlayerProfile();
