@@ -8,11 +8,10 @@ namespace MyBeatSaberScore.Convertes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string v = (string)value;
-            if (v.Length > 0)
+            var v = (DateTime?)value;
+            if (v != null)
             {
-                var d = DateTime.Parse(v);
-                return d.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)");
+                return v?.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)") ?? "";
             }
             else
             {

@@ -65,7 +65,7 @@ namespace MyBeatSaberScore
             set
             {
                 _data.scoreSaberProfileId = value;
-                SaveLocalFile();
+                SaveToLocalFile();
             }
         }
 
@@ -82,11 +82,11 @@ namespace MyBeatSaberScore
             }
             set {
                 _data.skipVersion = value;
-                SaveLocalFile();
+                SaveToLocalFile();
             }
         }
 
-        public static void LoadLocalFile()
+        public static void LoadFromLocalFile()
         {
             try
             {
@@ -107,7 +107,7 @@ namespace MyBeatSaberScore
             }
         }
 
-        public static void SaveLocalFile()
+        public static void SaveToLocalFile()
         {
             try
             {

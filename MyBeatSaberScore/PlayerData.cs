@@ -53,7 +53,6 @@ namespace MyBeatSaberScore
                 var collection = JsonSerializer.Deserialize<ScoreSaber.PlayerScoreCollection>(jsonString);
                 if (collection != null)
                 {
-                    collection.Normalize();
                     collection.playerScores.ForEach(score =>
                     {
                         playedMaps[score.leaderboard.id] = score;
@@ -222,7 +221,7 @@ namespace MyBeatSaberScore
 
             public bool hasReplay { get; set; }
 
-            public string timeSet { get; set; } = "";
+            public DateTime timeSet { get; set; }
         }
 
         public class DifficultyResults
@@ -231,7 +230,7 @@ namespace MyBeatSaberScore
 
             public void Add(PlayResult result)
             {
-                _ = _results.TryAdd(DateTime.Parse(result.timeSet), result);
+                _ = _results.TryAdd(result.timeSet, result);
             }
 
             public int Count { get { return _results.Count; } }
@@ -319,7 +318,7 @@ namespace MyBeatSaberScore
                     _resultsByLeaderboardId[result.leaderboardId] = new();
                 }
                 _resultsByLeaderboardId[result.leaderboardId].Add(result);
-                _ = _allResults.TryAdd(DateTime.Parse(result.timeSet), result);
+                _ = _allResults.TryAdd(result.timeSet, result);
             }
 
             public void Add(ScoreSaber.PlayerScore score)

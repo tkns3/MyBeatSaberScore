@@ -3,6 +3,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using MyBeatSaberScore.BeatMap;
+using MyBeatSaberScore.Utility;
 
 namespace MyBeatSaberScore
 {
@@ -28,7 +30,10 @@ namespace MyBeatSaberScore
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Updater.Initialize(e.Args);
-            Utility.HttpTool.Client.DefaultRequestHeaders.Add("User-Agent", $"MyBeatSaberScore/" + Updater.CurrentVersion);
+            HttpTool.Client.DefaultRequestHeaders.Add("User-Agent", $"MyBeatSaberScore/" + Updater.CurrentVersion);
+            BeatMapCover.Initialize();
+            BeatMapDic.Initialize();
+            Config.LoadFromLocalFile();
         }
 
         protected override void OnStartup(StartupEventArgs e)

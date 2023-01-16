@@ -1,7 +1,7 @@
-﻿using MyBeatSaberScore.Utility;
+﻿using MyBeatSaberScore.BeatMap;
+using MyBeatSaberScore.Utility;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -39,7 +39,6 @@ namespace MyBeatSaberScore.APIs
 
                 if (collection?.playerScores?.Count > 0)
                 {
-                    collection.playerScores.ForEach(score => score.Normalize());
                     return (GetScoresResult.CONTINUE, collection);
                 }
 
@@ -76,15 +75,8 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
-                var httpsResponse = await HttpTool.Client.GetAsync(url);
-                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
-                var collection = JsonSerializer.Deserialize<LeaderboardInfoCollection>(responseContent);
-
-                if (collection?.leaderboards?.Count > 0)
-                {
-                    collection.Normalize();
-                    return collection;
-                }
+                var result = await HttpTool.GetAndDeserialize<LeaderboardInfoCollection>(url);
+                return result;
             }
             catch (Exception ex)
             {
@@ -94,27 +86,34 @@ namespace MyBeatSaberScore.APIs
             return new LeaderboardInfoCollection();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="hash">Hash</param>
-        /// <param name="difficulty">1:Easy, 3:Normal, 5:Hard, 7:Expert 9:ExpertPlus</param>
-        /// <param name="mode">SoloStandard, SoloLawless, SoloOneSaber, SoloLightShow, Solo90Degree, Solo360Degree, SoloNoArrows</param>
-        /// <returns></returns>
-        public static async Task<LeaderboardInfo> GetLeaderboard(string hash, int difficulty, string mode)
+        public static async Task<LeaderboardInfo> GetLeaderboard(string hash, BeatMapDifficulty mapDifficulty, BeatMapMode mapMode)
         {
+            int difficulty = mapDifficulty switch
+            {
+                BeatMapDifficulty.Easy => 1,
+                BeatMapDifficulty.Normal => 3,
+                BeatMapDifficulty.Hard => 5,
+                BeatMapDifficulty.Expert => 7,
+                BeatMapDifficulty.ExpertPlus => 9,
+                _ => 1,
+            };
+            string mode = mapMode switch
+            {
+                BeatMapMode.Standard => "SoloStandard",
+                BeatMapMode.OneSaber => "SoloOneSaber",
+                BeatMapMode.NoArrows => "SoloNoArrows",
+                BeatMapMode.Degree90 => "Solo90Degree",
+                BeatMapMode.Degree360 => "Solo360Degree",
+                BeatMapMode.Lightshow => "SoloLightshow",
+                BeatMapMode.Lawless => "SoloLawless",
+                _ => "SoloStandard",
+            };
             string url = $"https://scoresaber.com/api/leaderboard/by-hash/{hash}/info?difficulty={difficulty}&mode={mode}";
 
             try
             {
-                var httpsResponse = await HttpTool.Client.GetAsync(url);
-                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
-                var info = JsonSerializer.Deserialize<LeaderboardInfo>(responseContent);
-                if (info != null)
-                {
-                    info.Normalize();
-                    return info;
-                }
+                var result = await HttpTool.GetAndDeserialize<LeaderboardInfo>(url);
+                return result;
             }
             catch (Exception ex)
             {
@@ -130,10 +129,8 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
-                var httpsResponse = await HttpTool.Client.GetAsync(url);
-                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
-                var collection = JsonSerializer.Deserialize<PlayerProfile>(responseContent);
-                return collection ?? new PlayerProfile();
+                var result = await HttpTool.GetAndDeserialize<PlayerProfile>(url);
+                return result;
             }
             catch (Exception ex)
             {
@@ -143,398 +140,179 @@ namespace MyBeatSaberScore.APIs
             return new PlayerProfile();
         }
 
-        [DataContract]
         public class LeaderboardInfoCollection
         {
-            [DataMember]
-            public List<LeaderboardInfo> leaderboards { get; set; }
-
-            [DataMember]
-            public Metadata metadata { get; set; }
-
-            public LeaderboardInfoCollection()
-            {
-                leaderboards = new();
-                metadata = new Metadata();
-            }
-
-            public void Normalize()
-            {
-                leaderboards.ForEach(leaderboard => leaderboard.Normalize());
-            }
+            public List<LeaderboardInfo> leaderboards { get; set; } = new();
+            public Metadata metadata { get; set; } = new();
         }
 
-        [DataContract]
         public class PlayerScoreCollection
         {
-            [DataMember]
-            public List<PlayerScore> playerScores { get; set; }
-
-            [DataMember]
-            public Metadata metadata { get; set; }
-
-            public PlayerScoreCollection()
-            {
-                playerScores = new();
-                metadata = new Metadata();
-            }
-
-            public void Normalize()
-            {
-                playerScores.ForEach(playerScores => playerScores.Normalize());
-            }
+            public List<PlayerScore> playerScores { get; set; } = new();
+            public Metadata metadata { get; set; } = new();
         }
 
-        [DataContract]
         public class PlayerScore
         {
-            [DataMember]
-            public Score score { get; set; }
-
-            [DataMember]
-            public LeaderboardInfo leaderboard { get; set; }
-
-            public PlayerScore()
-            {
-                score = new Score();
-                leaderboard = new LeaderboardInfo();
-            }
-
-            public void Normalize()
-            {
-                leaderboard.Normalize();
-            }
+            public Score score { get; set; } = new();
+            public LeaderboardInfo leaderboard { get; set; } = new();
         }
 
-        [DataContract]
         public class Score
         {
-            [DataMember]
             public long id { get; set; }
-
-            [DataMember]
-            public LeaderboardPlayerInfo leaderboardPlayerInfo { get; set; }
-
-            [DataMember]
+            public LeaderboardPlayerInfo leaderboardPlayerInfo { get; set; } = new();
             public long rank { get; set; }
-
-            [DataMember]
             public long baseScore { get; set; }
-
-            [DataMember]
             public long modifiedScore { get; set; }
-
-            [DataMember]
             public double pp { get; set; }
-
-            [DataMember]
             public double weight { get; set; }
-
-            [DataMember]
-            public string modifiers { get; set; }
-
-            [DataMember]
+            public string modifiers { get; set; } = "";
             public double multiplier { get; set; }
-
-            [DataMember]
             public long badCuts { get; set; }
-
-            [DataMember]
             public long missedNotes { get; set; }
-
-            [DataMember]
             public long maxCombo { get; set; }
-
-            [DataMember]
             public bool fullCombo { get; set; }
-
-            [DataMember]
             public long hmd { get; set; }
-
-            [DataMember]
             public bool hasReplay { get; set; }
-
-            [DataMember]
-            public string timeSet { get; set; }
-
-            public Score()
-            {
-                leaderboardPlayerInfo = new LeaderboardPlayerInfo();
-                modifiers = "";
-                timeSet = "";
-            }
+            public DateTime timeSet { get; set; } = new();
         }
 
         public class LeaderboardPlayerInfo
         {
-            [DataMember]
             public long id { get; set; }
-
-            [DataMember]
-            public string name { get; set; }
-
-            [DataMember]
-            public string profilePicture { get; set; }
-
-            [DataMember]
-            public string country { get; set; }
-
-            [DataMember]
+            public string name { get; set; } = "";
+            public string profilePicture { get; set; } = "";
+            public string country { get; set; } = "";
             public long permissions { get; set; }
-
-            [DataMember]
-            public string role { get; set; }
-
-            public LeaderboardPlayerInfo()
-            {
-                name = "";
-                profilePicture = "";
-                country = "";
-                role = "";
-            }
+            public string role { get; set; } = "";
         }
 
-        [DataContract]
         public class LeaderboardInfo
         {
-            [DataMember]
             public long id { get; set; }
-
-            [DataMember]
-            public string songHash { get; set; }
-
-            [DataMember]
-            public string songName { get; set; }
-
-            [DataMember]
-            public string songSubName { get; set; }
-
-            [DataMember]
-            public string songAuthorName { get; set; }
-
-            [DataMember]
-            public string levelAuthorName { get; set; }
-
-            [DataMember]
-            public Difficulty difficulty { get; set; }
-
-            [DataMember]
+            public string songHash
+            {
+                get
+                {
+                    return _songHash;
+                }
+                set
+                {
+                    _songHash = value.ToLower();
+                }
+            }
+            public string songName { get; set; } = "";
+            public string songSubName { get; set; } = "";
+            public string songAuthorName { get; set; } = "";
+            public string levelAuthorName { get; set; } = "";
+            public Difficulty difficulty { get; set; } = new();
             public long maxScore { get; set; }
-
-            [DataMember]
-            public string createdDate { get; set; }
-
-            [DataMember]
-            public string? rankedDate { get; set; }
-
-            [DataMember]
-            public string? qualifiedDate { get; set; }
-
-            [DataMember]
-            public string? lovedDate { get; set; }
-
-            [DataMember]
+            public DateTime createdDate { get; set; }
+            public DateTime? rankedDate { get; set; }
+            public DateTime? qualifiedDate { get; set; }
+            public DateTime? lovedDate { get; set; }
             public bool ranked { get; set; }
-
-            [DataMember]
             public bool qualified { get; set; }
-
-            [DataMember]
             public bool loved { get; set; }
-
-            [DataMember]
             public long maxPP { get; set; }
-
-            [DataMember]
             public double stars { get; set; }
-
-            [DataMember]
             public bool positiveModifiers { get; set; }
-
-            [DataMember]
             public long plays { get; set; }
-
-            [DataMember]
             public long dailyPlays { get; set; }
-
-            [DataMember]
-            public string coverImage { get; set; }
-
-            [DataMember]
+            public string coverImage { get; set; } = "";
             public Score? playerScore { get; set; }
+            public List<Difficulty> difficulties { get; set; } = new();
 
-            [DataMember]
-            public List<Difficulty> difficulties { get; set; }
-
-            public LeaderboardInfo()
-            {
-                songHash = "";
-                songName = "";
-                songSubName = "";
-                songAuthorName = "";
-                levelAuthorName = "";
-                difficulty = new Difficulty();
-                createdDate = "";
-                coverImage = "";
-                difficulties = new();
-            }
-
-            public void Normalize()
-            {
-                if (difficulties == null)
-                {
-                    difficulties = new();
-                }
-                songHash = songHash.ToLower();
-                difficulty.Normalize();
-                foreach (Difficulty diff in difficulties)
-                {
-                    diff.Normalize();
-                }
-            }
+            private string _songHash = "";
         }
 
         public class Difficulty
         {
-            [DataMember]
             public long leaderboardId { get; set; }
-
-            [DataMember]
-            public long difficulty { get; set; }
-
-            [DataMember]
-            public string gameMode { get; set; }
-
-            [DataMember]
-            public string difficultyRaw { get; set; }
-
-            [IgnoreDataMember]
-            public long difficultyRawInt { get; set; }
-
-            public Difficulty()
+            public long difficulty
             {
-                gameMode = "";
-                difficultyRaw = "";
+                get
+                {
+                    return _difficulty;
+                }
+                set
+                {
+                    _difficulty = value;
+                    mapDifficulty = value switch
+                    {
+                        1 => BeatMapDifficulty.Easy,
+                        3 => BeatMapDifficulty.Normal,
+                        5 => BeatMapDifficulty.Hard,
+                        7 => BeatMapDifficulty.Expert,
+                        9 => BeatMapDifficulty.ExpertPlus,
+                        _ => BeatMapDifficulty.Unknown,
+                    };
+                }
             }
-
-            private enum EGameMode
+            public string gameMode
             {
-                _UnKnown = 0,
-                SoloStandard = 1,
-                SoloOneSaber = 2,
-                SoloNoArrows = 3,
-                Solo90Degree = 4,
-                Solo360Degree = 5,
-                SoloLightshow = 6,
-                SoloLawless = 7,
+                get
+                {
+                    return _gameMode;
+                }
+                set
+                {
+                    _gameMode = value;
+                    mapMode = value switch
+                    {
+                        "SoloStandard" => BeatMapMode.Standard,
+                        "SoloOneSaber" => BeatMapMode.OneSaber,
+                        "SoloNoArrows" => BeatMapMode.NoArrows,
+                        "SoloLightshow" => BeatMapMode.Lightshow,
+                        "Solo90Degree" => BeatMapMode.Degree90,
+                        "Solo360Degree" => BeatMapMode.Degree360,
+                        "SoloLawless" => BeatMapMode.Lawless,
+                        _ => BeatMapMode.Unknown,
+                    };
+                }
             }
+            public string difficultyRaw { get; set; } = "";
 
-            public void Normalize()
-            {
-                difficultyRawInt = ToDifficultyRawInt(gameMode, difficulty);
-            }
+            private string _gameMode = "";
+            private long _difficulty;
 
-            static public long ToDifficultyRawInt(string gameMode, long difficulty)
-            {
-                EGameMode egm = EGameMode._UnKnown;
-                _ = Enum.TryParse(gameMode, out egm);
-
-                return (long)egm * 32 + difficulty;
-            }
+            internal BeatMapMode mapMode;
+            internal BeatMapDifficulty mapDifficulty;
         }
 
-        [DataContract]
         public class Metadata
         {
-            [DataMember]
             public long total { get; set; }
-
-            [DataMember]
             public long page { get; set; }
-
-            [DataMember]
             public long itemsPerPage { get; set; }
         }
 
-        [DataContract]
         public class PlayerProfile
         {
-            [DataMember]
-            public string id { get; set; }
-
-            [DataMember]
-            public string name { get; set; }
-
-            [DataMember]
-            public string profilePicture { get; set; }
-
-            [DataMember]
-            public string country { get; set; }
-
-            [DataMember]
+            public string id { get; set; } = "";
+            public string name { get; set; } = "";
+            public string profilePicture { get; set; } = "Resources/_404.png";
+            public string country { get; set; } = "";
             public double pp { get; set; }
-
-            [DataMember]
             public long rank { get; set; }
-
-            [DataMember]
             public long countryRank { get; set; }
-
-            [DataMember]
-            public string role { get; set; }
-
-            [DataMember]
-            public string histories { get; set; }
-
-            [DataMember]
+            public string role { get; set; } = "";
+            public string histories { get; set; } = "";
             public double permissions { get; set; }
-
-            [DataMember]
             public bool banned { get; set; }
-
-            [DataMember]
             public bool inactive { get; set; }
-
-            [DataMember]
-            public ScoreStats scoreStats { get; set; }
-
-            public PlayerProfile()
-            {
-                id = "";
-                name = "";
-                profilePicture = "Resources/_404.png";
-                country = "";
-                role = "";
-                histories = "";
-                scoreStats = new();
-            }
+            public ScoreStats scoreStats { get; set; } = new();
         }
 
-        [DataContract]
         public class ScoreStats
         {
-            [DataMember]
             public long totalScore { get; set; }
-
-            [DataMember]
             public long totalRankedScore { get; set; }
-
-            [DataMember]
             public double averageRankedAccuracy { get; set; }
-
-            [DataMember]
             public long totalPlayCount { get; set; }
-
-            [DataMember]
             public long rankedPlayCount { get; set; }
-
-            [DataMember]
             public long replaysWatched { get; set; }
-
-            public ScoreStats()
-            {
-                //
-            }
         }
     }
 }

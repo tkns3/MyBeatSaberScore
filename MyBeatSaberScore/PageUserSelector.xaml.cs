@@ -37,7 +37,7 @@ namespace MyBeatSaberScore
             if (profile.id.Length > 0)
             {
                 Config.FavoriteUsers.Add(new Config.User(profile.id, profile.name));
-                Config.SaveLocalFile();
+                Config.SaveToLocalFile();
             }
             else
             {
@@ -50,7 +50,7 @@ namespace MyBeatSaberScore
             if (((FrameworkElement)sender).DataContext is Config.User obj)
             {
                 Config.FavoriteUsers.Remove(obj);
-                Config.SaveLocalFile();
+                Config.SaveToLocalFile();
             }
         }
 

@@ -1,15 +1,16 @@
-﻿using MyBeatSaberScore.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static MyBeatSaberScore.APIs.BeatLeader;
 
-namespace MyBeatSaberScore
+namespace MyBeatSaberScore.Utility
 {
     // ＜前提＞
     //   リリースのタグ名は"v*.*.*"の形式で指定しなければならない。
@@ -92,7 +93,7 @@ namespace MyBeatSaberScore
                         if (arg.StartsWith("--old-pid="))
                         {
                             int pid = int.Parse(args[0][10..]);
-                            var p = System.Diagnostics.Process.GetProcessById(pid);
+                            var p = Process.GetProcessById(pid);
                             p.WaitForExit(1000);
                         }
                     }
@@ -115,9 +116,7 @@ namespace MyBeatSaberScore
 
             try
             {
-                var resp = await HttpTool.Client.GetAsync(ApiReleasesURL);
-                var body = await resp.Content.ReadAsStringAsync();
-                var releases = JsonSerializer.Deserialize<List<Release>>(body);
+                var releases = await HttpTool.GetAndDeserialize<List<Release>>(ApiReleasesURL);
                 if (releases != null)
                 {
                     ReleasesCache = releases;
@@ -181,37 +180,18 @@ namespace MyBeatSaberScore
             }
 
             var nexExeTmpPath = $"{NewExePath}.tmp";
-            var isSuccess = await Download(downloadLink, nexExeTmpPath);
-            if (!isSuccess)
+            try
             {
-                // ダウンロード失敗
+                await HttpTool.Download(downloadLink, nexExeTmpPath);
+            }
+            catch (Exception)
+            {
                 return;
             }
 
             File.Move(ExePath, OldExePath);
             File.Move(nexExeTmpPath, NewExePath);
             RunNew(NewExePath);
-        }
-
-        private static async Task<bool> Download(string link, string output)
-        {
-            HttpResponseMessage res = await HttpTool.Client.GetAsync(link);
-            if (res.StatusCode != HttpStatusCode.OK)
-            {
-                return false;
-            }
-
-            try
-            {
-                using var fileStream = new FileStream(output, FileMode.OpenOrCreate, FileAccess.Write);
-                using var httpStream = await res.Content.ReadAsStreamAsync();
-                await httpStream.CopyToAsync(fileStream);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         private static void RunNew(string newExePath)

@@ -1,8 +1,7 @@
-﻿using MyBeatSaberScore.Utility;
+﻿using MyBeatSaberScore.BeatMap;
+using MyBeatSaberScore.Utility;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MyBeatSaberScore.APIs
@@ -13,19 +12,12 @@ namespace MyBeatSaberScore.APIs
 
         public static async Task<MapDetail> GetMapDetailByHash(string hash)
         {
-            hash = hash.ToLower();
             string url = $"https://beatsaver.com/api/maps/hash/{hash}";
 
             try
             {
-                var httpsResponse = await HttpTool.Client.GetAsync(url);
-                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
-                var detail = JsonSerializer.Deserialize<MapDetail>(responseContent);
-                if (detail != null)
-                {
-                    detail.Normalize();
-                    return detail;
-                }
+                var result = await HttpTool.GetAndDeserialize<MapDetail>(url);
+                return result;
             }
             catch (Exception ex)
             {
@@ -35,508 +27,231 @@ namespace MyBeatSaberScore.APIs
             return new MapDetail();
         }
 
-        [DataContract]
         public class MapCollection
         {
-            [DataMember]
-            public List<MapDetail> mapDetails { get; set; }
-
-            public MapCollection()
-            {
-                mapDetails = new();
-            }
-
-            public void Normalize()
-            {
-                if (mapDetails == null)
-                {
-                    mapDetails = new();
-                }
-                mapDetails.ForEach(mapDetail => mapDetail.Normalize());
-            }
+            public List<MapDetail> mapDetails { get; set; } = new();
         }
 
-        [DataContract]
         public class MapDetail
         {
-            [DataMember]
             public bool automapper { get; set; }
-
-            [DataMember]
-            public string createdAt { get; set; }
-
-            [DataMember]
-            public string curator { get; set; }
-
-            [DataMember]
-            public string deletedAt { get; set; }
-
-            [DataMember]
-            public string description { get; set; }
-
-            [DataMember]
-            public string id { get; set; }
-
-            [DataMember]
-            public string lastPublishedAt { get; set; }
-
-            [DataMember]
-            public MapDetailMetadata metadata { get; set; }
-
-            [DataMember]
-            public string name { get; set; }
-
-            [DataMember]
+            public DateTime createdAt { get; set; }
+            public DateTime? curatedAt { get; set; }
+            public UserDetail? curator { get; set; } = new();
+            public DateTime? deletedAt { get; set; }
+            public string description { get; set; } = "";
+            public string id
+            {
+                get
+                {
+                    return _id;
+                }
+                set
+                {
+                    _id = value.ToLower();
+                }
+            }
+            public DateTime lastPublishedAt { get; set; }
+            public MapDetailMetadata metadata { get; set; } = new();
+            public string name { get; set; } = "";
             public bool qualified { get; set; }
-
-            [DataMember]
             public bool ranked { get; set; }
+            public MapStats stats { get; set; } = new();
+            public List<string> tags { get; set; } = new();
+            public DateTime updatedAt { get; set; }
+            public DateTime uploaded { get; set; }
+            public UserDetail uploader { get; set; } = new();
+            public List<MapVersion> versions { get; set; } = new();
 
-            [DataMember]
-            public MapStats stats { get; set; }
-
-            [DataMember]
-            public string updatedAt { get; set; }
-
-            [DataMember]
-            public string uploaded { get; set; }
-
-            [DataMember]
-            public UserDetail uploader { get; set; }
-
-            [DataMember]
-            public List<MapVersion> versions { get; set; }
-
-            [DataMember]
-            public string error { get; set; }
-
-            public MapDetail()
-            {
-                createdAt = "";
-                curator = "";
-                deletedAt = "";
-                description = "";
-                id = "";
-                lastPublishedAt = "";
-                metadata = new();
-                name = "";
-                stats = new();
-                updatedAt = "";
-                uploaded = "";
-                uploader = new();
-                versions = new();
-                error = "";
-            }
-
-            public void Normalize()
-            {
-                if (id == null)
-                {
-                    id = "";
-                }
-                if (versions == null)
-                {
-                    versions = new();
-                }
-                if (error == null)
-                {
-                    error = "";
-                }
-                id = id.ToLower();
-                versions.ForEach(v => v.Normalize());
-            }
+            private string _id = "";
         }
 
-        [DataContract]
-        public class Instant
-        {
-            [DataMember]
-            public int epochSeconds { get; set; }
-
-            [DataMember]
-            public int nanosecondsOfSecond { get; set; }
-
-            [DataMember]
-            public string value { get; set; }
-
-            public Instant()
-            {
-                value = "";
-            }
-        }
-
-        [DataContract]
         public class MapDetailMetadata
         {
-            [DataMember]
             public double bpm { get; set; }
-
-            [DataMember]
             public int duration { get; set; }
-
-            [DataMember]
-            public string levelAuthorName { get; set; }
-
-            [DataMember]
-            public string songAuthorName { get; set; }
-
-            [DataMember]
-            public string songName { get; set; }
-
-            [DataMember]
-            public string songSubName { get; set; }
-
-            public MapDetailMetadata()
-            {
-                levelAuthorName = "";
-                songAuthorName = "";
-                songName = "";
-                songSubName = "";
-            }
+            public string levelAuthorName { get; set; } = "";
+            public string songAuthorName { get; set; } = "";
+            public string songName { get; set; } = "";
+            public string songSubName { get; set; } = "";
         }
 
-        [DataContract]
         public class MapStats
         {
-            [DataMember]
             public int downloads { get; set; }
-
-            [DataMember]
             public int downvotes { get; set; }
-
-            [DataMember]
             public int plays { get; set; }
-
-            [DataMember]
+            public int reviews { get; set; }
             public double score { get; set; }
-
-            [DataMember]
+            public double scoreOneDP { get; set; }
+            public string sentiment { get; set; } = "";
             public int upvotes { get; set; }
-
-            public MapStats()
-            {
-            }
         }
 
-        [DataContract]
         public class UserDetail
         {
-            [DataMember]
-            public string avatar { get; set; }
-
-            [DataMember]
-            public string email { get; set; }
-
-            [DataMember]
-            public string hash { get; set; }
-
-            [DataMember]
+            public bool admin { get; set; }
+            public string avatar { get; set; } = "";
+            public bool curator { get; set; }
+            public string description { get; set; } = "";
+            public string email { get; set; } = "";
+            public string hash { get; set; } = "";
             public int id { get; set; }
-
-            [DataMember]
-            public string name { get; set; }
-
-            [DataMember]
-            public UserStats stats { get; set; }
-
-            [DataMember]
+            public string name { get; set; } = "";
+            public UserStats stats { get; set; } = new();
             public bool testplay { get; set; }
-
-            [DataMember]
-            public string type { get; set; }
-
-            [DataMember]
+            public string type { get; set; } = "";
             public bool uniqueSet { get; set; }
-
-            [DataMember]
             public int uploadLimit { get; set; }
-
-            public UserDetail()
-            {
-                avatar = "";
-                email = "";
-                hash = "";
-                name = "";
-                stats = new UserStats();
-                type = "";
-            }
+            public bool verifiedMapper { get; set; }
         }
 
-        [DataContract]
         public class UserStats
         {
-            [DataMember]
             public double avgBpm { get; set; }
-
-            [DataMember]
             public double avgDuration { get; set; }
-
-            [DataMember]
             public double avgScore { get; set; }
-
-            [DataMember]
-            public UserDiffStats diffStats { get; set; }
-
-            [DataMember]
-            public string firstUpload { get; set; }
-
-            [DataMember]
-            public string lastUpload { get; set; }
-
-            [DataMember]
+            public UserDiffStats diffStats { get; set; } = new();
+            public string firstUpload { get; set; } = "";
+            public string lastUpload { get; set; } = "";
             public int rankedMaps { get; set; }
-
-            [DataMember]
             public int totalDownvotes { get; set; }
-
-            [DataMember]
             public int totalMaps { get; set; }
-
-            [DataMember]
             public int totalUpvotes { get; set; }
-
-            public UserStats()
-            {
-                diffStats = new UserDiffStats();
-                firstUpload = "";
-                lastUpload = "";
-            }
         }
 
-        [DataContract]
         public class UserDiffStats
         {
-            [DataMember]
             public int easy { get; set; }
-
-            [DataMember]
             public int expert { get; set; }
-
-            [DataMember]
             public int expertPlus { get; set; }
-
-            [DataMember]
             public int hard { get; set; }
-
-            [DataMember]
             public int normal { get; set; }
-
-            [DataMember]
             public int total { get; set; }
         }
 
-        [DataContract]
         public class MapVersion
         {
-            [DataMember]
-            public string coverURL { get; set; }
-
-            [DataMember]
-            public string createdAt { get; set; }
-
-            [DataMember]
-            public List<MapDifficulty> diffs { get; set; }
-
-            [DataMember]
-            public string downloadURL { get; set; }
-
-            [DataMember]
-            public string feedback { get; set; }
-
-            [DataMember]
-            public string hash { get; set; }
-
-            [DataMember]
-            public string key { get; set; }
-
-            [DataMember]
-            public string previewURL { get; set; }
-
-            [DataMember]
-            public int sageScore { get; set; }
-
-            [DataMember]
-            public string scheduledAt { get; set; }
-
-            [DataMember]
-            public string state { get; set; }
-
-            [DataMember]
-            public string testplayAt { get; set; }
-
-            [DataMember]
-            public List<MapTestplay> testplays { get; set; }
-
-            public MapVersion()
+            public string coverURL { get; set; } = "";
+            public DateTime createdAt { get; set; }
+            public List<MapDifficulty> diffs { get; set; } = new();
+            public string downloadURL { get; set; } = "";
+            public string feedback { get; set; } = "";
+            public string hash
             {
-                coverURL = "";
-                createdAt = "";
-                diffs = new();
-                downloadURL = "";
-                feedback = "";
-                hash = "";
-                key = "";
-                previewURL = "";
-                scheduledAt = "";
-                state = "";
-                testplayAt = "";
-                testplays = new();
-            }
-
-            public void Normalize()
-            {
-                if (diffs == null)
+                get
                 {
-                    diffs = new();
+                    return _hash;
                 }
-                hash = hash.ToLower();
-                key = key.ToLower();
-                diffs.ForEach(d => d.Normalize());
+                set
+                {
+                    _hash = value.ToLower();
+                }
             }
+            public string key
+            {
+                get
+                {
+                    return _key;
+                }
+                set
+                {
+                    _key = value.ToLower();
+                }
+            }
+            public string previewURL { get; set; } = "";
+            public int sageScore { get; set; }
+            public DateTime scheduledAt { get; set; }
+            public string state { get; set; } = "";
+            public DateTime testplayAt { get; set; }
+            public List<MapTestplay> testplays { get; set; } = new();
+
+            private string _hash = "";
+            private string _key = "";
         }
 
-        [DataContract]
         public class MapDifficulty
         {
-            [DataMember]
             public int bombs { get; set; }
-
-            [DataMember]
-            public string characteristic { get; set; }
-
-            [DataMember]
+            public string characteristic
+            {
+                get
+                {
+                    return _characteristic;
+                }
+                set
+                {
+                    _characteristic = value;
+                    mapMode = value switch
+                    {
+                        "Standard" => BeatMapMode.Standard,
+                        "OneSaber" => BeatMapMode.OneSaber,
+                        "NoArrows" => BeatMapMode.NoArrows,
+                        "Lightshow" => BeatMapMode.Lightshow,
+                        "90Degree" => BeatMapMode.Degree90,
+                        "360Degree" => BeatMapMode.Degree360,
+                        "Lawless" => BeatMapMode.Lawless,
+                        _ => BeatMapMode.Unknown,
+                    };
+                }
+            }
             public bool chroma { get; set; }
-
-            [DataMember]
             public bool cinema { get; set; }
-
-            [DataMember]
-            public string difficulty { get; set; }
-
-            [DataMember]
+            public string difficulty
+            {
+                get
+                {
+                    return _difficulty;
+                }
+                set
+                {
+                    _difficulty = value;
+                    mapDifficulty = value switch
+                    {
+                        "Easy" => BeatMapDifficulty.Easy,
+                        "Normal" => BeatMapDifficulty.Normal,
+                        "Hard" => BeatMapDifficulty.Hard,
+                        "Expert" => BeatMapDifficulty.Expert,
+                        "ExpertPlus" => BeatMapDifficulty.ExpertPlus,
+                        _ => BeatMapDifficulty.Unknown,
+                    };
+                }
+            }
             public int events { get; set; }
-
-            [DataMember]
             public double length { get; set; }
-
-            [DataMember]
             public bool me { get; set; }
-
-            [DataMember]
             public bool ne { get; set; }
-
-            [DataMember]
             public double njs { get; set; }
-
-            [DataMember]
             public int notes { get; set; }
-
-            [DataMember]
             public double nps { get; set; }
-
-            [DataMember]
             public int obstacles { get; set; }
-
-            [DataMember]
             public double offset { get; set; }
-
-            [DataMember]
-            public MapParitySummary paritySummary { get; set; }
-
-            [DataMember]
+            public MapParitySummary paritySummary { get; set; } = new();
             public double seconds { get; set; }
-
-            [DataMember]
             public double stars { get; set; }
 
-            [IgnoreDataMember]
-            public int difficultyRawInt { get; set; }
+            private string _characteristic = "";
+            private string _difficulty = "";
 
-            public MapDifficulty()
-            {
-                characteristic = "";
-                difficulty = "";
-                paritySummary = new MapParitySummary();
-            }
+            internal BeatMapMode mapMode;
+            internal BeatMapDifficulty mapDifficulty;
 
-            private enum ECharacteristic
-            {
-                _UnKnown = 0,
-                _Standard = 1,
-                _OneSaber = 2,
-                _NoArrows = 3,
-                _90Degree = 4,
-                _360Degree = 5,
-                _Lightshow = 6,
-                _Lawless = 7,
-            }
-
-            private enum EDifficulty
-            {
-                UnKnown = 0,
-                Easy = 1,
-                Normal = 3,
-                Hard = 5,
-                Expert = 7,
-                ExpertPlus = 9,
-            }
-
-            public void Normalize()
-            {
-                difficultyRawInt = ToDifficultyRawInt(characteristic, difficulty);
-            }
-
-            static public int ToDifficultyRawInt(string characteristic, string difficulty)
-            {
-                ECharacteristic ec = ECharacteristic._UnKnown;
-                _ = Enum.TryParse("_" + characteristic, out ec);
-
-                EDifficulty ed = EDifficulty.UnKnown;
-                _ = Enum.TryParse(difficulty, out ed);
-
-                return (int)ec * 32 + (int)ed;
-            }
         }
 
-        [DataContract]
         public class MapParitySummary
         {
-            [DataMember]
             public int errors { get; set; }
-
-            [DataMember]
             public int resets { get; set; }
-
-            [DataMember]
             public int warns { get; set; }
         }
 
-        [DataContract]
         public class MapTestplay
         {
-            [DataMember]
-            public string createdAt { get; set; }
-
-            [DataMember]
-            public string feedback { get; set; }
-
-            [DataMember]
-            public string feedbackAt { get; set; }
-
-            [DataMember]
-            public UserDetail user { get; set; }
-
-            [DataMember]
-            public string video { get; set; }
-
-            public MapTestplay()
-            {
-                createdAt = "";
-                feedback = "";
-                feedbackAt = "";
-                user = new UserDetail();
-                video = "";
-            }
+            public DateTime createdAt { get; set; }
+            public string feedback { get; set; } = "";
+            public string feedbackAt { get; set; } = "";
+            public UserDetail user { get; set; } = new();
+            public string video { get; set; } = "";
         }
     }
 }

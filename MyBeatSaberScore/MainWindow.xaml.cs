@@ -18,7 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MyBeatSaberScore;
+using MyBeatSaberScore.Utility;
 
 namespace MyBeatSaberScore
 {
@@ -30,7 +30,6 @@ namespace MyBeatSaberScore
         public MainWindow()
         {
             InitializeComponent();
-            Config.LoadLocalFile();
             this.Title = $"MyBeatSaberScore v{Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}";
 
             Application.Current.Properties["XaTabControl"] = XaTabControl;

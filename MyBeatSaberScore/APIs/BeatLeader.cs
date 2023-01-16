@@ -1,8 +1,7 @@
-﻿using MyBeatSaberScore.Utility;
+﻿using MyBeatSaberScore.BeatMap;
+using MyBeatSaberScore.Utility;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MyBeatSaberScore.APIs
@@ -11,24 +10,14 @@ namespace MyBeatSaberScore.APIs
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="hash">Hash</param>
-        /// <returns></returns>
         public static async Task<LeaderboardsResponse> GetLeaderboardsByHash(string hash)
         {
-            string url = $"https://api.beatleader.xyz/leaderboards/hash//{hash}";
+            string url = $"https://api.beatleader.xyz/leaderboards/hash/{hash}";
 
             try
             {
-                var httpsResponse = await HttpTool.Client.GetAsync(url);
-                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
-                var leaderboardsResponse = JsonSerializer.Deserialize<LeaderboardsResponse>(responseContent);
-                if (leaderboardsResponse != null)
-                {
-                    return leaderboardsResponse;
-                }
+                var result = await HttpTool.GetAndDeserialize<LeaderboardsResponse>(url);
+                return result;
             }
             catch (Exception ex)
             {
@@ -38,71 +27,74 @@ namespace MyBeatSaberScore.APIs
             return new LeaderboardsResponse();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="difficulty">1:Easy, 3:Normal, 5:Hard, 7:Expert 9:ExpertPlus</param>
-        /// <param name="modeName">SoloStandard, SoloLawless, SoloOneSaber, SoloLightShow, Solo90Degree, Solo360Degree, SoloNoArrows</param>
-        /// <returns></returns>
-        public static string GetLeaderboardId(LeaderboardsResponse response, int difficulty, string modeName)
+        public static string GetLeaderboardId(LeaderboardsResponse response, BeatMapDifficulty difficulty, BeatMapMode mode)
         {
-            int mode = 1;
-            switch (modeName)
-            {
-                case "SoloStandard": mode = 1; break;
-                case "SoloLawless": mode = 7; break;
-                case "SoloOneSaber": mode = 2; break;
-                case "SoloLightShow": mode = 6; break;
-                case "Solo90Degree": mode = 4; break;
-                case "Solo360Degree": mode = 5; break;
-                case "SoloNoArrows": mode = 3; break;
-                default: mode = 1; break;
-            }
-
-            string? id = response.leaderboards.Find(l => l.difficulty.value == difficulty && l.difficulty.mode == mode)?.id;
+            string? id = response.leaderboards.Find(l => l.difficulty.mapDifficulty == difficulty && l.difficulty.mapMode == mode)?.id;
             return id ?? "";
         }
 
-        [DataContract]
         public class LeaderboardsResponse
         {
-            [DataMember]
-            public List<LeaderboardsInfoResponse> leaderboards { get; set; }
-
-
-            public LeaderboardsResponse()
-            {
-                leaderboards = new();
-            }
+            public List<LeaderboardsInfoResponse> leaderboards { get; set; } = new();
         }
 
-        [DataContract]
         public class LeaderboardsInfoResponse
         {
-            [DataMember]
-            public string id { get; set; }
-
-            [DataMember]
-            public DifficultyDescription difficulty { get; set; }
-
-            public LeaderboardsInfoResponse()
-            {
-                id = "";
-                difficulty = new DifficultyDescription();
-            }
+            public string id { get; set; } = "";
+            public DifficultyDescription difficulty { get; set; } = new();
         }
 
         public class DifficultyDescription
         {
-            [DataMember]
             public int id { get; set; }
+            public int value
+            {
+                get
+                {
+                    return _value;
+                }
+                set
+                {
+                    _value = value;
+                    mapDifficulty = value switch
+                    {
+                        1 => BeatMapDifficulty.Easy,
+                        3 => BeatMapDifficulty.Normal,
+                        5 => BeatMapDifficulty.Hard,
+                        7 => BeatMapDifficulty.Expert,
+                        9 => BeatMapDifficulty.ExpertPlus,
+                        _ => BeatMapDifficulty.Unknown,
+                    };
+                }
+            }
+            public int mode
+            {
+                get
+                {
+                    return _mode;
+                }
+                set
+                {
+                    _mode = value;
+                    mapMode = value switch
+                    {
+                        1 => BeatMapMode.Standard,
+                        2 => BeatMapMode.OneSaber,
+                        3 => BeatMapMode.NoArrows,
+                        4 => BeatMapMode.Degree90,
+                        5 => BeatMapMode.Degree360,
+                        6 => BeatMapMode.Lightshow,
+                        7 => BeatMapMode.Lawless,
+                        _ => BeatMapMode.Unknown,
+                    };
+                }
+            }
 
-            [DataMember]
-            public int value { get; set; }
+            private int _value;
+            private int _mode;
 
-            [DataMember]
-            public int mode { get; set; }
+            internal BeatMapDifficulty mapDifficulty;
+            internal BeatMapMode mapMode;
         }
     }
 }

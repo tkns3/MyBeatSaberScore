@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using MyBeatSaberScore.APIs;
+using MyBeatSaberScore.BeatMap;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -632,6 +633,18 @@ namespace MyBeatSaberScore
             }
         }
 
+        internal class NumOfKey : IComparable
+        {
+            public long Key;
+
+            public bool IsDeleted;
+
+            public int CompareTo(object? obj)
+            {
+                return Key.CompareTo(((NumOfKey?)obj)?.Key);
+            }
+        }
+
         private class GridItem
         {
             /// <summary>
@@ -642,12 +655,22 @@ namespace MyBeatSaberScore
             /// <summary>
             /// Keyを10進数になおしたやつ。
             /// </summary>
-            public long NumOfKey { get; set; }
+            public NumOfKey NumOfKey { get; set; }
+
+            /// <summary>
+            /// BeatSaverのハッシュ
+            /// </summary>
+            public string Hash { get; set; }
 
             /// <summary>
             /// ローカルに保存したカバー画像のパス。
             /// </summary>
             public string Cover { get; set; }
+
+            /// <summary>
+            /// カバー画像のURL
+            /// </summary>
+            public string CoverUrl { get; set; }
 
             /// <summary>
             /// 順位
@@ -682,37 +705,27 @@ namespace MyBeatSaberScore
             /// <summary>
             /// スコア更新日
             /// </summary>
-            public string TimeSet { get; set; }
-
-            /// <summary>
-            /// スコア更新日
-            /// </summary>
-            public DateTime? TimeSetDT { get; set; }
+            public DateTime? TimeSet { get; set; }
 
             /// <summary>
             /// Ranked Date
             /// </summary>
-            public string RankedDate { get; set; }
-
-            /// <summary>
-            /// Ranked Date
-            /// </summary>
-            public DateTime? RankedDateDT { get; set; }
+            public DateTime? RankedDate { get; set; }
 
             /// <summary>
             /// SoloStandard, SoloLawless, SoloOneSaber, SoloLightShow, Solo90Degree, Solo360Degree, SoloNoArrows
             /// </summary>
-            public string GameMode { get; set; }
+            public BeatMapMode GameMode { get; set; }
 
             /// <summary>
             /// 1:Easy, 3:Normal, 5:Hard, 7:Expert 9:ExpertPlus
             /// </summary>
-            public long Difficulty { get; set; }
+            public BeatMapDifficulty Difficulty { get; set; }
 
             /// <summary>
             /// ランク譜面の星。ランク譜面以外は-1。
             /// </summary>
-            public double Stars { get; set; }
+            public double Star { get; set; }
 
             /// <summary>
             /// スコア
@@ -781,16 +794,6 @@ namespace MyBeatSaberScore
             /// スコア更新回数
             /// </summary>
             public long ScoreCount { get; set; }
-
-            /// <summary>
-            /// BeatSaverのハッシュ
-            /// </summary>
-            public string Hash { get; set; }
-
-            /// <summary>
-            /// カバー画像のURL
-            /// </summary>
-            public string CoverUrl { get; set; }
 
             /// <summary>
             /// ランク譜面かどうか
@@ -862,74 +865,61 @@ namespace MyBeatSaberScore
             /// </summary>
             public long LeaderbordId { get; set; }
 
-            public GridItem(BeatSaberScrappedData.MapInfo map, ScoreSaber.PlayerScore score, PlayerData.DifficultyResults results)
+            /// <summary>
+            /// マップが削除されているかどうか
+            /// </summary>
+            public bool IsMapDeleted { get; set; }
+
+            public GridItem(ScoreSaber.PlayerScore score, PlayerData.DifficultyResults results)
             {
                 string hash = score.leaderboard.songHash.ToLower();
-                BeatSaberScrappedData.Difficulty diff = map.GetDifficulty(score.leaderboard.difficulty.difficultyRawInt);
-                long maxScore = MapUtil.MaxScore(diff.Notes); // ScoreSaberから取得したランク譜面のMaxScoreがいくつか間違っているので常にノーツ数から計算した値を使う。アークとチェインは未対応。
+                var map = BeatMapDic.Get(hash, score.leaderboard.difficulty.mapMode, score.leaderboard.difficulty.mapDifficulty) ?? new();
 
                 Key = map.Key;
-                NumOfKey = (Key.Length > 0) ? Convert.ToInt64(Key, 16) : 0;
+                NumOfKey = new NumOfKey() { Key = (Key.Length > 0) ? Convert.ToInt64(Key, 16) : 0, IsDeleted = map.Deleted };
+                Hash = hash;
                 ScoreRank = score.score.rank;
-                Cover = MapUtil.GetCoverLocalPath(score);
+                Cover = BeatMapCover.GetCoverLocalPath(score);
+                CoverUrl = score.leaderboard.coverImage;
+                if (score.leaderboard.coverImage.Contains("steam.png"))
+                {
+                    CoverUrl = $"https://eu.cdn.beatsaver.com/{hash}.jpg";
+                }
                 SongFullName = $"{score.leaderboard.songName} {score.leaderboard.songSubName} / {score.leaderboard.songAuthorName} [ {score.leaderboard.levelAuthorName} ]";
                 SongName = score.leaderboard.songName;
                 SongSubName = score.leaderboard.songSubName;
                 SongAuthor = score.leaderboard.songAuthorName;
                 LevelAuthor = score.leaderboard.levelAuthorName;
-                if (score.score.timeSet.Length > 0)
-                {
-                    TimeSet = score.score.timeSet;
-                    TimeSetDT = DateTime.Parse(TimeSet).ToLocalTime();
-                }
-                else
-                {
-                    TimeSet = "";
-                    TimeSetDT = null;
-                }
-                if (diff.Char.Contains("Standard") && diff.Ranked)
-                {
-                    RankedDate = diff.RankedUpdateTime;
-                    RankedDateDT = DateTime.Parse(RankedDate).ToLocalTime();
-                }
-                else
-                {
-                    RankedDate = "";
-                    RankedDateDT = null;
-                }
-                GameMode = score.leaderboard.difficulty.gameMode;
-                Difficulty = score.leaderboard.difficulty.difficulty;
-                Stars = score.leaderboard.ranked ? diff.Stars : -1;
+                TimeSet = (score.score.modifiedScore >= 0) ? score.score.timeSet : null;
+                RankedDate = (map.ScoreSaber.Ranked) ? map.ScoreSaber.RankedTime : null;
+                GameMode = score.leaderboard.difficulty.mapMode;
+                Difficulty = score.leaderboard.difficulty.mapDifficulty;
+                Star = score.leaderboard.ranked ? map.ScoreSaber.Star : -1;
                 ModifiedScore = score.score.modifiedScore;
-                MaxScore = maxScore;
-                Acc = (maxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / maxScore : 0;
-                AccDifference = (maxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / maxScore : 0;
+                MaxScore = map.MaxScore;
+                Acc = (MaxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / MaxScore : 0;
+                AccDifference = (MaxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / MaxScore : 0;
                 IsFirstScore = results.Count == 1;
                 IsFirstClear = results.IsFirstClear();
                 ClearStatus = (IsFirstScore ? 1 : 0)  + (IsFirstClear ? 2 : 0);
                 PP = score.leaderboard.ranked ? score.score.pp : 0;
                 Modifiers = score.score.modifiers;
                 ScoreCount = results.Count;
-                Hash = hash;
-                CoverUrl = score.leaderboard.coverImage;
-                if (score.leaderboard.coverImage.Contains("steam.png"))
-                {
-                    CoverUrl = $"https://eu.cdn.beatsaver.com/{hash}.jpg";
-                }
                 Ranked = score.leaderboard.ranked;
                 MissPlusBad = score.score.badCuts + score.score.missedNotes;
                 Miss = score.score.missedNotes;
                 Bad = score.score.badCuts;
                 Bpm = map.Bpm;
                 Duration = map.Duration;
-                Njs = diff.Njs;
-                Nps = diff.Notes / map.Duration;
-                Notes = diff.Notes;
-                Bombs = diff.Bombs;
-                Obstacles = diff.Obstacles;
+                Njs = map.Njs;
+                Nps = map.Nps;
+                Notes = map.Notes;
+                Bombs = map.Bombs;
+                Obstacles = map.Walls;
                 FullCombo = (score.score.fullCombo) ? "FC" : "";
                 Selected = true;
                 LeaderbordId = score.leaderboard.id;
+                IsMapDeleted = map.Deleted;
             }
         }
 
@@ -937,7 +927,6 @@ namespace MyBeatSaberScore
         {
             InitializeComponent();
 
-            MapUtil.Initialize();
             _playerData = new PlayerData();
             _allScores = new();
             _gridItemsViewSource.Filter += new FilterEventHandler(DataGridFilter);
@@ -998,96 +987,32 @@ namespace MyBeatSaberScore
 
         private bool FilterByMapGameMode(GridItem item)
         {
-            switch (item.GameMode)
+            bool isShow = item.GameMode switch
             {
-                case "SoloStandard":
-                    if (!_bindingSource._filterValue.IsShowStandard)
-                    {
-                        return false;
-                    }
-                    break;
-                case "SoloLawless":
-                    if (!_bindingSource._filterValue.IsShowLawless)
-                    {
-                        return false;
-                    }
-                    break;
-                case "SoloOneSaber":
-                    if (!_bindingSource._filterValue.IsShowOneSaber)
-                    {
-                        return false;
-                    }
-                    break;
-                case "SoloLightShow":
-                    if (!_bindingSource._filterValue.IsShowLightShow)
-                    {
-                        return false;
-                    }
-                    break;
-                case "Solo90Degree":
-                    if (!_bindingSource._filterValue.IsShow90Degree)
-                    {
-                        return false;
-                    }
-                    break;
-                case "Solo360Degree":
-                    if (!_bindingSource._filterValue.IsShow360Degree)
-                    {
-                        return false;
-                    }
-                    break;
-                case "SoloNoArrows":
-                    if (!_bindingSource._filterValue.IsShowNoArrows)
-                    {
-                        return false;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            return true;
+                BeatMapMode.Standard => _bindingSource._filterValue.IsShowStandard,
+                BeatMapMode.OneSaber => _bindingSource._filterValue.IsShowOneSaber,
+                BeatMapMode.NoArrows => _bindingSource._filterValue.IsShowNoArrows,
+                BeatMapMode.Degree90 => _bindingSource._filterValue.IsShow90Degree,
+                BeatMapMode.Degree360 => _bindingSource._filterValue.IsShow360Degree,
+                BeatMapMode.Lightshow => _bindingSource._filterValue.IsShowLightShow,
+                BeatMapMode.Lawless => _bindingSource._filterValue.IsShowLawless,
+                _ => true,
+            };
+            return isShow;
         }
 
         private bool FilterByMapGameDifficulty(GridItem item)
         {
-            switch (item.Difficulty)
+            bool isShow = item.Difficulty switch
             {
-                case 1:
-                    if (!_bindingSource._filterValue.IsShowEasy)
-                    {
-                        return false;
-                    }
-                    break;
-                case 3:
-                    if (!_bindingSource._filterValue.IsShowNormal)
-                    {
-                        return false;
-                    }
-                    break;
-                case 5:
-                    if (!_bindingSource._filterValue.IsShowHard)
-                    {
-                        return false;
-                    }
-                    break;
-                case 7:
-                    if (!_bindingSource._filterValue.IsShowExpert)
-                    {
-                        return false;
-                    }
-                    break;
-                case 9:
-                    if (!_bindingSource._filterValue.IsShowExpertPlus)
-                    {
-                        return false;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            return true;
+                BeatMapDifficulty.Easy => _bindingSource._filterValue.IsShowEasy,
+                BeatMapDifficulty.Normal => _bindingSource._filterValue.IsShowNormal,
+                BeatMapDifficulty.Hard => _bindingSource._filterValue.IsShowHard,
+                BeatMapDifficulty.Expert => _bindingSource._filterValue.IsShowExpert,
+                BeatMapDifficulty.ExpertPlus => _bindingSource._filterValue.IsShowExpertPlus,
+                _ => true,
+            };
+            return isShow;
         }
 
         private bool FilterByMapStatus(GridItem item)
@@ -1106,7 +1031,7 @@ namespace MyBeatSaberScore
         {
             if (item.Ranked)
             {
-                return (_bindingSource.MinStar <= item.Stars && item.Stars < _bindingSource.MaxStar);
+                return (_bindingSource.MinStar <= item.Star && item.Star < _bindingSource.MaxStar);
             }
 
             return true;
@@ -1114,11 +1039,11 @@ namespace MyBeatSaberScore
 
         private bool FilterByMapRankedDate(GridItem item)
         {
-            if (item.RankedDateDT != null)
+            if (item.RankedDate != null)
             {
                 if (_bindingSource._filterValue.RankedDateStart != null)
                 {
-                    if (item.RankedDateDT < _bindingSource._filterValue.RankedDateStart)
+                    if (item.RankedDate < _bindingSource._filterValue.RankedDateStart)
                     {
                         return false;
                     }
@@ -1126,7 +1051,7 @@ namespace MyBeatSaberScore
 
                 if (_bindingSource._filterValue.RankedDateEnd != null)
                 {
-                    if (item.RankedDateDT > _bindingSource._filterValue.RankedDateEnd)
+                    if (item.RankedDate > _bindingSource._filterValue.RankedDateEnd)
                     {
                         return false;
                     }
@@ -1175,11 +1100,11 @@ namespace MyBeatSaberScore
 
         private bool FilterByResultScoreUpdateDate(GridItem item)
         {
-            if (item.TimeSetDT != null)
+            if (item.TimeSet != null)
             {
                 if (_bindingSource._filterValue.DateStart != null)
                 {
-                    if (item.TimeSetDT < _bindingSource._filterValue.DateStart)
+                    if (item.TimeSet < _bindingSource._filterValue.DateStart)
                     {
                         return false;
                     }
@@ -1187,7 +1112,7 @@ namespace MyBeatSaberScore
 
                 if (_bindingSource._filterValue.DateEnd != null)
                 {
-                    if (item.TimeSetDT > _bindingSource._filterValue.DateEnd)
+                    if (item.TimeSet > _bindingSource._filterValue.DateEnd)
                     {
                         return false;
                     }
@@ -1262,39 +1187,35 @@ namespace MyBeatSaberScore
             _allScores.AddRange(_playerData.playedMaps.Values);
 
             // 未プレイランク譜面を追加
-            foreach (var map in MapUtil._mapList)
+            foreach (var map in BeatMapDic.Values)
             {
-                map.Diffs.ForEach(diff =>
+                if (map.ScoreSaber.Ranked && !_playerData.playedRankHash.Contains(map.Hash + (int)map.MapDifficulty))
                 {
-                    if (diff.Ranked && diff.Char.Contains("Standard") && !_playerData.playedRankHash.Contains(map.Hash + diff.difficultyInt))
+                    var score = new ScoreSaber.PlayerScore()
                     {
-                        var score = new ScoreSaber.PlayerScore()
+                        score = new ScoreSaber.Score()
                         {
-                            score = new ScoreSaber.Score()
+                            modifiedScore = -1
+                        },
+                        leaderboard = new ScoreSaber.LeaderboardInfo()
+                        {
+                            ranked = true,
+                            songHash = map.Hash,
+                            songName = map.SongName,
+                            songSubName = map.SongSubName,
+                            songAuthorName = map.SongAuthorName,
+                            levelAuthorName = map.MapperName,
+                            stars = map.ScoreSaber.Star,
+                            coverImage = $"https://cdn.scoresaber.com/covers/{map.Hash.ToUpper()}.png",
+                            difficulty = new ScoreSaber.Difficulty()
                             {
-                                modifiedScore = -1
-                            },
-                            leaderboard = new ScoreSaber.LeaderboardInfo()
-                            {
-                                ranked = true,
-                                songHash = map.Hash,
-                                songName = map.SongName,
-                                songSubName = map.SongSubName,
-                                songAuthorName = map.SongAuthorName,
-                                levelAuthorName = map.LevelAuthorName,
-                                stars = diff.Stars,
-                                coverImage = $"https://cdn.scoresaber.com/covers/{map.Hash.ToUpper()}.png",
-                                difficulty = new ScoreSaber.Difficulty()
-                                {
-                                    gameMode = "SoloStandard",
-                                    difficulty = diff.difficultyInt,
-                                }
+                                gameMode = "SoloStandard",
+                                difficulty = (int)map.MapDifficulty,
                             }
-                        };
-                        score.Normalize();
-                        _allScores.Add(score);
-                    }
-                });
+                        }
+                    };
+                    _allScores.Add(score);
+                }
             }
         }
 
@@ -1333,11 +1254,10 @@ namespace MyBeatSaberScore
                         UpdateAllScores();
                         foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
                         {
-                            BeatSaberScrappedData.MapInfo map = MapUtil.GetMapInfo(score.leaderboard.songHash);
                             XaDataGrid.Dispatcher.Invoke(() =>
                             {
                                 var results = _playerData.History.GetDifficultyResults(score.leaderboard.id);
-                                _gridItems.Add(new GridItem(map, score, results));
+                                _gridItems.Add(new GridItem(score, results));
                             });
                         }
                     }
@@ -1401,11 +1321,10 @@ namespace MyBeatSaberScore
             // GridItemを構築。未取得のカバー画像は後で取得する。
             foreach (var score in _allScores.OrderByDescending(a => a.score.timeSet))
             {
-                BeatSaberScrappedData.MapInfo map = MapUtil.GetMapInfo(score.leaderboard.songHash);
                 XaDataGrid.Dispatcher.Invoke(() =>
                 {
                     var reuslts = _playerData.History.GetDifficultyResults(score.leaderboard.id);
-                    _gridItems.Add(new GridItem(map, score, reuslts));
+                    _gridItems.Add(new GridItem(score, reuslts));
                 });
             }
 
@@ -1430,10 +1349,10 @@ namespace MyBeatSaberScore
             RefreshGrid();
         }
 
-        private async Task TaskDownloadLatestScores(bool isGetAll, Action<int, int> callback)
+        private async Task TaskDownloadLatestScores(bool isGetAll, Action<int, int> progress)
         {
             _bindingSource.StatusText = "";
-            var isSuccess = await _playerData.DownloadLatestScores(isGetAll, callback);
+            var isSuccess = await _playerData.DownloadLatestScores(isGetAll, progress);
             if (isSuccess)
             {
                 _playerData.SaveLocalFile();
@@ -1442,26 +1361,26 @@ namespace MyBeatSaberScore
             {
                 _bindingSource.StatusText = "最新スコアの取得に失敗しました";
             }
-            callback(1, 1);
+            progress(1, 1);
         }
 
-        private async Task TaskDownloadMapList(Action<int, int> callback)
+        private async Task TaskDownloadMapList(Action<int, int> progress)
         {
-            callback(100, 10);
-            await BeatSaberScrappedData.DownlaodCombinedScrappedData();
-            callback(100, 80);
-            MapUtil.UpdateMapListByScrappedData();
-            callback(100, 100);
+            await Task.Run(() =>
+            {
+                BeatMapDic.Update(progress);
+                progress(100, 100);
+            });
         }
 
-        private async Task TaskDownloadUnacquiredCover(Action<int, int> callback)
+        private async Task TaskDownloadUnacquiredCover(Action<int, int> progress)
         {
             int count = 0;
             Dictionary<string, List<GridItem>> needAcquireCovers = new();
 
             foreach (var item in _gridItems)
             {
-                if (!MapUtil.IsExistCoverAtLocal(item.Hash))
+                if (!BeatMapCover.IsExistCoverAtLocal(item.Hash))
                 {
                     if (!needAcquireCovers.ContainsKey(item.Hash))
                     {
@@ -1478,18 +1397,18 @@ namespace MyBeatSaberScore
             };
             await Parallel.ForEachAsync(needAcquireCovers, parallelOptions, async (cover, y) =>
             {
-                _ = await MapUtil.GetCover(cover.Key, cover.Value.First().CoverUrl);
+                _ = await BeatMapCover.GetCover(cover.Key, cover.Value.First().CoverUrl);
                 XaDataGrid.Dispatcher.Invoke(new Action(() =>
                 {
                     cover.Value.ForEach(item =>
                     {
-                        item.Cover = MapUtil.GetCoverLocalPath(item.Hash);
+                        item.Cover = BeatMapCover.GetCoverLocalPath(item.Hash);
                     });
                 }));
                 count++;
-                callback(needAcquireCovers.Count, count);
+                progress(needAcquireCovers.Count, count);
             });
-            callback(100, 100);
+            progress(100, 100);
         }
 
         private void OnFilterEnableChanged(object sender, RoutedEventArgs e)
@@ -1573,7 +1492,7 @@ namespace MyBeatSaberScore
                     else
                     {
                         // 未プレイランク譜面のLeaderbordIdはScrappedDataに含まれていないので取得してくる必要がある
-                        var info = await ScoreSaber.GetLeaderboard(item.Hash, (int)item.Difficulty, item.GameMode);
+                        var info = await ScoreSaber.GetLeaderboard(item.Hash, item.Difficulty, item.GameMode);
                         var url = $"https://scoresaber.com/leaderboard/{info.difficulty.leaderboardId}";
                         _ = OpenUrl(url);
                     }
@@ -1592,7 +1511,7 @@ namespace MyBeatSaberScore
                 if (((FrameworkElement)sender).DataContext is GridItem item)
                 {
                     var leaderboards = await BeatLeader.GetLeaderboardsByHash(item.Hash);
-                    var leaderboardId = BeatLeader.GetLeaderboardId(leaderboards, (int)item.Difficulty, item.GameMode);
+                    var leaderboardId = BeatLeader.GetLeaderboardId(leaderboards, item.Difficulty, item.GameMode);
                     var url = $"https://www.beatleader.xyz/leaderboard/global/{leaderboardId}";
                     _ = OpenUrl(url);
                 }
@@ -1715,9 +1634,9 @@ namespace MyBeatSaberScore
                     sb.Append($"\"{TrimDoubleQuotationMarks(i.SongSubName)}\"").Append(delmiter);
                     sb.Append($"\"{TrimDoubleQuotationMarks(i.SongAuthor)}\"").Append(delmiter);
                     sb.Append($"\"{TrimDoubleQuotationMarks(i.LevelAuthor)}\"").Append(delmiter);
-                    if (i.TimeSet.Length > 0)
+                    if (i.TimeSet != null)
                     {
-                        sb.Append(DateTime.Parse(i.TimeSet).ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)")).Append(delmiter);
+                        sb.Append(i.TimeSet?.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)")).Append(delmiter);
                     }
                     else
                     {
@@ -1725,7 +1644,7 @@ namespace MyBeatSaberScore
                     }
                     sb.Append(i.GameMode).Append(delmiter);
                     sb.Append(i.Difficulty).Append(delmiter);
-                    sb.Append(i.Stars).Append(delmiter);
+                    sb.Append(i.Star).Append(delmiter);
                     sb.Append(i.ModifiedScore).Append(delmiter);
                     sb.Append(i.Acc).Append(delmiter);
                     sb.Append(i.MissPlusBad).Append(delmiter);

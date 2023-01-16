@@ -4,7 +4,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MyBeatSaberScore"
+      xmlns:beatmap="clr-namespace:MyBeatSaberScore.BeatMap"
       xmlns:convert="clr-namespace:MyBeatSaberScore.Convertes"
+      xmlns:utility="clr-namespace:MyBeatSaberScore.Utility"
       mc:Ignorable="d" 
       d:DesignHeight="720" d:DesignWidth="1070"
       Title="PageMain" Loaded="Page_Loaded">
@@ -189,7 +191,7 @@
             </StatusBar>
             <DataGrid x:Name="XaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" RowHeight="45">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="CheckBox" Width="32">
+                    <DataGridTemplateColumn Header="" utility:TagBehavior.Tag="CheckBox" Width="32">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickGridItemCheckBox">
@@ -212,9 +214,9 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="bsr" local:TagBehavior.Tag="Bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="bsr" utility:TagBehavior.Tag="Bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTemplateColumn Header="カバー" local:TagBehavior.Tag="Cover" Width="45">
+                    <DataGridTemplateColumn Header="カバー" utility:TagBehavior.Tag="Cover" Width="45">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Source="{Binding Cover}" CacheMode="BitmapCache"/>
@@ -222,36 +224,36 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" local:TagBehavior.Tag="SongName" Width="220" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
+                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" utility:TagBehavior.Tag="SongName" Width="220" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
 
-                    <DataGridTextColumn Header="更新日" local:TagBehavior.Tag="Date"  Width="140" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
+                    <DataGridTextColumn Header="更新日" utility:TagBehavior.Tag="Date"  Width="140" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
 
-                    <DataGridTemplateColumn Header="モード" local:TagBehavior.Tag="Mode">
+                    <DataGridTemplateColumn Header="モード" utility:TagBehavior.Tag="Mode">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Width="32">
                                     <Image.Style>
                                         <Style>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloStandard">
+                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Standard}">
                                                     <Setter Property="Image.Source" Value="Resources/standard.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloLawless">
+                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Lawless}">
                                                     <Setter Property="Image.Source" Value="Resources/lawless.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloOneSaber">
+                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.OneSaber}">
                                                     <Setter Property="Image.Source" Value="Resources/onesaber.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloLightShow">
+                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Lightshow}">
                                                     <Setter Property="Image.Source" Value="Resources/lightshow.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="Solo90Degree">
+                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Degree90}">
                                                     <Setter Property="Image.Source" Value="Resources/90degree.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="Solo360Degree">
+                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Degree360}">
                                                     <Setter Property="Image.Source" Value="Resources/360degree.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="SoloNoArrows">
+                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.NoArrows}">
                                                     <Setter Property="Image.Source" Value="Resources/noarrows.png"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -262,26 +264,26 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="難易度" local:TagBehavior.Tag="Difficulty">
+                    <DataGridTemplateColumn Header="難易度" utility:TagBehavior.Tag="Difficulty">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Width="32">
                                     <Image.Style>
                                         <Style>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="1">
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Easy}">
                                                     <Setter Property="Image.Source" Value="Resources/easy.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="3">
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Normal}">
                                                     <Setter Property="Image.Source" Value="Resources/normal.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="5">
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Hard}">
                                                     <Setter Property="Image.Source" Value="Resources/hard.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="7">
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Expert}">
                                                     <Setter Property="Image.Source" Value="Resources/expert.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="9">
+                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.ExpertPlus}">
                                                     <Setter Property="Image.Source" Value="Resources/expertplus.png"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -292,27 +294,27 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="★" local:TagBehavior.Tag="Stars" Binding="{Binding Stars, Converter={StaticResource StarConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="★" utility:TagBehavior.Tag="Stars" Binding="{Binding Star, Converter={StaticResource StarConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="#" local:TagBehavior.Tag="ScoreRank" Binding="{Binding ScoreRank, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="#" utility:TagBehavior.Tag="ScoreRank" Binding="{Binding ScoreRank, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="スコア" local:TagBehavior.Tag="Score" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource ClearStatus}"/>
+                    <DataGridTextColumn Header="スコア" utility:TagBehavior.Tag="Score" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource ClearStatus}"/>
 
-                    <DataGridTextColumn Header="精度" local:TagBehavior.Tag="Acc" Binding="{Binding Acc, Converter={StaticResource AccConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="精度" utility:TagBehavior.Tag="Acc" Binding="{Binding Acc, Converter={StaticResource AccConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="Diff" local:TagBehavior.Tag="AccDiff" Binding="{Binding AccDifference, Converter={StaticResource AccDiffConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="Diff" utility:TagBehavior.Tag="AccDiff" Binding="{Binding AccDifference, Converter={StaticResource AccDiffConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="✖" local:TagBehavior.Tag="MissPlusBad" Binding="{Binding MissPlusBad}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="✖" utility:TagBehavior.Tag="MissPlusBad" Binding="{Binding MissPlusBad}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="FC" local:TagBehavior.Tag="FullCombo" Binding="{Binding FullCombo, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="FC" utility:TagBehavior.Tag="FullCombo" Binding="{Binding FullCombo, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="PP" local:TagBehavior.Tag="Pp" Binding="{Binding PP, Converter={StaticResource PPConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="PP" utility:TagBehavior.Tag="Pp" Binding="{Binding PP, Converter={StaticResource PPConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="Modifiers" local:TagBehavior.Tag="Modifiers" Width="40"  Binding="{Binding Modifiers}" ElementStyle="{StaticResource WrapText}"/>
+                    <DataGridTextColumn Header="Modifiers" utility:TagBehavior.Tag="Modifiers" Width="40"  Binding="{Binding Modifiers}" ElementStyle="{StaticResource WrapText}"/>
 
-                    <DataGridTextColumn Header="回数" local:TagBehavior.Tag="ScoreCount" Binding="{Binding ScoreCount, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="回数" utility:TagBehavior.Tag="ScoreCount" Binding="{Binding ScoreCount, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="CopyBsr">
+                    <DataGridTemplateColumn Header="" utility:TagBehavior.Tag="CopyBsr">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickCopyBSR" ToolTip="Copy BSR">
@@ -335,7 +337,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="JumpBeatSaver">
+                    <DataGridTemplateColumn Header="" utility:TagBehavior.Tag="JumpBeatSaver">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickJumpBeatSaver" ToolTip="Open Beat Saver in your browser">
@@ -345,7 +347,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="JumpScoreSaber">
+                    <DataGridTemplateColumn Header="" utility:TagBehavior.Tag="JumpScoreSaber">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickJumpScoreSaber" ToolTip="Open Score Saber in your browser">
@@ -355,7 +357,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="" local:TagBehavior.Tag="JumpBeatLeader">
+                    <DataGridTemplateColumn Header="" utility:TagBehavior.Tag="JumpBeatLeader">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource ImageButtonStyle}" Click="OnClickJumpBeatLeader" ToolTip="Open BeatLeader in your browser">
@@ -365,27 +367,27 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="⌛" local:TagBehavior.Tag="Duration" Binding="{Binding Duration, Converter={StaticResource TimeConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="⌛" utility:TagBehavior.Tag="Duration" Binding="{Binding Duration, Converter={StaticResource TimeConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="BPM" local:TagBehavior.Tag="Bpm" Binding="{Binding Bpm, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="BPM" utility:TagBehavior.Tag="Bpm" Binding="{Binding Bpm, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="ノーツ" local:TagBehavior.Tag="Notes" Binding="{Binding Notes, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="ノーツ" utility:TagBehavior.Tag="Notes" Binding="{Binding Notes, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="NPS" local:TagBehavior.Tag="Nps" Binding="{Binding Nps, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="NPS" utility:TagBehavior.Tag="Nps" Binding="{Binding Nps, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="NJS" local:TagBehavior.Tag="Njs" Binding="{Binding Njs, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="NJS" utility:TagBehavior.Tag="Njs" Binding="{Binding Njs, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="💣" local:TagBehavior.Tag="Bombs" Binding="{Binding Bombs, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="💣" utility:TagBehavior.Tag="Bombs" Binding="{Binding Bombs, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="壁" local:TagBehavior.Tag="Obstacles" Binding="{Binding Obstacles, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="壁" utility:TagBehavior.Tag="Obstacles" Binding="{Binding Obstacles, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="Miss" local:TagBehavior.Tag="Miss" Binding="{Binding Miss, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="Miss" utility:TagBehavior.Tag="Miss" Binding="{Binding Miss, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="Bad" local:TagBehavior.Tag="Bad" Binding="{Binding Bad, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="Bad" utility:TagBehavior.Tag="Bad" Binding="{Binding Bad, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="Hash" local:TagBehavior.Tag="Hash" Width="64" Binding="{Binding Hash}"/>
+                    <DataGridTextColumn Header="Hash" utility:TagBehavior.Tag="Hash" Width="64" Binding="{Binding Hash}"/>
 
-                    <DataGridTextColumn Header="Ranked Date" local:TagBehavior.Tag="RankedDate"  Width="140" Binding="{Binding RankedDate, Converter={StaticResource DateConverter}}"/>
+                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="RankedDate"  Width="140" Binding="{Binding RankedDate, Converter={StaticResource DateConverter}}"/>
 
                 </DataGrid.Columns>
             </DataGrid>

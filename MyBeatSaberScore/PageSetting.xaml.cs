@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MyBeatSaberScore.Utility;
 
 namespace MyBeatSaberScore
 {
@@ -84,7 +85,7 @@ namespace MyBeatSaberScore
                     if (_InitializeFinished)
                     {
                         Config.GridSetting.rowHeight = height;
-                        Config.SaveLocalFile();
+                        Config.SaveToLocalFile();
                     }
                 }
             }
@@ -161,7 +162,7 @@ namespace MyBeatSaberScore
             DispCheckBoxChanged(XaDispRankedDate, Config.ColumnTagRankedDate);
             DispCheckBoxChanged(XaDispScoreRank, Config.ColumnTagScoreRank);
 
-            Config.SaveLocalFile();
+            Config.SaveToLocalFile();
         }
     }
 }
