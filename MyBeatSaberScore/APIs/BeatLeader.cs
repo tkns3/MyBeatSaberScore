@@ -22,7 +22,7 @@ namespace MyBeatSaberScore.APIs
         /// <returns></returns>
         public static async Task<LeaderboardsResponse> GetLeaderboardsByHash(string hash)
         {
-            string url = $"https://api.beatleader.xyz/leaderboards/hash//{hash}";
+            string url = $"https://api.beatleader.xyz/leaderboards/hash/{hash}";
 
             try
             {
