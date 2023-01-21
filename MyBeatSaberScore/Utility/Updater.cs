@@ -2,13 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
-using System.Security.Policy;
-using System.Text.Json;
 using System.Threading.Tasks;
-using static MyBeatSaberScore.APIs.BeatLeader;
 
 namespace MyBeatSaberScore.Utility
 {
@@ -25,6 +20,8 @@ namespace MyBeatSaberScore.Utility
 
     class Updater
     {
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
+
         private static readonly string Owner = "tkns3";
         private static readonly string Repo = "MyBeatSaberScore";
         private static readonly string OriginalExeName = "MyBeatSaberScore.exe";
@@ -32,7 +29,7 @@ namespace MyBeatSaberScore.Utility
 
         private static string[] _arguments = Array.Empty<string>();
 
-        public static Version? CurrentVersion { get; private set; }
+        public static Version? CurrentVersion { get; private set; } = new Version(Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0.0");
         public static Version? LatestVersion { get; private set; }
         public static string ExeDir { get; private set; } = "";
         public static string ExeName { get; private set; } = "";
@@ -47,8 +44,6 @@ namespace MyBeatSaberScore.Utility
         public static void Initialize(string[] args)
         {
             ReleasesCache.Clear();
-
-            CurrentVersion = new Version(Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0.0");
 
             _arguments = new string[args.Length];
             args.CopyTo(_arguments, 0);
@@ -101,9 +96,9 @@ namespace MyBeatSaberScore.Utility
                     {
                         File.Delete(OldExePath);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // ログ ファイル削除失敗
+                        _logger.Warn($"{OldExePath}: {ex}");
                     }
                 }
             }
@@ -131,9 +126,9 @@ namespace MyBeatSaberScore.Utility
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Githubから取得失敗
+                _logger.Warn($"{ApiReleasesURL}: {ex}");
             }
         }
 

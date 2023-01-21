@@ -1,10 +1,10 @@
-﻿using System;
+﻿using MyBeatSaberScore.BeatMap;
+using MyBeatSaberScore.Utility;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
-using MyBeatSaberScore.BeatMap;
-using MyBeatSaberScore.Utility;
 
 namespace MyBeatSaberScore
 {
@@ -27,20 +27,9 @@ namespace MyBeatSaberScore
             }
         }
 
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            Updater.Initialize(e.Args);
-            HttpTool.Client.DefaultRequestHeaders.Add("User-Agent", $"MyBeatSaberScore/" + Updater.CurrentVersion);
-            BeatMapCover.Initialize();
-            BeatMapDic.Initialize();
-            Config.LoadFromLocalFile();
-        }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            _logger.Info("Start");
 
             // UIスレッドの未処理例外で発生
             DispatcherUnhandledException += OnDispatcherUnhandledException;
@@ -48,6 +37,13 @@ namespace MyBeatSaberScore
             TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
             // それでも処理されない例外で発生
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            _logger.Info($"Start: {Updater.CurrentVersion}");
+
+            Updater.Initialize(e.Args);
+            HttpTool.Client.DefaultRequestHeaders.Add("User-Agent", $"MyBeatSaberScore/" + Updater.CurrentVersion);
+            BeatMapCover.Initialize();
+            Config.LoadFromLocalFile();
         }
 
         private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

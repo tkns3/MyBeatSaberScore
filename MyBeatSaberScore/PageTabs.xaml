@@ -1,0 +1,63 @@
+﻿<Page x:Class="MyBeatSaberScore.PageTabs"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MyBeatSaberScore"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="PageTabs" Initialized="Page_Initialized">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0*"/>
+        </Grid.ColumnDefinitions>
+
+        <TabControl x:Name="XaTabControl" TabStripPlacement="Left" BorderThickness="1" Grid.ColumnSpan="2">
+            <TabItem x:Name="XaTabMain">
+                <TabItem.Header>
+                    <Image Width="26" Margin="2" Source="Resources/menu_onpu.png"/>
+                </TabItem.Header>
+                <Frame Source="PageMain.xaml"></Frame>
+            </TabItem>
+            <TabItem x:Name="XaTabUsers">
+                <TabItem.Header>
+                    <Image Width="26" Margin="2" Source="Resources/menu_users.png"/>
+                </TabItem.Header>
+                <Frame Source="PageUserSelector.xaml"></Frame>
+            </TabItem>
+            <TabItem x:Name="XaTabFilter">
+                <TabItem.Header>
+                    <Image Width="26" Margin="2" Source="Resources/menu_filter.png"/>
+                </TabItem.Header>
+                <Frame Source="PageFilter.xaml"></Frame>
+            </TabItem>
+            <TabItem x:Name="XaTabPlaylist">
+                <TabItem.Header>
+                    <Image Width="26" Margin="2" Source="Resources/menu_playlist.png"/>
+                </TabItem.Header>
+                <TextBlock Text="工事中" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            </TabItem>
+            <TabItem x:Name="XaTabCompare">
+                <TabItem.Header>
+                    <Image Width="26" Margin="2" Source="Resources/menu_compare.png"/>
+                </TabItem.Header>
+                <TextBlock Text="工事中" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            </TabItem>
+            <TabItem x:Name="XaTabSetting">
+                <TabItem.Header>
+                    <Image Width="26" Margin="2" Source="Resources/menu_setting.png"/>
+                </TabItem.Header>
+                <Frame Source="PageSetting.xaml"></Frame>
+            </TabItem>
+            <TabItem x:Name="XaTabUpdater">
+                <TabItem.Header>
+                    <Image x:Name="XaImageMenuUpdate" Width="26" Margin="2" Source="Resources/menu_update_none.png"/>
+                </TabItem.Header>
+                <Frame Source="PageUpdater.xaml"></Frame>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>
