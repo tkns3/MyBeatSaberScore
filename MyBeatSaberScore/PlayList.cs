@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MyBeatSaberScore.APIs;
+using MyBeatSaberScore.BeatMap;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +12,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static MyBeatSaberScore.APIs.BeatSaver;
 
 namespace MyBeatSaberScore
 {
@@ -41,7 +44,7 @@ namespace MyBeatSaberScore
             _container = new Container();
         }
 
-        public void AddSong(string key, string hash, string songName, string levelAuthor, string mode, long difficultyInt)
+        public void AddSong(string key, string hash, string songName, string levelAuthor, BeatMapMode mode, BeatMapDifficulty difficulty)
         {
             _container.songs.Add(new Song()
             {
@@ -50,7 +53,7 @@ namespace MyBeatSaberScore
                 levelAuthorName = levelAuthor,
                 hash = hash,
                 levelid = $"custom_level_{hash}",
-                difficulties = new List<Difficulty>() { new Difficulty(mode, difficultyInt) }
+                difficulties = new List<Difficulty>() { new Difficulty().Set(mode, difficulty) }
             });
         }
 
@@ -67,22 +70,16 @@ namespace MyBeatSaberScore
             }
         }
 
-        [DataContract]
         public class Container
         {
-            [DataMember]
             public string playlistTitle { get; set; }
 
-            [DataMember]
             public string playlistAuthor { get; set; }
 
-            [DataMember]
             public string playlistDescription { get; set; }
 
-            [DataMember]
             public List<Song> songs { get; set; }
 
-            [DataMember]
             public string image { get; set; }
 
             public Container()
@@ -95,65 +92,50 @@ namespace MyBeatSaberScore
             }
         }
 
-        [DataContract]
         public class Song
         {
-            [DataMember]
-            public string key { get; set; }
+            public string key { get; set; } = "";
 
-            [DataMember]
-            public string songName { get; set; }
+            public string songName { get; set; } = "";
 
-            [DataMember]
-            public string levelAuthorName { get; set; }
+            public string levelAuthorName { get; set; } = "";
 
-            [DataMember]
-            public string hash { get; set; }
+            public string hash { get; set; } = "";
 
-            [DataMember]
-            public string levelid { get; set; }
+            public string levelid { get; set; } = "";
 
-            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public List<Difficulty> difficulties { get; set; }
-
-            public Song()
-            {
-                key = "";
-                songName = "";
-                levelAuthorName = "";
-                hash = "";
-                levelid = "";
-                difficulties = new();
-            }
+            public List<Difficulty>? difficulties { get; set; }
         }
 
-        [DataContract]
         public class Difficulty
         {
-            [DataMember]
-            public string characteristic { get; set; }
+            public string characteristic { get; set; } = "";
 
-            [DataMember]
-            public string name { get; set; }
+            public string name { get; set; } = "";
 
-            public Difficulty()
+            public Difficulty Set(BeatMapMode mapMode, BeatMapDifficulty mapDifficulty)
             {
-                characteristic = "";
-                name = "";
-            }
-
-            public Difficulty(string mode, long difficultyInt)
-            {
-                characteristic = mode[4..];
-                switch (difficultyInt)
+                name = mapDifficulty switch
                 {
-                    case 1: name = "Easy"; break;
-                    case 3: name = "Normal"; break;
-                    case 5: name = "Hard"; break;
-                    case 7: name = "Expert"; break;
-                    case 9: name = "ExpertPlus"; break;
-                    default: name = "ExpertPlus"; break;
-                }
+                    BeatMapDifficulty.Easy => "Easy",
+                    BeatMapDifficulty.Normal => "Normal",
+                    BeatMapDifficulty.Hard => "Hard",
+                    BeatMapDifficulty.Expert => "Expert",
+                    BeatMapDifficulty.ExpertPlus => "ExpertPlus",
+                    _ => "ExpertPlus",
+                };
+                characteristic = mapMode switch
+                {
+                    BeatMapMode.Standard => "Standard",
+                    BeatMapMode.OneSaber => "OneSaber",
+                    BeatMapMode.NoArrows => "NoArrows",
+                    BeatMapMode.Degree90 => "90Degree",
+                    BeatMapMode.Degree360 => "360Degree",
+                    BeatMapMode.Lightshow => "Lightshow",
+                    BeatMapMode.Lawless => "Lawless",
+                    _ => "Standard",
+                };
+                return this;
             }
         }
     }

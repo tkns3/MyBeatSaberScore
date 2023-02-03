@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using static MyBeatSaberScore.PageMain;
 
 namespace MyBeatSaberScore.Convertes
 {
@@ -8,8 +9,8 @@ namespace MyBeatSaberScore.Convertes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            long v = (long)value;
-            return (v > 0) ? $"{v:x}" : "";
+            NumOfKey v = (NumOfKey)value;
+            return (v.Key > 0) ? (v.IsDeleted) ? $"({v.Key:x})" : $"{v.Key:x}" : "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

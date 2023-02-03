@@ -52,6 +52,30 @@ namespace MyBeatSaberScore
                       typeof(PlaceholderTextBox), new PropertyMetadata(null, OnPlaceHolderChanged));
 
         private string _placeholder = string.Empty;
+
+        public PlaceholderTextBox()
+        {
+            TextCompositionManager.AddPreviewTextInputHandler(this, OnPreviewTextInput);
+            TextCompositionManager.AddPreviewTextInputStartHandler(this, OnPreviewTextInputStart);
+            TextCompositionManager.AddPreviewTextInputUpdateHandler(this, OnPreviewTextInputUpdate);
+        }
+
+        public bool _imeFlag = false;
+
+        private void OnPreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            _imeFlag = false;
+        }
+        private void OnPreviewTextInputStart(object sender, TextCompositionEventArgs e)
+        {
+            _imeFlag = true;
+        }
+        private void OnPreviewTextInputUpdate(object sender, TextCompositionEventArgs e)
+        {
+            if (e.TextComposition.CompositionText.Length == 0)
+                _imeFlag = false;
+        }
+
         /// <summary>
         /// プレースホルダーのプロパティを設定
         /// </summary>

@@ -1,10 +1,8 @@
-﻿using System;
+﻿using MyBeatSaberScore.Utility;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Runtime.Serialization;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MyBeatSaberScore.APIs
@@ -13,24 +11,16 @@ namespace MyBeatSaberScore.APIs
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
 
-        private static readonly HttpClient _client = new();
-
         public static async Task<RankedMapCollection> GetRankedMaps()
         {
             string url = @"https://www.beatsavior.io/api/maps/ranked";
+            HttpContent requestContent = new StringContent("{\"minStar\":0,\"maxStar\":20,\"playlist\":true}", Encoding.UTF8, "application/json");
 
             try
             {
-                HttpContent requestContent = new StringContent("{\"minStar\":0,\"maxStar\":20,\"playlist\":true}", Encoding.UTF8, "application/json");
-                var httpsResponse = await _client.PostAsync(url, requestContent);
-                var responseContent = await httpsResponse.Content.ReadAsStringAsync();
-                var collection = JsonSerializer.Deserialize<RankedMapCollection>(responseContent);
-                
-                if (collection != null)
-                {
-                    collection.Normalize();
-                    return collection;
-                }
+                _logger.Info(url);
+                var result = await HttpTool.PostAndDeserialize<RankedMapCollection>(url, requestContent);
+                return result;
             }
             catch (Exception ex)
             {
@@ -40,83 +30,50 @@ namespace MyBeatSaberScore.APIs
             return new RankedMapCollection();
         }
 
-        [DataContract]
         public class RankedMapCollection
         {
-            [DataMember]
-            public List<RankedMap> maps { get; set; }
-
-            public RankedMapCollection()
-            {
-                maps = new();
-            }
-
-            public void Normalize()
-            {
-                maps.ForEach(map => map.Normalize());
-            }
+            public List<RankedMap> maps { get; set; } = new();
         }
 
-        [DataContract]
         public class RankedMap
         {
-            [DataMember]
-            public string hash { get; set; }
-
-            [DataMember]
-            public string key { get; set; }
-
-            [DataMember]
-            public string levelAuthorName { get; set; }
-
-            [DataMember]
-            public string songName { get; set; }
-
-            [DataMember]
-            public string songSubName { get; set; }
-
-            [DataMember]
-            public string songAuthorName { get; set; }
-
-            [DataMember]
-            public string coverURL { get; set; }
-
-            [DataMember]
-            public Dictionary<string, RankedDifficulty> diffs { get; set; }
-
-            public RankedMap()
+            public string hash
             {
-                hash = "";
-                key = "";
-                levelAuthorName = "";
-                songName = "";
-                songSubName = "";
-                songAuthorName = "";
-                coverURL = "";
-                diffs = new();
+                get
+                {
+                    return _hash;
+                }
+                set
+                {
+                    _hash = value.ToLower();
+                }
             }
-
-            public void Normalize()
+            public string key
             {
-                hash = hash.ToLower();
-                key = key.ToLower();
-                coverURL = "https://cdn.scoresaber.com/covers/" + hash.ToUpper() + ".png";
+                get
+                {
+                    return _key;
+                }
+                set
+                {
+                    _key = value.ToLower();
+                }
             }
+            public string levelAuthorName { get; set; } = "";
+            public string songName { get; set; } = "";
+            public string songSubName { get; set; } = "";
+            public string songAuthorName { get; set; } = "";
+            public string coverURL { get; set; } = "";
+            public Dictionary<string, RankedDifficulty> diffs { get; set; } = new();
+
+            private string _hash = "";
+            private string _key = "";
         }
 
-        [DataContract]
         public class RankedDifficulty
         {
-            [DataMember]
             public double Stars { get; set; }
-
-            [DataMember]
-            public string Diff { get; set; }
-
-            public RankedDifficulty()
-            {
-                Diff = "";
-            }
+            public string Diff { get; set; } = "";
         }
     }
 }

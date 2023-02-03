@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
-using System.Text.Json;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
-namespace MyBeatSaberScore
+namespace MyBeatSaberScore.Utility
 {
     // ＜前提＞
     //   リリースのタグ名は"v*.*.*"の形式で指定しなければならない。
@@ -23,15 +21,16 @@ namespace MyBeatSaberScore
 
     class Updater
     {
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
+
         private static readonly string Owner = "tkns3";
         private static readonly string Repo = "MyBeatSaberScore";
         private static readonly string OriginalExeName = "MyBeatSaberScore.exe";
         private static readonly string ApiReleasesURL = $"https://api.github.com/repos/{Owner}/{Repo}/releases";
 
-        private static HttpClient _client = new();
         private static string[] _arguments = Array.Empty<string>();
 
-        public static Version? CurrentVersion { get; private set; }
+        public static Version? CurrentVersion { get; private set; } = new Version(Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0.0");
         public static Version? LatestVersion { get; private set; }
         public static string ExeDir { get; private set; } = "";
         public static string ExeName { get; private set; } = "";
@@ -46,8 +45,6 @@ namespace MyBeatSaberScore
         public static void Initialize(string[] args)
         {
             ReleasesCache.Clear();
-
-            CurrentVersion = new Version(Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0.0");
 
             _arguments = new string[args.Length];
             args.CopyTo(_arguments, 0);
@@ -92,7 +89,7 @@ namespace MyBeatSaberScore
                         if (arg.StartsWith("--old-pid="))
                         {
                             int pid = int.Parse(args[0][10..]);
-                            var p = System.Diagnostics.Process.GetProcessById(pid);
+                            var p = Process.GetProcessById(pid);
                             p.WaitForExit(1000);
                         }
                     }
@@ -100,25 +97,12 @@ namespace MyBeatSaberScore
                     {
                         File.Delete(OldExePath);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // ログ ファイル削除失敗
+                        _logger.Warn($"{OldExePath}: {ex}");
                     }
                 }
             }
-
-            var handler = new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-            };
-
-            _client = new HttpClient(handler)
-            {
-                Timeout = TimeSpan.FromSeconds(240),
-            };
-
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            _client.DefaultRequestHeaders.Add("User-Agent", $"{Repo}/" + CurrentVersion);
         }
 
         public static async Task FetchReleasesAsync()
@@ -128,9 +112,8 @@ namespace MyBeatSaberScore
 
             try
             {
-                var resp = await _client.GetAsync(ApiReleasesURL);
-                var body = await resp.Content.ReadAsStringAsync();
-                var releases = JsonSerializer.Deserialize<List<Release>>(body);
+                _logger.Info(ApiReleasesURL);
+                var releases = await HttpTool.GetAndDeserialize<List<Release>>(ApiReleasesURL);
                 if (releases != null)
                 {
                     ReleasesCache = releases;
@@ -145,9 +128,9 @@ namespace MyBeatSaberScore
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Githubから取得失敗
+                _logger.Warn($"{ApiReleasesURL}: {ex}");
             }
         }
 
@@ -188,43 +171,27 @@ namespace MyBeatSaberScore
                     File.Delete(OldExePath);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.Warn($"{OldExePath}: {ex}");
                 return;
             }
 
             var nexExeTmpPath = $"{NewExePath}.tmp";
-            var isSuccess = await Download(downloadLink, nexExeTmpPath);
-            if (!isSuccess)
+            try
             {
-                // ダウンロード失敗
+                _logger.Info(downloadLink);
+                await HttpTool.Download(downloadLink, nexExeTmpPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn($"{downloadLink}: {ex}");
                 return;
             }
 
             File.Move(ExePath, OldExePath);
             File.Move(nexExeTmpPath, NewExePath);
             RunNew(NewExePath);
-        }
-
-        private static async Task<bool> Download(string link, string output)
-        {
-            HttpResponseMessage res = await _client.GetAsync(link);
-            if (res.StatusCode != HttpStatusCode.OK)
-            {
-                return false;
-            }
-
-            try
-            {
-                using var fileStream = new FileStream(output, FileMode.OpenOrCreate, FileAccess.Write);
-                using var httpStream = await res.Content.ReadAsStreamAsync();
-                await httpStream.CopyToAsync(fileStream);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         private static void RunNew(string newExePath)

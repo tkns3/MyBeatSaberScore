@@ -2,22 +2,18 @@
 using MyBeatSaberScore.Utility;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace MyBeatSaberScore.APIs
 {
-    public static class BeatSaberScrappedData
+    public static class BeatLeaderRankedMaps
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
 
-        private static readonly string _mapsDir = Path.Combine("data", "maps");
-        private static readonly string _combinedScrappedDataJsonPath = Path.Combine(_mapsDir, "combinedScrappedData.json");
-
-        public static async Task<Response?> GetAllMaps(string? etag)
+        public static async Task<Response?> GetRankedMaps(string? etag)
         {
-            string url = "https://github.com/andruzzzhka/BeatSaberScrappedData/raw/master/combinedScrappedData.zip";
-            string entryName = "combinedScrappedData.json";
+            string url = "https://github.com/tkns3/BeatLeaderRankedData/releases/latest/download/rankedmaps.zip";
+            string entryName = "rankedmaps.json";
 
             try
             {
@@ -39,57 +35,35 @@ namespace MyBeatSaberScore.APIs
             return null;
         }
 
-/*
-	{
-		"Key":"1",
-		"Hash":"FDA568FC27C20D21F8DC6F3709B49B5CC96723BE",
-		"SongName":"me & u",
-		"SongSubName":"",
-		"SongAuthorName":"succducc",
-		"LevelAuthorName":"datkami",
-		"Diffs":[
-			{
-				"Diff":"Hard",
-				"Char":"Standard",
-				"Stars":2.81,
-				"Ranked":true,
-				"RankedUpdateTime":"2018-05-08T14:28:56Z",
-				"Bombs":28,
-				"Notes":337,
-				"Obstacles":11,
-				"Njs":10,
-				"NjsOffset":0,
-				"Requirements":[]
-			}
-		],
-		"Chars":["Standard"],
-		"Uploaded":"2018-05-08T14:28:56Z",
-		"Uploader":"datkami",
-		"Bpm":160,
-		"Downloads":0,
-		"Upvotes":587,
-		"Downvotes":116,
-		"Duration":144
-	},
-*/
-
         public class Response
         {
             public string? Etag;
             public List<MapInfo> Maps = new();
         }
 
+
         public class MapInfo
         {
-            public string Key
+            public string BeatLeaderId
             {
                 get
                 {
-                    return _key;
+                    return _beatLeaderId;
                 }
                 set
                 {
-                    _key = value.ToLower();
+                    _beatLeaderId = value.ToLower();
+                }
+            }
+            public string BeatSaverId
+            {
+                get
+                {
+                    return _beatSaberId;
+                }
+                set
+                {
+                    _beatSaberId = value.ToLower();
                 }
             }
             public string Hash
@@ -106,40 +80,19 @@ namespace MyBeatSaberScore.APIs
             public string SongName { get; set; } = "";
             public string SongSubName { get; set; } = "";
             public string SongAuthorName { get; set; } = "";
-            public string LevelAuthorName { get; set; } = "";
-            public List<Difficulty> Diffs { get; set; } = new();
-            public DateTime Uploaded { get; set; }
+            public string MapperName { get; set; } = "";
+            public DateTime UploadedTime { get; set; } = new();
             public double Bpm { get; set; }
-            public int Downloads { get; set; }
-            public int Upvotes { get; set; }
-            public int Downvotes { get; set; }
             public double Duration { get; set; }
-            /// <summary>
-            /// 勝手に追加したプロパティ。削除やリパブリッシュによってBeatServerからDLできないHashになっている場合にtrue。
-            /// </summary>
-            public bool Deleted { get; set; }
-
-            private string _key = "";
-            private string _hash = "";
-
-            public Difficulty GetDifficulty(BeatMapMode mode, BeatMapDifficulty difficulty)
-            {
-                var diff = Diffs.Find(d => d.MapMode == mode && d.MapDifficulty == difficulty);
-                return diff ?? new Difficulty();
-            }
-        }
-
-        public class Difficulty
-        {
-            public string Diff
+            public string DifficultyName
             {
                 get
                 {
-                    return _diff;
+                    return _difficultyName;
                 }
                 set
                 {
-                    _diff = value;
+                    _difficultyName = value;
                     MapDifficulty = value switch
                     {
                         "Easy" => BeatMapDifficulty.Easy,
@@ -151,23 +104,23 @@ namespace MyBeatSaberScore.APIs
                     };
                 }
             }
-            public string Char
+            public string ModeName
             {
                 get
                 {
-                    return _char;
+                    return _modeName;
                 }
                 set
                 {
-                    _char = value;
+                    _modeName = value;
                     MapMode = value switch
                     {
                         "Standard" => BeatMapMode.Standard,
                         "OneSaber" => BeatMapMode.OneSaber,
                         "NoArrows" => BeatMapMode.NoArrows,
-                        "Lightshow" => BeatMapMode.Lightshow,
                         "90Degree" => BeatMapMode.Degree90,
                         "360Degree" => BeatMapMode.Degree360,
+                        "Lightshow" => BeatMapMode.Lightshow,
                         "Lawless" => BeatMapMode.Lawless,
                         _ => BeatMapMode.Unknown,
                     };
@@ -175,15 +128,23 @@ namespace MyBeatSaberScore.APIs
             }
             public double Stars { get; set; }
             public bool Ranked { get; set; }
-            public DateTime RankedUpdateTime { get; set; }
-            public int Bombs { get; set; }
-            public int Notes { get; set; }
-            public int Obstacles { get; set; }
+            public DateTime RankedTime { get; set; } = new();
+            public long Bombs { get; set; }
+            public long Notes { get; set; }
+            public long Walls { get; set; }
             public double Njs { get; set; }
-            public double NjsOffset { get; set; }
+            public double Nps { get; set; }
+            public long MaxScore { get; set; }
+            /// <summary>
+            /// 勝手に追加したプロパティ。削除やリパブリッシュによってBeatServerからDLできないHashになっている場合にtrue。
+            /// </summary>
+            public bool Deleted { get; set; }
 
-            private string _char = "";
-            private string _diff = "";
+            private string _beatLeaderId = "";
+            private string _beatSaberId = "";
+            private string _hash = "";
+            private string _difficultyName = "";
+            private string _modeName = "";
 
             internal BeatMapDifficulty MapDifficulty;
             internal BeatMapMode MapMode;

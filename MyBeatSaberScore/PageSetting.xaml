@@ -1,10 +1,9 @@
-﻿<Page
+﻿<Page x:Class="MyBeatSaberScore.PageSetting"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MyBeatSaberScore"
-      xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="MyBeatSaberScore.PageSetting"
       mc:Ignorable="d" d:DesignWidth="1070"
       Title="PageSetting" Height="Auto">
 
@@ -19,6 +18,10 @@
             </Setter>
         </Style>
     </Page.Resources>
+
+    <Page.DataContext>
+        <local:PageSettingViewModel/>
+    </Page.DataContext>
 
     <Grid>
         <ScrollViewer Margin="8,8,0,0">
@@ -45,7 +48,7 @@
                             <StackPanel Margin="0,0,0,20">
                                 <TextBlock Text="行の高さ" FontWeight="Bold" Margin="0,0,0,4"/>
                                 <TextBlock Text="グリッドの１行の高さを指定します。 (デフォルトの値：45)" Foreground="Gray" Margin="0,0,0,4"/>
-                                <TextBox x:Name="XaRowHeight" Text="45" Width="256" TextChanged="OnRowHeightChanged" Margin="0,0,0,4" HorizontalAlignment="Left"/>
+                                <TextBox x:Name="XaRowHeight" Text="{Binding GirdRowHeight}" Width="256" Margin="0,0,0,4" HorizontalAlignment="Left" InputMethod.IsInputMethodEnabled="False" PreviewTextInput="textBox_PreviewTextInput" CommandManager.PreviewExecuted="textBox_PreviewExecuted"/>
                             </StackPanel>
                             <StackPanel Margin="0,0,0,20">
                                 <TextBlock Text="列の順番" FontWeight="Bold" Margin="0,0,0,4"/>
@@ -76,117 +79,183 @@
                             <StackPanel Margin="0,0,0,16">
                                 <TextBlock Text="列の表示" FontWeight="Bold" Margin="0,0,0,4"/>
                                 <TextBlock Text="グリッドに表示する列を選択します。" Foreground="Gray"  Margin="0,0,0,4"/>
-                                <CheckBox x:Name="XaDispCheckBox" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Width="16" Source="Resources/checkon.png"></Image>
-                                        <TextBlock Text=" (チェックボックス)" Width="200"/>
-                                    </StackPanel>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispBsr" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="bsr" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispCover" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="カバー" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispSongName" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="曲名 / 曲作者 [ 譜面作者 ]" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispDate" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="更新日" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispMode" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="モード" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispDifficulty" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="難易度" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispStars" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="★" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispScoreRank" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="# (順位)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispScore" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="スコア" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispAcc" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="精度" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispAccDiff" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="Diff" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispMissPlusBad" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="✖ (Miss Notes + Bad Cuts)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispFullCombo" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="FC (Full Combo)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispPp" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="PP" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispModifiers" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="Modifiers" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispScoreCount" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="回数" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispCopyBsr" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Width="16" Source="Resources/twitch1.png"></Image>
-                                        <TextBlock Text=" (Copy BSR)" Width="200"/>
-                                    </StackPanel>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispJumpBeatSaver" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Width="16" Source="Resources/beatsaver.png"></Image>
-                                        <TextBlock Text=" (Open Beat Saver in your browser)" Width="200"/>
-                                    </StackPanel>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispJumpScoreSaber" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Width="16" Source="Resources/scoresaber.png"></Image>
-                                        <TextBlock Text=" (Open Score Saber in your browser)" Width="200"/>
-                                    </StackPanel>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispJumpBeatLeader" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Width="16" Source="Resources/beatleader.png"></Image>
-                                        <TextBlock Text=" (Open BeatLeader in your browser)" Width="200"/>
-                                    </StackPanel>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispDuration" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="⌛ (Song Duration)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispBpm" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="BPM" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispNotes" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="ノーツ" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispNps" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="NPS (Notes Per Sec)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispNjs" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="NJS (Notes Jump Speed)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispBombs" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="💣 (Bombs)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispObstacles" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="壁" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispMiss" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="Miss (Miss Notes)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispBad" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="Bad (Bud Cuts)" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispHash" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="Hash" Width="200"/>
-                                </CheckBox>
-                                <CheckBox x:Name="XaDispRankedDate" Checked="OnCheckBoxChanged" Unchecked="OnCheckBoxChanged">
-                                    <TextBlock Text="Ranked Date" Width="200"/>
-                                </CheckBox>
+                                <TextBlock Text="[マップ情報]" Foreground="Gray"  Margin="0,0,0,4"/>
+                                <StackPanel Margin="16,0,0,4">
+                                    <CheckBox x:Name="XaDispMapBsr" IsChecked="{Binding IsDisplayMapBsr}">
+                                        <TextBlock Text="bsr" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapCover" IsChecked="{Binding IsDisplayMapCover}">
+                                        <TextBlock Text="カバー" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapSongName" IsChecked="{Binding IsDisplayMapSongName}">
+                                        <TextBlock Text="曲名 / 曲作者 [ 譜面作者 ]" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapMode" IsChecked="{Binding IsDisplayMapMode}">
+                                        <TextBlock Text="モード" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapDifficulty" IsChecked="{Binding IsDisplayMapDifficulty}">
+                                        <TextBlock Text="難易度" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapDuration" IsChecked="{Binding IsDisplayMapDuration}">
+                                        <TextBlock Text="⌛ (Song Duration)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapBpm" IsChecked="{Binding IsDisplayMapBpm}">
+                                        <TextBlock Text="BPM" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapNotes" IsChecked="{Binding IsDisplayMapNotes}">
+                                        <TextBlock Text="ノーツ" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapNps" IsChecked="{Binding IsDisplayMapNps}">
+                                        <TextBlock Text="NPS (Notes Per Sec)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapNjs" IsChecked="{Binding IsDisplayMapNjs}">
+                                        <TextBlock Text="NJS (Notes Jump Speed)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapBombs" IsChecked="{Binding IsDisplayMapBombs}">
+                                        <TextBlock Text="💣 (Bombs)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapWalls" IsChecked="{Binding IsDisplayMapWalls}">
+                                        <TextBlock Text="壁" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispMapHash" IsChecked="{Binding IsDisplayMapHash}">
+                                        <TextBlock Text="Hash" Width="200"/>
+                                    </CheckBox>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="[ " Foreground="Gray"/>
+                                    <Image Width="16" Source="Resources/scoresaber.png"></Image>
+                                    <TextBlock Text=" Score Saber]" Foreground="Gray"/>
+                                </StackPanel>
+                                <StackPanel Margin="16,0,0,4">
+                                    <CheckBox x:Name="XaDispScoreSaberDate" IsChecked="{Binding IsDisplayScoreSaberDate}">
+                                        <TextBlock Text="更新日" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberWorldRank" IsChecked="{Binding IsDisplayScoreSaberWorldRank}">
+                                        <TextBlock Text="# (順位)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberScore" IsChecked="{Binding IsDisplayScoreSaberScore}">
+                                        <TextBlock Text="スコア" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberAcc" IsChecked="{Binding IsDisplayScoreSaberAcc}">
+                                        <TextBlock Text="精度" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberAccDiff" IsChecked="{Binding IsDisplayScoreSaberAccDiff}">
+                                        <TextBlock Text="Diff" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberPp" IsChecked="{Binding IsDisplayScoreSaberPp}">
+                                        <TextBlock Text="PP" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberMissPlusBad" IsChecked="{Binding IsDisplayScoreSaberMissPlusBad}">
+                                        <TextBlock Text="✖ (Miss Notes + Bad Cuts)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberMiss" IsChecked="{Binding IsDisplayScoreSaberMiss}">
+                                        <TextBlock Text="Miss (Miss Notes)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberBad" IsChecked="{Binding IsDisplayScoreSaberBad}">
+                                        <TextBlock Text="Bad (Bud Cuts)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberFullCombo" IsChecked="{Binding IsDisplayScoreSaberFullCombo}">
+                                        <TextBlock Text="FC (Full Combo)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberModifiers" IsChecked="{Binding IsDisplayScoreSaberModifiers}">
+                                        <TextBlock Text="Modifiers" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberScoreCount" IsChecked="{Binding IsDisplayScoreSaberScoreCount}">
+                                        <TextBlock Text="回数" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberStar" IsChecked="{Binding IsDisplayMapScoreSaberStar}">
+                                        <TextBlock Text="★" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispScoreSaberRankedDate" IsChecked="{Binding IsDisplayMapScoreSaberRankedDate}">
+                                        <TextBlock Text="Ranked Date" Width="200"/>
+                                    </CheckBox>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="[ " Foreground="Gray"/>
+                                    <Image Width="16" Source="Resources/beatleader.png"></Image>
+                                    <TextBlock Text=" Beat Leader]" Foreground="Gray"/>
+                                </StackPanel>
+                                <StackPanel Margin="16,0,0,4">
+                                    <CheckBox x:Name="XaDispBeatLeaderDate" IsChecked="{Binding IsDisplayBeatLeaderDate}">
+                                        <TextBlock Text="更新日" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderWorldRank" IsChecked="{Binding IsDisplayBeatLeaderWorldRank}">
+                                        <TextBlock Text="# (順位)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderScore" IsChecked="{Binding IsDisplayBeatLeaderScore}">
+                                        <TextBlock Text="スコア" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderAcc" IsChecked="{Binding IsDisplayBeatLeaderAcc}">
+                                        <TextBlock Text="精度" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderAccDiff" IsChecked="{Binding IsDisplayBeatLeaderAccDiff}">
+                                        <TextBlock Text="Diff" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderPp" IsChecked="{Binding IsDisplayBeatLeaderPp}">
+                                        <TextBlock Text="PP" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderMissPlusBad" IsChecked="{Binding IsDisplayBeatLeaderMissPlusBad}">
+                                        <TextBlock Text="✖ (Miss Notes + Bad Cuts)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderMiss" IsChecked="{Binding IsDisplayBeatLeaderMiss}">
+                                        <TextBlock Text="Miss (Miss Notes)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderBad" IsChecked="{Binding IsDisplayBeatLeaderBad}">
+                                        <TextBlock Text="Bad (Bud Cuts)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderFullCombo" IsChecked="{Binding IsDisplayBeatLeaderFullCombo}">
+                                        <TextBlock Text="FC (Full Combo)" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderModifiers" IsChecked="{Binding IsDisplayBeatLeaderModifiers}">
+                                        <TextBlock Text="Modifiers" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderScoreCount" IsChecked="{Binding IsDisplayBeatLeaderScoreCount}">
+                                        <TextBlock Text="回数" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderStar" IsChecked="{Binding IsDisplayMapBeatLeaderStar}">
+                                        <TextBlock Text="★" Width="200"/>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispBeatLeaderRankedDate" IsChecked="{Binding IsDisplayMapBeatLeaderRankedDate}">
+                                        <TextBlock Text="Ranked Date" Width="200"/>
+                                    </CheckBox>
+                                </StackPanel>
+
+                                <TextBlock Text="[その他]" Foreground="Gray"  Margin="0,0,0,4"/>
+                                <StackPanel Margin="16,0,0,4">
+                                    <CheckBox x:Name="XaDispCheckBox" IsChecked="{Binding IsDisplayCheckBox}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Width="16" Source="Resources/checkon.png"></Image>
+                                            <TextBlock Text=" (チェックボックス)" Width="200"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispCopyBsr" IsChecked="{Binding IsDisplayCopyBsr}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Width="16" Source="Resources/twitch1.png"></Image>
+                                            <TextBlock Text=" (Copy BSR)" Width="200"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispJumpBeatSaver" IsChecked="{Binding IsDisplayJumpBeatSaver}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Width="16" Source="Resources/beatsaver.png"></Image>
+                                            <TextBlock Text=" (Open Beat Saver in your browser)" Width="200"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispJumpScoreSaber" IsChecked="{Binding IsDisplayJumpScoreSaber}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Width="16" Source="Resources/scoresaber.png"></Image>
+                                            <TextBlock Text=" (Open Score Saber in your browser)" Width="200"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                    <CheckBox x:Name="XaDispJumpBeatLeader" IsChecked="{Binding IsDisplayJumpBeatLeader}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Width="16" Source="Resources/beatleader.png"></Image>
+                                            <TextBlock Text=" (Open BeatLeader in your browser)" Width="200"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </StackPanel>
+                                
                             </StackPanel>
                         </StackPanel>
                     </Grid>

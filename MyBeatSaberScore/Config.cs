@@ -1,15 +1,9 @@
-﻿using System;
+﻿using MyBeatSaberScore.APIs;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace MyBeatSaberScore
 {
@@ -22,38 +16,56 @@ namespace MyBeatSaberScore
         private static ConfigData _data = new();
 
         #region 列のタグ名
+        // マップ情報
+        public const string ColumnTagMapBsr = "Map.Bsr";
+        public const string ColumnTagMapCover = "Map.Cover";
+        public const string ColumnTagMapSongName = "Map.SongName";
+        public const string ColumnTagMapMode = "Map.Mode";
+        public const string ColumnTagMapDifficulty = "Map.Difficulty";
+        public const string ColumnTagMapDuration = "Map.Duration";
+        public const string ColumnTagMapBpm = "Map.Bpm";
+        public const string ColumnTagMapNotes = "Map.Notes";
+        public const string ColumnTagMapNps = "Map.Nps";
+        public const string ColumnTagMapNjs = "Map.Njs";
+        public const string ColumnTagMapBombs = "Map.Bombs";
+        public const string ColumnTagMapWalls = "Map.Walls";
+        public const string ColumnTagMapHash = "Map.Hash";
+        public const string ColumnTagMapScoreSaberRankedDate = "Map.ScoreSaber.RankedDate";
+        public const string ColumnTagMapScoreSaberStar = "Map.ScoreSaber.Star";
+        public const string ColumnTagMapBeatLeaderRankedDate = "Map.BeatLeader.RankedDate";
+        public const string ColumnTagMapBeatLeaderStar = "Map.BeatLeader.Star";
+        // ScoreSaber
+        public const string ColumnTagScoreSaberDate = "ScoreSaber.Date";
+        public const string ColumnTagScoreSaberScore = "ScoreSaber.Score";
+        public const string ColumnTagScoreSaberAcc = "ScoreSaber.Acc";
+        public const string ColumnTagScoreSaberAccDiff = "ScoreSaber.AccDiff";
+        public const string ColumnTagScoreSaberMissPlusBad = "ScoreSaber.MissPlusBad";
+        public const string ColumnTagScoreSaberFullCombo = "ScoreSaber.FullCombo";
+        public const string ColumnTagScoreSaberPp = "ScoreSaber.Pp";
+        public const string ColumnTagScoreSaberModifiers = "ScoreSaber.Modifiers";
+        public const string ColumnTagScoreSaberScoreCount = "ScoreSaber.ScoreCount";
+        public const string ColumnTagScoreSaberMiss = "ScoreSaber.Miss";
+        public const string ColumnTagScoreSaberBad = "ScoreSaber.Bad";
+        public const string ColumnTagScoreSaberWorldRank = "ScoreSaber.WorldRank";
+        // BeatLeader
+        public const string ColumnTagBeatLeaderDate = "BeatLeader.Date";
+        public const string ColumnTagBeatLeaderScore = "BeatLeader.Score";
+        public const string ColumnTagBeatLeaderAcc = "BeatLeader.Acc";
+        public const string ColumnTagBeatLeaderAccDiff = "BeatLeader.AccDiff";
+        public const string ColumnTagBeatLeaderMissPlusBad = "BeatLeader.MissPlusBad";
+        public const string ColumnTagBeatLeaderFullCombo = "BeatLeader.FullCombo";
+        public const string ColumnTagBeatLeaderPp = "BeatLeader.Pp";
+        public const string ColumnTagBeatLeaderModifiers = "BeatLeader.Modifiers";
+        public const string ColumnTagBeatLeaderScoreCount = "BeatLeader.ScoreCount";
+        public const string ColumnTagBeatLeaderMiss = "BeatLeader.Miss";
+        public const string ColumnTagBeatLeaderBad = "BeatLeader.Bad";
+        public const string ColumnTagBeatLeaderWorldRank = "BeatLeader.WorldRank";
+        // その他
         public const string ColumnTagCheckBox = "CheckBox";
-        public const string ColumnTagBsr = "Bsr";
-        public const string ColumnTagCover = "Cover";
-        public const string ColumnTagSongName = "SongName";
-        public const string ColumnTagDate = "Date";
-        public const string ColumnTagMode = "Mode";
-        public const string ColumnTagDifficulty = "Difficulty";
-        public const string ColumnTagStars = "Stars";
-        public const string ColumnTagScore = "Score";
-        public const string ColumnTagAcc = "Acc";
-        public const string ColumnTagAccDiff = "AccDiff";
-        public const string ColumnTagMissPlusBad = "MissPlusBad";
-        public const string ColumnTagFullCombo = "FullCombo";
-        public const string ColumnTagPp = "Pp";
-        public const string ColumnTagModifiers = "Modifiers";
-        public const string ColumnTagScoreCount = "ScoreCount";
         public const string ColumnTagCopyBsr = "CopyBsr";
         public const string ColumnTagJumpBeatSaver = "JumpBeatSaver";
         public const string ColumnTagJumpScoreSaber = "JumpScoreSaber";
         public const string ColumnTagJumpBeatLeader = "JumpBeatLeader";
-        public const string ColumnTagDuration = "Duration";
-        public const string ColumnTagBpm = "Bpm";
-        public const string ColumnTagNotes = "Notes";
-        public const string ColumnTagNps = "Nps";
-        public const string ColumnTagNjs = "Njs";
-        public const string ColumnTagBombs = "Bombs";
-        public const string ColumnTagObstacles = "Obstacles";
-        public const string ColumnTagMiss = "Miss";
-        public const string ColumnTagBad = "Bad";
-        public const string ColumnTagHash = "Hash";
-        public const string ColumnTagRankedDate = "RankedDate";
-        public const string ColumnTagScoreRank = "ScoreRank";
         #endregion
 
         public static string ScoreSaberProfileId
@@ -65,7 +77,7 @@ namespace MyBeatSaberScore
             set
             {
                 _data.scoreSaberProfileId = value;
-                SaveLocalFile();
+                SaveToLocalFile();
             }
         }
 
@@ -75,25 +87,15 @@ namespace MyBeatSaberScore
 
         public static Grid GridSetting => _data.grid;
 
-        public static Version SkipVersion
-        {
-            get {
-                return _data.skipVersion;
-            }
-            set {
-                _data.skipVersion = value;
-                SaveLocalFile();
-            }
-        }
+        public static ViewTarget ViewTarget { get => _data.viewTarget; set => _data.viewTarget = value; }
 
-        public static void LoadLocalFile()
+        public static void LoadFromLocalFile()
         {
             try
             {
                 if (File.Exists(_configPath))
                 {
-                    string jsonString = File.ReadAllText(_configPath, Encoding.UTF8);
-                    var data = JsonSerializer.Deserialize<ConfigData>(jsonString);
+                    var data = Utility.Json.DeserializeFromLocalFile<ConfigData>(_configPath);
                     if (data != null)
                     {
                         data.Normalize();
@@ -107,12 +109,11 @@ namespace MyBeatSaberScore
             }
         }
 
-        public static void SaveLocalFile()
+        public static void SaveToLocalFile()
         {
             try
             {
-                var jsonString = JsonSerializer.Serialize<ConfigData>(_data, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(_configPath, jsonString);
+                Utility.Json.SerializeToLocalFile(_data, _configPath, Formatting.Indented);
             }
             catch (Exception ex)
             {
@@ -120,79 +121,63 @@ namespace MyBeatSaberScore
             }
         }
 
-        [DataContract]
         public class ConfigData
         {
-            [DataMember]
-            public string scoreSaberProfileId { get; set; }
+            public string scoreSaberProfileId { get; set; } = string.Empty;
 
-            [DataMember]
-            public List<string> failures { get; set; }
+            public ViewTarget viewTarget { get; set; }
 
-            [DataMember]
-            public ObservableCollection<User> favoUsers { get; set; }
+            public List<string> failures { get; set; } = new();
 
-            [DataMember]
-            public Grid grid { get; set; }
+            public ObservableCollection<User> favoUsers { get; set; } = new();
 
-            [DataMember]
-            public Version skipVersion { get; set; }
-
-            public ConfigData()
-            {
-                scoreSaberProfileId = "";
-                failures = new();
-                favoUsers = new();
-                grid = new Grid();
-                skipVersion = new Version();
-            }
+            public Grid grid { get; set; } = new();
 
             public void Normalize()
             {
-                if (failures == null)
-                {
-                    failures = new() { "NF", "SS" };
-                }
                 if (failures.Count == 0)
                 {
                     failures.Add("NF");
                     failures.Add("SS");
                 }
+
+                if (viewTarget == ViewTarget.None)
+                {
+                    viewTarget = ViewTarget.ScoreSaber;
+                }
             }
         }
 
-        [DataContract]
         public class User
         {
-            [DataMember]
-            public string id { get; set; }
+            public string id { get; set; } = string.Empty;
 
-            [DataMember]
-            public string name { get; set; }
+            public string beatLeaderName { get; set; } = string.Empty;
 
-            [IgnoreDataMember]
-            public string profilePicture { get { return $"https://cdn.scoresaber.com/avatars/{id}.jpg"; } }
+            public string beatLeaderAvatar { get; set; } = string.Empty;
+
+            public string scoreSaberName { get; set; } = string.Empty;
+
+            public string scoreSaberAvatar { get; set; } = string.Empty;
 
             public User()
             {
-                id = "";
-                name = "";
             }
 
-            public User(string id, string name)
+            public User(string id, BeatLeader.PlayerResponseFull beatLeaderProfile, ScoreSaber.PlayerProfile scoreSaberProfile)
             {
                 this.id = id;
-                this.name = name;
+                beatLeaderName = beatLeaderProfile.name;
+                beatLeaderAvatar = beatLeaderProfile.avatar;
+                scoreSaberName = scoreSaberProfile.name;
+                scoreSaberAvatar = scoreSaberProfile.profilePicture;
             }
         }
 
-        [DataContract]
         public class Grid
         {
-            [DataMember]
             public int rowHeight { get; set; }
 
-            [DataMember]
             public List<String> notDisplayColumns { get; set; }
 
             public Grid()

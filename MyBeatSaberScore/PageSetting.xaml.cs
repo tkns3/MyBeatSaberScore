@@ -1,19 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MyBeatSaberScore
 {
@@ -22,146 +12,119 @@ namespace MyBeatSaberScore
     /// </summary>
     public partial class PageSetting : Page
     {
-        private readonly bool _InitializeFinished = false;
-
         public PageSetting()
         {
             InitializeComponent();
-
-            XaRowHeight.Text = Config.GridSetting.rowHeight.ToString();
-
-            DispCheckBoxInitialize(XaDispCheckBox, Config.ColumnTagCheckBox);
-            DispCheckBoxInitialize(XaDispBsr, Config.ColumnTagBsr);
-            DispCheckBoxInitialize(XaDispCover, Config.ColumnTagCover);
-            DispCheckBoxInitialize(XaDispSongName, Config.ColumnTagSongName);
-            DispCheckBoxInitialize(XaDispDate, Config.ColumnTagDate);
-            DispCheckBoxInitialize(XaDispMode, Config.ColumnTagMode);
-            DispCheckBoxInitialize(XaDispDifficulty, Config.ColumnTagDifficulty);
-            DispCheckBoxInitialize(XaDispStars, Config.ColumnTagStars);
-            DispCheckBoxInitialize(XaDispScore, Config.ColumnTagScore);
-            DispCheckBoxInitialize(XaDispAcc, Config.ColumnTagAcc);
-            DispCheckBoxInitialize(XaDispAccDiff, Config.ColumnTagAccDiff);
-            DispCheckBoxInitialize(XaDispMissPlusBad, Config.ColumnTagMissPlusBad);
-            DispCheckBoxInitialize(XaDispFullCombo, Config.ColumnTagFullCombo);
-            DispCheckBoxInitialize(XaDispPp, Config.ColumnTagPp);
-            DispCheckBoxInitialize(XaDispModifiers, Config.ColumnTagModifiers);
-            DispCheckBoxInitialize(XaDispScoreCount, Config.ColumnTagScoreCount);
-            DispCheckBoxInitialize(XaDispCopyBsr, Config.ColumnTagCopyBsr);
-            DispCheckBoxInitialize(XaDispJumpBeatSaver, Config.ColumnTagJumpBeatSaver);
-            DispCheckBoxInitialize(XaDispJumpScoreSaber, Config.ColumnTagJumpScoreSaber);
-            DispCheckBoxInitialize(XaDispJumpBeatLeader, Config.ColumnTagJumpBeatLeader);
-            DispCheckBoxInitialize(XaDispDuration, Config.ColumnTagDuration);
-            DispCheckBoxInitialize(XaDispBpm, Config.ColumnTagBpm);
-            DispCheckBoxInitialize(XaDispNotes, Config.ColumnTagNotes);
-            DispCheckBoxInitialize(XaDispNps, Config.ColumnTagNps);
-            DispCheckBoxInitialize(XaDispNjs, Config.ColumnTagNjs);
-            DispCheckBoxInitialize(XaDispBombs, Config.ColumnTagBombs);
-            DispCheckBoxInitialize(XaDispObstacles, Config.ColumnTagObstacles);
-            DispCheckBoxInitialize(XaDispMiss, Config.ColumnTagMiss);
-            DispCheckBoxInitialize(XaDispBad, Config.ColumnTagBad);
-            DispCheckBoxInitialize(XaDispHash, Config.ColumnTagHash);
-            DispCheckBoxInitialize(XaDispRankedDate, Config.ColumnTagRankedDate);
-            DispCheckBoxInitialize(XaDispScoreRank, Config.ColumnTagScoreRank);
-
-            _InitializeFinished = true;
         }
 
-        private void OnRowHeightChanged(object sender, TextChangedEventArgs e)
+        private void textBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (Application.Current.Properties["XaDataGrid"] is DataGrid dataGrid)
+            // 0-9のみ
+            e.Handled = !new Regex("[0-9]").IsMatch(e.Text);
+        }
+
+        private void textBox_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            // 貼り付けを許可しない
+            if (e.Command == ApplicationCommands.Paste)
             {
-                if (Int32.TryParse(XaRowHeight.Text, out int height))
+                e.Handled = true;
+            }
+        }
+    }
+
+    internal class PageSettingViewModel : ObservableBase
+    {
+        public string GirdRowHeight
+        {
+            get
+            {
+                return Config.GridSetting.rowHeight.ToString();
+            }
+            set
+            {
+                if (int.TryParse(value, out int height))
                 {
-                    dataGrid.RowHeight = height;
-
-                    // カバー画像のサイズもあわせて変更する
-                    var column = dataGrid.Columns.SingleOrDefault(p => TagBehavior.GetTag(p).ToString() == Config.ColumnTagCover);
-                    if (column != null)
-                    {
-                        column.Width = height;
-                    }
-
-                    if (_InitializeFinished)
+                    if (Config.GridSetting.rowHeight != height)
                     {
                         Config.GridSetting.rowHeight = height;
-                        Config.SaveLocalFile();
+                        Config.SaveToLocalFile();
+                        OnPropertyChanged();
                     }
                 }
             }
         }
 
-        private void DispCheckBoxInitialize(CheckBox checkBox, string tagName)
+        public bool IsDisplayMapBsr { get => GetIsDisplay(Config.ColumnTagMapBsr); set => SetIsDisplay(Config.ColumnTagMapBsr, value); }
+        public bool IsDisplayMapCover { get => GetIsDisplay(Config.ColumnTagMapCover); set => SetIsDisplay(Config.ColumnTagMapCover, value); }
+        public bool IsDisplayMapSongName { get => GetIsDisplay(Config.ColumnTagMapSongName); set => SetIsDisplay(Config.ColumnTagMapSongName, value); }
+        public bool IsDisplayMapMode { get => GetIsDisplay(Config.ColumnTagMapMode); set => SetIsDisplay(Config.ColumnTagMapMode, value); }
+        public bool IsDisplayMapDifficulty { get => GetIsDisplay(Config.ColumnTagMapDifficulty); set => SetIsDisplay(Config.ColumnTagMapDifficulty, value); }
+        public bool IsDisplayMapDuration { get => GetIsDisplay(Config.ColumnTagMapDuration); set => SetIsDisplay(Config.ColumnTagMapDuration, value); }
+        public bool IsDisplayMapBpm { get => GetIsDisplay(Config.ColumnTagMapBpm); set => SetIsDisplay(Config.ColumnTagMapBpm, value); }
+        public bool IsDisplayMapNotes { get => GetIsDisplay(Config.ColumnTagMapNotes); set => SetIsDisplay(Config.ColumnTagMapNotes, value); }
+        public bool IsDisplayMapNps { get => GetIsDisplay(Config.ColumnTagMapNps); set => SetIsDisplay(Config.ColumnTagMapNps, value); }
+        public bool IsDisplayMapNjs { get => GetIsDisplay(Config.ColumnTagMapNjs); set => SetIsDisplay(Config.ColumnTagMapNjs, value); }
+        public bool IsDisplayMapBombs { get => GetIsDisplay(Config.ColumnTagMapBombs); set => SetIsDisplay(Config.ColumnTagMapBombs, value); }
+        public bool IsDisplayMapWalls { get => GetIsDisplay(Config.ColumnTagMapWalls); set => SetIsDisplay(Config.ColumnTagMapWalls, value); }
+        public bool IsDisplayMapHash { get => GetIsDisplay(Config.ColumnTagMapHash); set => SetIsDisplay(Config.ColumnTagMapHash, value); }
+        public bool IsDisplayMapScoreSaberStar { get => GetIsDisplay(Config.ColumnTagMapScoreSaberStar); set => SetIsDisplay(Config.ColumnTagMapScoreSaberStar, value); }
+        public bool IsDisplayMapScoreSaberRankedDate { get => GetIsDisplay(Config.ColumnTagMapScoreSaberRankedDate); set => SetIsDisplay(Config.ColumnTagMapScoreSaberRankedDate, value); }
+        public bool IsDisplayMapBeatLeaderStar { get => GetIsDisplay(Config.ColumnTagMapBeatLeaderStar); set => SetIsDisplay(Config.ColumnTagMapBeatLeaderStar, value); }
+        public bool IsDisplayMapBeatLeaderRankedDate { get => GetIsDisplay(Config.ColumnTagMapBeatLeaderRankedDate); set => SetIsDisplay(Config.ColumnTagMapBeatLeaderRankedDate, value); }
+        public bool IsDisplayScoreSaberDate { get => GetIsDisplay(Config.ColumnTagScoreSaberDate); set => SetIsDisplay(Config.ColumnTagScoreSaberDate, value); }
+        public bool IsDisplayScoreSaberScore { get => GetIsDisplay(Config.ColumnTagScoreSaberScore); set => SetIsDisplay(Config.ColumnTagScoreSaberScore, value); }
+        public bool IsDisplayScoreSaberAcc { get => GetIsDisplay(Config.ColumnTagScoreSaberAcc); set => SetIsDisplay(Config.ColumnTagScoreSaberAcc, value); }
+        public bool IsDisplayScoreSaberAccDiff { get => GetIsDisplay(Config.ColumnTagScoreSaberAccDiff); set => SetIsDisplay(Config.ColumnTagScoreSaberAccDiff, value); }
+        public bool IsDisplayScoreSaberMissPlusBad { get => GetIsDisplay(Config.ColumnTagScoreSaberMissPlusBad); set => SetIsDisplay(Config.ColumnTagScoreSaberMissPlusBad, value); }
+        public bool IsDisplayScoreSaberFullCombo { get => GetIsDisplay(Config.ColumnTagScoreSaberFullCombo); set => SetIsDisplay(Config.ColumnTagScoreSaberFullCombo, value); }
+        public bool IsDisplayScoreSaberPp { get => GetIsDisplay(Config.ColumnTagScoreSaberPp); set => SetIsDisplay(Config.ColumnTagScoreSaberPp, value); }
+        public bool IsDisplayScoreSaberModifiers { get => GetIsDisplay(Config.ColumnTagScoreSaberModifiers); set => SetIsDisplay(Config.ColumnTagScoreSaberModifiers, value); }
+        public bool IsDisplayScoreSaberScoreCount { get => GetIsDisplay(Config.ColumnTagScoreSaberScoreCount); set => SetIsDisplay(Config.ColumnTagScoreSaberScoreCount, value); }
+        public bool IsDisplayScoreSaberMiss { get => GetIsDisplay(Config.ColumnTagScoreSaberMiss); set => SetIsDisplay(Config.ColumnTagScoreSaberMiss, value); }
+        public bool IsDisplayScoreSaberBad { get => GetIsDisplay(Config.ColumnTagScoreSaberBad); set => SetIsDisplay(Config.ColumnTagScoreSaberBad, value); }
+        public bool IsDisplayScoreSaberWorldRank { get => GetIsDisplay(Config.ColumnTagScoreSaberWorldRank); set => SetIsDisplay(Config.ColumnTagScoreSaberWorldRank, value); }
+        public bool IsDisplayBeatLeaderDate { get => GetIsDisplay(Config.ColumnTagBeatLeaderDate); set => SetIsDisplay(Config.ColumnTagBeatLeaderDate, value); }
+        public bool IsDisplayBeatLeaderScore { get => GetIsDisplay(Config.ColumnTagBeatLeaderScore); set => SetIsDisplay(Config.ColumnTagBeatLeaderScore, value); }
+        public bool IsDisplayBeatLeaderAcc { get => GetIsDisplay(Config.ColumnTagBeatLeaderAcc); set => SetIsDisplay(Config.ColumnTagBeatLeaderAcc, value); }
+        public bool IsDisplayBeatLeaderAccDiff { get => GetIsDisplay(Config.ColumnTagBeatLeaderAccDiff); set => SetIsDisplay(Config.ColumnTagBeatLeaderAccDiff, value); }
+        public bool IsDisplayBeatLeaderMissPlusBad { get => GetIsDisplay(Config.ColumnTagBeatLeaderMissPlusBad); set => SetIsDisplay(Config.ColumnTagBeatLeaderMissPlusBad, value); }
+        public bool IsDisplayBeatLeaderFullCombo { get => GetIsDisplay(Config.ColumnTagBeatLeaderFullCombo); set => SetIsDisplay(Config.ColumnTagBeatLeaderFullCombo, value); }
+        public bool IsDisplayBeatLeaderPp { get => GetIsDisplay(Config.ColumnTagBeatLeaderPp); set => SetIsDisplay(Config.ColumnTagBeatLeaderPp, value); }
+        public bool IsDisplayBeatLeaderModifiers { get => GetIsDisplay(Config.ColumnTagBeatLeaderModifiers); set => SetIsDisplay(Config.ColumnTagBeatLeaderModifiers, value); }
+        public bool IsDisplayBeatLeaderScoreCount { get => GetIsDisplay(Config.ColumnTagBeatLeaderScoreCount); set => SetIsDisplay(Config.ColumnTagBeatLeaderScoreCount, value); }
+        public bool IsDisplayBeatLeaderMiss { get => GetIsDisplay(Config.ColumnTagBeatLeaderMiss); set => SetIsDisplay(Config.ColumnTagBeatLeaderMiss, value); }
+        public bool IsDisplayBeatLeaderBad { get => GetIsDisplay(Config.ColumnTagBeatLeaderBad); set => SetIsDisplay(Config.ColumnTagBeatLeaderBad, value); }
+        public bool IsDisplayBeatLeaderWorldRank { get => GetIsDisplay(Config.ColumnTagBeatLeaderWorldRank); set => SetIsDisplay(Config.ColumnTagBeatLeaderWorldRank, value); }
+        public bool IsDisplayCheckBox { get => GetIsDisplay(Config.ColumnTagCheckBox); set => SetIsDisplay(Config.ColumnTagCheckBox, value); }
+        public bool IsDisplayCopyBsr { get => GetIsDisplay(Config.ColumnTagCopyBsr); set => SetIsDisplay(Config.ColumnTagCopyBsr, value); }
+        public bool IsDisplayJumpBeatSaver { get => GetIsDisplay(Config.ColumnTagJumpBeatSaver); set => SetIsDisplay(Config.ColumnTagJumpBeatSaver, value); }
+        public bool IsDisplayJumpScoreSaber { get => GetIsDisplay(Config.ColumnTagJumpScoreSaber); set => SetIsDisplay(Config.ColumnTagJumpScoreSaber, value); }
+        public bool IsDisplayJumpBeatLeader { get => GetIsDisplay(Config.ColumnTagJumpBeatLeader); set => SetIsDisplay(Config.ColumnTagJumpBeatLeader, value); }
+
+        private bool GetIsDisplay(string name)
         {
-            if (Application.Current.Properties["XaDataGrid"] is DataGrid dataGrid)
+            return !Config.GridSetting.notDisplayColumns.Contains(name);
+        }
+
+        private void SetIsDisplay(string name, bool value)
+        {
+            if (value)
             {
-                var column = dataGrid.Columns.SingleOrDefault(p => TagBehavior.GetTag(p).ToString() == tagName);
-                if (column != null)
+                if (Config.GridSetting.notDisplayColumns.Contains(name))
                 {
-                    checkBox.IsChecked = !Config.GridSetting.notDisplayColumns.Contains(tagName);
-                    column.Visibility = (checkBox.IsChecked ?? false) ? Visibility.Visible : Visibility.Hidden;
+                    Config.GridSetting.notDisplayColumns.Remove(name);
+                    Config.SaveToLocalFile();
                 }
             }
-        }
-
-        private void DispCheckBoxChanged(CheckBox checkBox, string tagName)
-        {
-            if (Application.Current.Properties["XaDataGrid"] is DataGrid dataGrid)
+            else
             {
-                var column = dataGrid.Columns.SingleOrDefault(p => TagBehavior.GetTag(p).ToString() == tagName);
-                if (column != null)
+                if (!Config.GridSetting.notDisplayColumns.Contains(name))
                 {
-                    if (!checkBox.IsChecked ?? false)
-                    {
-                        Config.GridSetting.notDisplayColumns.Add(tagName);
-                        column.Visibility = Visibility.Hidden;
-                    }
-                    else
-                    {
-                        column.Visibility = Visibility.Visible;
-                    }
+                    Config.GridSetting.notDisplayColumns.Add(name);
+                    Config.SaveToLocalFile();
                 }
             }
-        }
-
-        private void OnCheckBoxChanged(object sender, RoutedEventArgs e)
-        {
-            if (!_InitializeFinished) return;
-
-            Config.GridSetting.notDisplayColumns.Clear();
-            DispCheckBoxChanged(XaDispCheckBox, Config.ColumnTagCheckBox);
-            DispCheckBoxChanged(XaDispBsr, Config.ColumnTagBsr);
-            DispCheckBoxChanged(XaDispCover, Config.ColumnTagCover);
-            DispCheckBoxChanged(XaDispSongName, Config.ColumnTagSongName);
-            DispCheckBoxChanged(XaDispDate, Config.ColumnTagDate);
-            DispCheckBoxChanged(XaDispMode, Config.ColumnTagMode);
-            DispCheckBoxChanged(XaDispDifficulty, Config.ColumnTagDifficulty);
-            DispCheckBoxChanged(XaDispStars, Config.ColumnTagStars);
-            DispCheckBoxChanged(XaDispScore, Config.ColumnTagScore);
-            DispCheckBoxChanged(XaDispAcc, Config.ColumnTagAcc);
-            DispCheckBoxChanged(XaDispAccDiff, Config.ColumnTagAccDiff);
-            DispCheckBoxChanged(XaDispMissPlusBad, Config.ColumnTagMissPlusBad);
-            DispCheckBoxChanged(XaDispFullCombo, Config.ColumnTagFullCombo);
-            DispCheckBoxChanged(XaDispPp, Config.ColumnTagPp);
-            DispCheckBoxChanged(XaDispModifiers, Config.ColumnTagModifiers);
-            DispCheckBoxChanged(XaDispScoreCount, Config.ColumnTagScoreCount);
-            DispCheckBoxChanged(XaDispCopyBsr, Config.ColumnTagCopyBsr);
-            DispCheckBoxChanged(XaDispJumpBeatSaver, Config.ColumnTagJumpBeatSaver);
-            DispCheckBoxChanged(XaDispJumpScoreSaber, Config.ColumnTagJumpScoreSaber);
-            DispCheckBoxChanged(XaDispJumpBeatLeader, Config.ColumnTagJumpBeatLeader);
-            DispCheckBoxChanged(XaDispDuration, Config.ColumnTagDuration);
-            DispCheckBoxChanged(XaDispBpm, Config.ColumnTagBpm);
-            DispCheckBoxChanged(XaDispNotes, Config.ColumnTagNotes);
-            DispCheckBoxChanged(XaDispNps, Config.ColumnTagNps);
-            DispCheckBoxChanged(XaDispNjs, Config.ColumnTagNjs);
-            DispCheckBoxChanged(XaDispBombs, Config.ColumnTagBombs);
-            DispCheckBoxChanged(XaDispObstacles, Config.ColumnTagObstacles);
-            DispCheckBoxChanged(XaDispMiss, Config.ColumnTagMiss);
-            DispCheckBoxChanged(XaDispBad, Config.ColumnTagBad);
-            DispCheckBoxChanged(XaDispHash, Config.ColumnTagHash);
-            DispCheckBoxChanged(XaDispRankedDate, Config.ColumnTagRankedDate);
-            DispCheckBoxChanged(XaDispScoreRank, Config.ColumnTagScoreRank);
-
-            Config.SaveLocalFile();
         }
     }
 }

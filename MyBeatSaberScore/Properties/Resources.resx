@@ -130,6 +130,9 @@
   <data name="beatleader" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\beatleader.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="beatleader_gray" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\beatleader_gray.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="beatsaver" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\beatsaver.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -193,6 +196,9 @@
   <data name="onesaber" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\onesaber.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="reload" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reload.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="reload1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\reload1.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -201,6 +207,9 @@
   </data>
   <data name="scoresaber" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\scoresaber.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="scoresaber_gray" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\scoresaber_gray.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="standard" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\standard.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

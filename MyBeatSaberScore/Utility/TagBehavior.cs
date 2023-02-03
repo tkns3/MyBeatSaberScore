@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MyBeatSaberScore
+namespace MyBeatSaberScore.Utility
 {
     /// <summary>
     /// <see cref="TagBehavior"/> クラスは、添付プロパティを定義するクラスです。

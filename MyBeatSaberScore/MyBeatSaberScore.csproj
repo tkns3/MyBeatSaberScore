@@ -20,6 +20,7 @@
     <None Remove="Resources\90degree.png" />
     <None Remove="Resources\app.ico" />
     <None Remove="Resources\beatleader.png" />
+    <None Remove="Resources\beatleader_gray.png" />
     <None Remove="Resources\beatsaver.png" />
     <None Remove="Resources\checkoff.png" />
     <None Remove="Resources\checkon.png" />
@@ -41,9 +42,11 @@
     <None Remove="Resources\noarrows.png" />
     <None Remove="Resources\normal.png" />
     <None Remove="Resources\onesaber.png" />
+    <None Remove="Resources\reload.png" />
     <None Remove="Resources\reload1.png" />
     <None Remove="Resources\reload2.png" />
     <None Remove="Resources\scoresaber.png" />
+    <None Remove="Resources\scoresaber_gray.png" />
     <None Remove="Resources\standard.png" />
     <None Remove="Resources\twitch1.png" />
     <None Remove="Resources\twitch2.png" />
@@ -54,10 +57,14 @@
 
   <ItemGroup>
     <EmbeddedResource Include="log4net.config" />
+    <Resource Include="Resources\beatleader_gray.png" />
+    <Resource Include="Resources\reload.png" />
+    <Resource Include="Resources\scoresaber_gray.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.14" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>

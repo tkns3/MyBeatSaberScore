@@ -1,19 +1,9 @@
 ﻿using MyBeatSaberScore.APIs;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+using MyBeatSaberScore.Model;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MyBeatSaberScore
 {
@@ -33,11 +23,26 @@ namespace MyBeatSaberScore
 
         private async void OnClickAddUser(object sender, RoutedEventArgs e)
         {
-            var profile = await ScoreSaber.GetPlayerInfo(XaProfileId.Text);
-            if (profile.id.Length > 0)
+            var scoreSaberUserData = new ScoreSaberUserData(XaProfileId.Text);
+            var beatLeaderUserData = new BeatLeaderUserData(XaProfileId.Text);
+
+            await Task.Run(() =>
             {
-                Config.FavoriteUsers.Add(new Config.User(profile.id, profile.name));
-                Config.SaveLocalFile();
+                if (!scoreSaberUserData.IsExistProfile)
+                {
+                    scoreSaberUserData.FetchLatestProfile();
+                }
+
+                if (!beatLeaderUserData.IsExistProfile)
+                {
+                    beatLeaderUserData.FetchLatestProfile();
+                }
+            });
+
+            if (scoreSaberUserData.IsExistProfile || beatLeaderUserData.IsExistProfile)
+            {
+                Config.FavoriteUsers.Add(new Config.User(XaProfileId.Text, beatLeaderUserData.Profile, scoreSaberUserData.Profile));
+                Config.SaveToLocalFile();
             }
             else
             {
@@ -50,7 +55,7 @@ namespace MyBeatSaberScore
             if (((FrameworkElement)sender).DataContext is Config.User obj)
             {
                 Config.FavoriteUsers.Remove(obj);
-                Config.SaveLocalFile();
+                Config.SaveToLocalFile();
             }
         }
 
@@ -60,10 +65,31 @@ namespace MyBeatSaberScore
             {
                 Config.ScoreSaberProfileId = obj.id;
 
-                if (Application.Current.Properties["XaTabMain"] is TabItem tabItem)
+                if (AppData.XaTabMain != null)
                 {
-                    tabItem.IsSelected = true;
+                    AppData.XaTabMain.IsSelected = true;
                 }
+            }
+        }
+
+        private async void OnClickReload(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)sender).DataContext is Config.User obj)
+            {
+                var beatLeaderProfile = await BeatLeader.GetPlayerInfo(obj.id);
+                if (beatLeaderProfile != null && beatLeaderProfile.id.Length > 0)
+                {
+                    obj.beatLeaderName = beatLeaderProfile.name;
+                    obj.beatLeaderAvatar = beatLeaderProfile.avatar;
+                }
+                var scoreSaberProfile = await ScoreSaber.GetPlayerInfo(obj.id);
+                if (scoreSaberProfile != null && scoreSaberProfile.id.Length > 0)
+                {
+                    obj.scoreSaberName = scoreSaberProfile.name;
+                    obj.scoreSaberAvatar = scoreSaberProfile.profilePicture;
+                }
+                _usersSource.View.Refresh();
+                Config.SaveToLocalFile();
             }
         }
     }
