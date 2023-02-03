@@ -50,17 +50,26 @@
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
                                 <Button Grid.Row="0" Click="OnClickSelectUser">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="78" />
-                                            <ColumnDefinition Width="120" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0" Source="{Binding profilePicture}" Height="74" Width="74" Margin="2" CacheMode="BitmapCache"/>
-                                        <StackPanel Grid.Column="1">
-                                            <TextBlock Text="{Binding name}" FontSize="16" FontWeight="Bold" Foreground="CadetBlue"/>
+                                    <StackPanel Orientation="Vertical" Width="188">
+                                        <Canvas Width="200" Height="92">
+                                            <Image Grid.Column="0" Source="{Binding scoreSaberAvatar}" Height="88" Width="88" Canvas.Left="4" Canvas.Top="2" CacheMode="BitmapCache"/>
+                                            <Image Grid.Column="0" Source="{Binding beatLeaderAvatar}" Height="88" Width="88" Canvas.Left="96" Canvas.Top="2" CacheMode="BitmapCache"/>
+                                            <Image Source="Resources/scoresaber.png" Height="16" Width="16" Margin="0,0,0,0" Canvas.Left="4" Canvas.Top="2" ></Image>
+                                            <Image Source="Resources/beatleader.png" Height="16" Width="16" Margin="0,0,0,0" Canvas.Left="96" Canvas.Top="2" ></Image>
+                                        </Canvas>
+                                        <StackPanel Orientation="Vertical">
                                             <TextBlock Text="{Binding id}"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="Resources/scoresaber.png" Height="16" Width="16" Margin="0,4,4,0"></Image>
+                                                <TextBlock Text="{Binding scoreSaberName}" FontSize="16" FontWeight="Bold" Foreground="CadetBlue"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="Resources/beatleader.png" Height="16" Width="16" Margin="0,4,4,0"></Image>
+                                                <TextBlock Text="{Binding beatLeaderName}" FontSize="16" FontWeight="Bold" Foreground="CadetBlue"/>
+                                            </StackPanel>
+
                                         </StackPanel>
-                                    </Grid>
+                                    </StackPanel>
                                 </Button>
                                 <Grid Grid.Row="1" Background="Beige">
                                     <Grid.ColumnDefinitions>
@@ -70,6 +79,9 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Style="{StaticResource UserCardMenuButtonStyle}" Margin="4" BorderThickness="0" Click="OnClickReload">
+                                        <Image Width="20" Height="20" Source="Resources/reload1.png"/>
+                                    </Button>
                                     <Button Grid.Column="4" Style="{StaticResource UserCardMenuButtonStyle}" Margin="4" BorderThickness="0" Click="OnClickDelUser">
                                         <Image Width="20" Height="20" Source="Resources/user_del.png"/>
                                     </Button>

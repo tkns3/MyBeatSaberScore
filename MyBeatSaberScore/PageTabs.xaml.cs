@@ -16,8 +16,8 @@ namespace MyBeatSaberScore
         public PageTabs()
         {
             InitializeComponent();
-            Application.Current.Properties["XaTabControl"] = XaTabControl;
-            Application.Current.Properties["XaTabMain"] = XaTabMain;
+
+            AppData.XaTabMain = XaTabMain;
         }
 
         private void Page_Initialized(object sender, EventArgs e)

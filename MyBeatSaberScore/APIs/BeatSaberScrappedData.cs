@@ -21,6 +21,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
+                _logger.Info(url);
                 var (res, maps) = await HttpTool.DownloadZipAndDeserialize<List<MapInfo>>(url, entryName, etag);
                 if (res.StatusCode == System.Net.HttpStatusCode.NotModified)
                 {

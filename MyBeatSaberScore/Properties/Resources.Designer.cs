@@ -103,6 +103,16 @@ namespace MyBeatSaberScore.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
+        internal static byte[] beatleader_gray {
+            get {
+                object obj = ResourceManager.GetObject("beatleader_gray", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
         internal static byte[] beatsaver {
             get {
                 object obj = ResourceManager.GetObject("beatsaver", resourceCulture);
@@ -313,6 +323,16 @@ namespace MyBeatSaberScore.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
+        internal static byte[] reload {
+            get {
+                object obj = ResourceManager.GetObject("reload", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
         internal static byte[] reload1 {
             get {
                 object obj = ResourceManager.GetObject("reload1", resourceCulture);
@@ -336,6 +356,16 @@ namespace MyBeatSaberScore.Properties {
         internal static byte[] scoresaber {
             get {
                 object obj = ResourceManager.GetObject("scoresaber", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] scoresaber_gray {
+            get {
+                object obj = ResourceManager.GetObject("scoresaber_gray", resourceCulture);
                 return ((byte[])(obj));
             }
         }

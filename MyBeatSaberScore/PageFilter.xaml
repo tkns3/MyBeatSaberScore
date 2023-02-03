@@ -8,6 +8,10 @@
       d:DesignWidth="1070"
       Title="PageFilter">
 
+    <Page.DataContext>
+        <local:PageFilterViewModel/>
+    </Page.DataContext>
+
     <Grid>
         <ScrollViewer>
             <StackPanel Margin="8,8,0,0">
@@ -31,10 +35,10 @@
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="ステータス" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="譜面のステータスごとに表示有無を指定する。" Foreground="Gray" Margin="0,0,0,4"/>
-                                    <CheckBox IsChecked="{Binding IsShowRank}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowRank}">
                                         <TextBlock Text="ランク：ランク譜面を表示する。" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowUnRank}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowUnRank}">
                                         <TextBlock Text="アンランク：アンランク譜面を表示する。" Width="200"/>
                                     </CheckBox>
                                 </StackPanel>
@@ -42,55 +46,55 @@
                                     <TextBlock Text="星" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="指定した星の範囲のランク譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,4"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <Slider Width="200" Maximum="20" Value="{Binding MinStar}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                        <TextBlock Text="{Binding MinStar, StringFormat=Min ★ \{0:N0\}}" Height="16"/>
+                                        <Slider Width="200" Maximum="20" Value="{Binding FilterValue.MinStar}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Text="{Binding FilterValue.MinStar, StringFormat=Min ★ \{0:N0\}}" Height="16"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <Slider Width="200" Maximum="20" Value="{Binding MaxStar}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                        <TextBlock Text="{Binding MaxStar, StringFormat=Max ★ \{0:N0\}}" Height="16"/>
+                                        <Slider Width="200" Maximum="20" Value="{Binding FilterValue.MaxStar}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Text="{Binding FilterValue.MaxStar, StringFormat=Max ★ \{0:N0\}}" Height="16"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="モード" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="譜面のモードごとに表示有無を指定する。" Foreground="Gray" Margin="0,0,0,4"/>
-                                    <CheckBox IsChecked="{Binding IsShowStandard}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowStandard}">
                                         <TextBlock Text="Standard" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowLawless}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowLawless}">
                                         <TextBlock Text="Lawless" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowOneSaber}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowOneSaber}">
                                         <TextBlock Text="OneSaber" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowLightShow}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowLightShow}">
                                         <TextBlock Text="LightShow" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShow90Degree}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShow90Degree}">
                                         <TextBlock Text="90Degree" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShow360Degree}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShow360Degree}">
                                         <TextBlock Text="360Degree" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowNoArrows}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowNoArrows}">
                                         <TextBlock Text="NoArrows" Width="200"/>
                                     </CheckBox>
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="難易度" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="譜面の難易度ごとに表示有無を指定する。" Foreground="Gray" Margin="0,0,0,4"/>
-                                    <CheckBox IsChecked="{Binding IsShowEasy}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowEasy}">
                                         <TextBlock Text="Easy" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowNormal}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowNormal}">
                                         <TextBlock Text="Normal" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowHard}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowHard}">
                                         <TextBlock Text="Hard" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowExpert}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowExpert}">
                                         <TextBlock Text="Expert" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowExpertPlus}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowExpertPlus}">
                                         <TextBlock Text="ExpertPlus" Width="200"/>
                                     </CheckBox>
                                 </StackPanel>
@@ -99,9 +103,9 @@
                                     <TextBlock Text="指定した範囲のRanked Dateの譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,0"/>
                                     <TextBlock Text="日付をBackSpaceまたはDeleteで削除すると未選択に戻すことができる。" Foreground="Gray" Margin="0,0,0,4"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <DatePicker SelectedDate="{Binding RankedDateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <DatePicker SelectedDate="{Binding FilterValue.RankedDateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
                                         <TextBlock Text="～" Foreground="Gray" Margin="4,4,4,0"/>
-                                        <DatePicker SelectedDate="{Binding RankedDateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <DatePicker SelectedDate="{Binding FilterValue.RankedDateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
@@ -119,31 +123,31 @@
                                     <TextBlock Text="指定した範囲のスコア更新日の譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,0"/>
                                     <TextBlock Text="日付をBackSpaceまたはDeleteで削除すると未選択に戻すことができる。" Foreground="Gray" Margin="0,0,0,4"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <DatePicker SelectedDate="{Binding DateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <DatePicker SelectedDate="{Binding FilterValue.DateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
                                         <TextBlock Text="～" Foreground="Gray" Margin="4,4,4,0"/>
-                                        <DatePicker SelectedDate="{Binding DateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <DatePicker SelectedDate="{Binding FilterValue.DateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="プレイ状況" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="譜面のプレイ状況ごとに表示有無を指定する。" Foreground="Gray" Margin="0,0,0,4"/>
-                                    <CheckBox IsChecked="{Binding IsShowClear}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowClear}">
                                         <TextBlock Text="Clear：クリアした譜面を表示する。" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowFailure}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowFailure}">
                                         <TextBlock Text="Failure：NoFailかSlowSongがついた譜面を表示する。" Width="300"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowNotPlay}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowNotPlay}">
                                         <TextBlock Text="未プレイ：プレイしていないランク譜面を表示する。" Width="240"/>
                                     </CheckBox>
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="Full Combo" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="譜面のフルコンボ有無による表示有無を指定する。" Foreground="Gray" Margin="0,0,0,4"/>
-                                    <CheckBox IsChecked="{Binding IsShowFullCombo}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowFullCombo}">
                                         <TextBlock Text="フルコンボした譜面を表示する。" Width="200"/>
                                     </CheckBox>
-                                    <CheckBox IsChecked="{Binding IsShowNotFullCombo}">
+                                    <CheckBox IsChecked="{Binding FilterValue.IsShowNotFullCombo}">
                                         <TextBlock Text="フルコンボしていない譜面を表示する。" Width="200"/>
                                     </CheckBox>
                                 </StackPanel>
@@ -151,33 +155,33 @@
                                     <TextBlock Text="# (順位)" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="指定した#(順位)の範囲のランク譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,4"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Width="64" Text="{Binding MinScoreRank}" />
+                                        <TextBox Width="64" Text="{Binding FilterValue.MinScoreRank}" />
                                         <TextBlock Text="～" Foreground="Gray" Margin="4,4,4,0"/>
-                                        <TextBox Width="64" Text="{Binding MaxScoreRank}" />
+                                        <TextBox Width="64" Text="{Binding FilterValue.MaxScoreRank}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="PP" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="指定したPPの範囲のランク譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,4"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <Slider Width="200" Maximum="1000" Value="{Binding MinPp}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                        <TextBlock Text="{Binding MinPp, StringFormat=Min PP \{0:N0\}}" Height="16"/>
+                                        <Slider Width="200" Maximum="1000" Value="{Binding FilterValue.MinPp}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Text="{Binding FilterValue.MinPp, StringFormat=Min PP \{0:N0\}}" Height="16"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <Slider Width="200" Maximum="1000" Value="{Binding MaxPp}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                        <TextBlock Text="{Binding MaxPp, StringFormat=Max PP \{0:N0\}}" Height="16"/>
+                                        <Slider Width="200" Maximum="1000" Value="{Binding FilterValue.MaxPp}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Text="{Binding FilterValue.MaxPp, StringFormat=Max PP \{0:N0\}}" Height="16"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="ACC" FontWeight="Bold" Margin="0,0,0,4"/>
                                     <TextBlock Text="指定したACCの範囲の譜面を表示対象にする。" Foreground="Gray" Margin="0,0,0,4"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <Slider Width="200" Maximum="101" Value="{Binding MinAcc}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                        <TextBlock Text="{Binding MinAcc, StringFormat=Min Acc \{0:N0\} %}" Height="16"/>
+                                        <Slider Width="200" Maximum="101" Value="{Binding FilterValue.MinAcc}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Text="{Binding FilterValue.MinAcc, StringFormat=Min Acc \{0:N0\} %}" Height="16"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <Slider Width="200" Maximum="101" Value="{Binding MaxAcc}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                        <TextBlock Text="{Binding MaxAcc, StringFormat=Max Acc \{0:N0\} %}" Height="16"/>
+                                        <Slider Width="200" Maximum="101" Value="{Binding FilterValue.MaxAcc}" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Text="{Binding FilterValue.MaxAcc, StringFormat=Max Acc \{0:N0\} %}" Height="16"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>

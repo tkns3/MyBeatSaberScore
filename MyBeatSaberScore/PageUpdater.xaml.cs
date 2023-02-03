@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using MyBeatSaberScore.Utility;
+using System;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using MyBeatSaberScore.Utility;
 
 namespace MyBeatSaberScore
 {
@@ -10,6 +10,8 @@ namespace MyBeatSaberScore
     /// </summary>
     public partial class PageUpdater : Page
     {
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
+        
         public PageUpdater()
         {
             InitializeComponent();
@@ -34,18 +36,25 @@ namespace MyBeatSaberScore
 
         private async void XaButtonUpdate_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new MessageBoxEx();
-            dlg.TextBlock.Inlines.Add("アップデートを開始しますか？\n");
-            dlg.TextBlock.Inlines.Add("最新の実行ファイルをダウンロードして自動的に再起動します。");
-            dlg.Owner = Application.Current.MainWindow;
-            dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            dlg.Button = MessageBoxButton.OKCancel;
-            dlg.Image = MessageBoxImage.Question;
-            dlg.Result = MessageBoxResult.No;
-            dlg.ShowDialog();
-            if (dlg.Result == MessageBoxResult.OK)
+            try
             {
-                await Updater.StartUpdate();
+                var dlg = new MessageBoxEx();
+                dlg.TextBlock.Inlines.Add("アップデートを開始しますか？\n");
+                dlg.TextBlock.Inlines.Add("最新の実行ファイルをダウンロードして自動的に再起動します。");
+                dlg.Owner = Application.Current.MainWindow;
+                dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dlg.Button = MessageBoxButton.OKCancel;
+                dlg.Image = MessageBoxImage.Question;
+                dlg.Result = MessageBoxResult.No;
+                dlg.ShowDialog();
+                if (dlg.Result == MessageBoxResult.OK)
+                {
+                    await Updater.StartUpdate();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
             }
         }
     }

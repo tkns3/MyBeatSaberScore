@@ -18,6 +18,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
+                _logger.Info(url);
                 var result = await HttpTool.PostAndDeserialize<RankedMapCollection>(url, requestContent);
                 return result;
             }

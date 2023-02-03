@@ -1,4 +1,6 @@
 ﻿using MyBeatSaberScore.APIs;
+using MyBeatSaberScore.Model;
+using MyBeatSaberScore.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,8 +26,8 @@ namespace MyBeatSaberScore.BeatMap
 
         internal static void Initialize()
         {
-            _beatSaberScrappedDataCache = DeserializeFromLocalFile<BeatSaberScrappedData.Response>(_beatSaberScrappedDataChachePath) ?? new();
-            _beatLeaderRankedMapsCache = DeserializeFromLocalFile<BeatLeaderRankedMaps.Response>(_beatLeaderRankedMapsChachePath) ?? new();
+            _beatSaberScrappedDataCache = Json.DeserializeFromLocalFile<BeatSaberScrappedData.Response>(_beatSaberScrappedDataChachePath) ?? new();
+            _beatLeaderRankedMapsCache = Json.DeserializeFromLocalFile<BeatLeaderRankedMaps.Response>(_beatLeaderRankedMapsChachePath) ?? new();
             UpdateDictionary();
         }
 
@@ -34,33 +36,9 @@ namespace MyBeatSaberScore.BeatMap
             return $"{hash}{(int)mode}{(int)difficulty}";
         }
 
-        internal static void Update(Action<int, int> progress)
+        internal static UpdateDirectoryExecuter UpdateDirectory()
         {
-            progress(100, 10);
-
-            var t1 = UpdateBeatSaberScrapedDataCache();
-            var t2 = UpdateBeatLeaderRankedMapsCache();
-            Task.WaitAll(t1, t2);
-
-            progress(100, 40);
-
-            UpdateDictionary();
-
-            progress(100, 60);
-
-            if (t1.Result)
-            {
-                SerializeToLocalFile(_beatSaberScrappedDataCache, _beatSaberScrappedDataChachePath);
-            }
-
-            progress(100, 80);
-
-            if (t2.Result)
-            {
-                SerializeToLocalFile(_beatLeaderRankedMapsCache, _beatLeaderRankedMapsChachePath);
-            }
-
-            progress(100, 100);
+            return new UpdateDirectoryExecuter();
         }
 
         internal static BeatMapData? Get(string hash, BeatMapMode mode, BeatMapDifficulty difficulty)
@@ -153,7 +131,7 @@ namespace MyBeatSaberScore.BeatMap
                         MaxScore = MaxScore(diff.Notes),
                         Deleted = false,
                     };
-                    mapData.ScoreSaber.Ranked = diff.Ranked && diff.MapMode == BeatMapMode.Standard;
+                    mapData.ScoreSaber.Ranked = diff.Ranked && diff.MapMode == BeatMapMode.Standard; // ScrappedDataはStandard以外のRankedがtrueになるバグがあるので除外しておく (ScoreSaberのRanked要件にStandardであることという条件がある)
                     mapData.ScoreSaber.RankedTime = (diff.Ranked && diff.MapMode == BeatMapMode.Standard) ? diff.RankedUpdateTime : null;
                     mapData.ScoreSaber.Star = diff.Stars;
 
@@ -206,23 +184,62 @@ namespace MyBeatSaberScore.BeatMap
             });
         }
 
-        private static T? DeserializeFromLocalFile<T>(string path)
+        public class UpdateDirectoryExecuter : IStepExecuter
         {
-            if (!File.Exists(path))
-            {
-                return default;
-            }
-            using var sr = File.OpenText(path);
-            using var reader = new JsonTextReader(sr);
-            var serializer = new JsonSerializer();
-            var deserialized = serializer.Deserialize<T>(reader);
-            return deserialized;
-        }
+            private int _totalStep;
+            private int _finishedStep;
+            private IStepExecuter.Status _status = IStepExecuter.Status.Processing;
+            private bool _t1Result;
+            private bool _t2Result;
 
-        private static void SerializeToLocalFile<T>(T data, string path, JsonSerializerSettings? setting = null)
-        {
-            var jsonString = JsonConvert.SerializeObject(data, setting);
-            File.WriteAllText(path, jsonString);
+            public UpdateDirectoryExecuter()
+            {
+                _totalStep = 4;
+                _finishedStep = 0;
+            }
+
+            public int TotalStepCount { get => _totalStep; }
+
+            public int FinishedStepCount { get => _finishedStep; }
+
+            public IStepExecuter.Status CurrentStatus { get => _status; }
+
+            public IStepExecuter.Status ExecuteStep()
+            {
+                switch (_finishedStep)
+                {
+                    case 0:
+                        var t1 = UpdateBeatSaberScrapedDataCache();
+                        var t2 = UpdateBeatLeaderRankedMapsCache();
+                        Task.WaitAll(t1, t2);
+                        _t1Result = t1.Result;
+                        _t2Result = t2.Result;
+                        _finishedStep += 1;
+                        break;
+                    case 1:
+                        UpdateDictionary();
+                        _finishedStep += 1;
+                        break;
+                    case 2:
+                        if (_t1Result)
+                        {
+                            Json.SerializeToLocalFile(_beatSaberScrappedDataCache, _beatSaberScrappedDataChachePath, Formatting.Indented);
+                        }
+                        _finishedStep += 1;
+                        break;
+                    case 3:
+                        if (_t2Result)
+                        {
+                            Json.SerializeToLocalFile(_beatLeaderRankedMapsCache, _beatLeaderRankedMapsChachePath, Formatting.Indented);
+                        }
+                        _finishedStep += 1;
+                        _status = IStepExecuter.Status.Completed;
+                        break;
+                    default:
+                        break;
+                }
+                return _status;
+            }
         }
 
         private static long MaxScore(int notes)

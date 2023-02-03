@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace MyBeatSaberScore.Utility
@@ -111,6 +112,7 @@ namespace MyBeatSaberScore.Utility
 
             try
             {
+                _logger.Info(ApiReleasesURL);
                 var releases = await HttpTool.GetAndDeserialize<List<Release>>(ApiReleasesURL);
                 if (releases != null)
                 {
@@ -169,18 +171,21 @@ namespace MyBeatSaberScore.Utility
                     File.Delete(OldExePath);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.Warn($"{OldExePath}: {ex}");
                 return;
             }
 
             var nexExeTmpPath = $"{NewExePath}.tmp";
             try
             {
+                _logger.Info(downloadLink);
                 await HttpTool.Download(downloadLink, nexExeTmpPath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.Warn($"{downloadLink}: {ex}");
                 return;
             }
 

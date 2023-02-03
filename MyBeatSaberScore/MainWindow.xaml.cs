@@ -2,6 +2,7 @@
 using MyBeatSaberScore.Utility;
 using System;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -29,16 +30,26 @@ namespace MyBeatSaberScore
             {
                 await Updater.FetchReleasesAsync();
                 BeatMapDic.Initialize();
+                AppData.SelectedUser.ProfileId = Config.ScoreSaberProfileId;
+                AppData.SelectedUser.BeatLeader = new(Config.ScoreSaberProfileId);
+                AppData.SelectedUser.ScoreSaber = new(Config.ScoreSaberProfileId);
+                AppData.SelectedUser.BeatLeader.LoadAllFromLocalFile();
+                AppData.SelectedUser.ScoreSaber.LoadAllFromLocalFile();
+                AppData.SelectedUser.ConstractScoresOfPlayedAndAllRanked();
             });
-            sw.Stop();
 
             var maxDelay = 1850;
-            if (sw.ElapsedMilliseconds < maxDelay)
+            while (sw.ElapsedMilliseconds < maxDelay)
             {
-                await Task.Delay((int)(maxDelay - sw.ElapsedMilliseconds));
+                await Task.Delay(100);
             }
 
             XaFrame.Source = new Uri("/PageTabs.xaml", UriKind.Relative);
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Config.SaveToLocalFile();
         }
     }
 }

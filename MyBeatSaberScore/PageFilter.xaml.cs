@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,13 +22,14 @@ namespace MyBeatSaberScore
     /// </summary>
     public partial class PageFilter : Page
     {
-        readonly PageMain.FilterValue? _filterValue;
-
         public PageFilter()
         {
             InitializeComponent();
-            _filterValue = (PageMain.FilterValue?)Application.Current.Properties["FilterValue"];
-            DataContext = _filterValue;
         }
+    }
+
+    public class PageFilterViewModel : ObservableBase
+    {
+        public FilterValue FilterValue { get => AppData.FilterValue; }
     }
 }

@@ -16,6 +16,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
+                _logger.Info(url);
                 var result = await HttpTool.GetAndDeserialize<MapDetail>(url);
                 return result;
             }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyBeatSaberScore"
         mc:Ignorable="d"
-        Title="MyBeatSaberScore" Height="720" Width="1100" Icon="/Resources/app.ico" ContentRendered="Window_ContentRendered">
+        Title="MyBeatSaberScore" Height="800" Width="1200" Icon="/Resources/app.ico" ContentRendered="Window_ContentRendered" Closing="Window_Closing">
     <Window.Resources>
     </Window.Resources>
     <Grid>

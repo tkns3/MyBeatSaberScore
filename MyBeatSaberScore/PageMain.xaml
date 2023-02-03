@@ -3,13 +3,15 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:system="clr-namespace:System;assembly=mscorlib"
       xmlns:local="clr-namespace:MyBeatSaberScore"
       xmlns:beatmap="clr-namespace:MyBeatSaberScore.BeatMap"
       xmlns:convert="clr-namespace:MyBeatSaberScore.Convertes"
       xmlns:utility="clr-namespace:MyBeatSaberScore.Utility"
       mc:Ignorable="d" 
-      d:DesignHeight="720" d:DesignWidth="1070"
+      d:DesignHeight="800" d:DesignWidth="1200"
       Title="PageMain" Loaded="Page_Loaded">
+
     <Page.Resources>
         <convert:AccConverter x:Key="AccConverter"/>
         <convert:AccDiffConverter x:Key="AccDiffConverter"/>
@@ -33,35 +35,43 @@
         <Style TargetType="{x:Type TextBlock}" x:Key="WrapText">
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
-        <Style TargetType="{x:Type DataGridCell}" x:Key="IsFirstScore">
+        <Style TargetType="{x:Type DataGridCell}" x:Key="ScoreSaberClearStatus">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsFirstScore}" Value="True">
-                    <Setter Property="Foreground" Value="royalblue"/>
-                    <Setter Property="Background" Value="lightcyan"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding IsFirstScore}" Value="False">
+                <DataTrigger Binding="{Binding ScoreSaber.ClearStatus}" Value="0">
                     <Setter Property="Foreground" Value="Black"/>
                     <Setter Property="Background" Value="White"/>
                 </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="{x:Type DataGridCell}" x:Key="ClearStatus">
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding ClearStatus}" Value="0">
-                    <Setter Property="Foreground" Value="Black"/>
-                    <Setter Property="Background" Value="White"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding ClearStatus}" Value="1">
+                <DataTrigger Binding="{Binding ScoreSaber.ClearStatus}" Value="1">
                     <Setter Property="Foreground" Value="royalblue"/>
                     <Setter Property="Background" Value="WhiteSmoke"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding ClearStatus}" Value="2">
+                <DataTrigger Binding="{Binding ScoreSaber.ClearStatus}" Value="2">
                     <Setter Property="Foreground" Value="royalblue"/>
                     <Setter Property="Background" Value="LightYellow"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding ClearStatus}" Value="3">
+                <DataTrigger Binding="{Binding ScoreSaber.ClearStatus}" Value="3">
+                    <Setter Property="Foreground" Value="royalblue"/>
+                    <Setter Property="Background" Value="lightcyan"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type DataGridCell}" x:Key="BeatLeaderClearStatus">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BeatLeader.ClearStatus}" Value="0">
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding BeatLeader.ClearStatus}" Value="1">
+                    <Setter Property="Foreground" Value="royalblue"/>
+                    <Setter Property="Background" Value="WhiteSmoke"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding BeatLeader.ClearStatus}" Value="2">
+                    <Setter Property="Foreground" Value="royalblue"/>
+                    <Setter Property="Background" Value="LightYellow"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding BeatLeader.ClearStatus}" Value="3">
                     <Setter Property="Foreground" Value="royalblue"/>
                     <Setter Property="Background" Value="lightcyan"/>
                 </DataTrigger>
@@ -69,12 +79,16 @@
         </Style>
     </Page.Resources>
 
+    <Page.DataContext>
+        <local:PageMainViewModel/>
+    </Page.DataContext>
+
     <Grid>
         <DockPanel LastChildFill="True">
             <Canvas Height="120" DockPanel.Dock="Top">
                 <DockPanel LastChildFill="True">
                     <Canvas Width="500" Height="120" DockPanel.Dock="Left">
-                        <local:PlaceholderTextBox x:Name="XaProfileId" Canvas.Left="10" Canvas.Top="10" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" Width="120" ToolTip="ScoreSaberのProfile ID (例 76561198003035723)を入力する" Height="18" Text=""/>
+                        <local:PlaceholderTextBox x:Name="XaProfileId" Canvas.Left="10" Canvas.Top="10" TextWrapping="Wrap" Placeholder="ScoreSaber Profile ID" Width="120" ToolTip="ScoreSaberのProfile ID (例 76561198003035723)を入力する" Height="18" Text="{Binding ProfileId}"/>
                         <Button x:Name="XaButtonGetData" Content="データ取得" Canvas.Left="135" Canvas.Top="9" Click="Button_Click" ToolTip="ScoreSaberからスコアを取得し表示を更新する" Height="20"/>
                         <RadioButton x:Name="XaRadioGetModeDiff" GroupName="GetMode" Content="差分" Canvas.Left="194" Canvas.Top="12" IsChecked="True" ToolTip="前回取得した以降にスコアを更新した譜面のデータを取得する。" />
                         <RadioButton x:Name="XaRadioGetModeAll" GroupName="GetMode" Content="全部" Canvas.Left="242" Canvas.Top="12" ToolTip="過去にプレイした全ての譜面のデータを取得する。取得済みデータのうち値が変化する可能性がある「順位」や「PP」を最新の値になおしたい場合に使用する想定。" />
@@ -99,7 +113,7 @@
                                     <TextBlock Margin="2,0,4,0" Foreground="White" Text="{Binding AverageRankedAccuracy, StringFormat={}Average Ranked Accuracy | {0:#\,0.00}%}"/>
                                 </Border>
                             </WrapPanel>
-                            <WrapPanel Orientation="Horizontal" Width="205">
+                            <WrapPanel Orientation="Horizontal" Width="195">
                                 <Border Margin="2,0,2,1" BorderBrush="Black" BorderThickness="1" CornerRadius="5">
                                     <TextBlock Margin="2,0,4,0" Text="{Binding TotalPlayCount, StringFormat={}Total Play Count | {0:#\,0}}"/>
                                 </Border>
@@ -107,43 +121,77 @@
                                     <TextBlock Margin="2,0,4,0" Text="{Binding TotalScore, StringFormat={}Total Score | {0:#\,0}}"/>
                                 </Border>
                                 <Border Margin="2,0,2,1" BorderBrush="Black" BorderThickness="1" CornerRadius="5">
-                                    <TextBlock Margin="2,0,4,0" Text="{Binding ReplaysWatched, StringFormat={}Replays Watched by Others | {0:#\,0}}"/>
+                                    <TextBlock Margin="2,0,4,0" Text="{Binding ReplaysWatched, StringFormat={}Replays Watched | {0:#\,0}}"/>
                                 </Border>
                             </WrapPanel>
                         </StackPanel>
                     </Canvas>
                     <StackPanel Height="100" DockPanel.Dock="Left" Orientation="Horizontal">
+                        <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="56">
+                            <Canvas>
+                                <Image Height="48" Width="48" Canvas.Left="4" Canvas.Top="0" MouseLeftButtonUp="XaViewTargetScoreSaberImage_MouseLeftButtonUp">
+                                    <Image.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ViewTargetHasScoreSaber}" Value="True">
+                                                    <Setter Property="Image.Source" Value="Resources/scoresaber.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding ViewTargetHasScoreSaber}" Value="False">
+                                                    <Setter Property="Image.Source" Value="Resources/scoresaber_gray.png"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+
+                                <Image Height="48" Width="48" Canvas.Left="4" Canvas.Top="48" MouseLeftButtonUp="XaViewTargetBeatLeaderImage_MouseLeftButtonUp">
+                                    <Image.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ViewTargetHasBeatLeader}" Value="True">
+                                                    <Setter Property="Image.Source" Value="Resources/beatleader.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding ViewTargetHasBeatLeader}" Value="False">
+                                                    <Setter Property="Image.Source" Value="Resources/beatleader_gray.png"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+
+                            </Canvas>
+                        </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="160">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="検索"/>
-                                <local:PlaceholderTextBox x:Name="XaSongNameFilter" Canvas.Left="8" Canvas.Top="28" Placeholder="曲名・曲作者・譜面作者" Width="144" ToolTip="曲名で検索" TextChanged="OnFilterTextChanged" Height="18"/>
-                                <local:PlaceholderTextBox x:Name="XaBsrFilter" Canvas.Left="8" Canvas.Top="51" Placeholder="BSR" Width="144" ToolTip="BSRで検索" TextChanged="OnFilterTextChanged" Height="18"/>
-                                <local:PlaceholderTextBox x:Name="XaHashFilter" Canvas.Left="8" Canvas.Top="74" Placeholder="HASH" Width="144" ToolTip="HASHで検索" TextChanged="OnFilterTextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="XaSongNameFilter" Text="{Binding FilterValue.SongName, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="8" Canvas.Top="28" Placeholder="曲名・曲作者・譜面作者" Width="144" ToolTip="曲名で検索" TextChanged="OnFilterTextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="XaBsrFilter" Text="{Binding FilterValue.Bsr, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="8" Canvas.Top="51" Placeholder="BSR" Width="144" ToolTip="BSRで検索" TextChanged="OnFilterTextChanged" Height="18"/>
+                                <local:PlaceholderTextBox x:Name="XaHashFilter" Text="{Binding FilterValue.Hash, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="8" Canvas.Top="74" Placeholder="HASH" Width="144" ToolTip="HASHで検索" TextChanged="OnFilterTextChanged" Height="18"/>
                             </Canvas>
                         </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="160">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="譜面の種類"/>
-                                <CheckBox x:Name="XaCheckBoxRank" Content="ランク" Canvas.Left="8" Canvas.Top="28" IsChecked="{Binding IsShowRank}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
-                                <CheckBox x:Name="XaCheckBoxUnRank" Content="アンランク" Canvas.Left="66" Canvas.Top="28" IsChecked="{Binding IsShowUnRank}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
-                                <Slider Canvas.Left="8" Canvas.Top="51" Width="92" Maximum="20" Value="{Binding MinStar}" ValueChanged="OnFilterSliderValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                <Slider Canvas.Left="8" Canvas.Top="74" Width="92" Maximum="20" Value="{Binding MaxStar}" ValueChanged="OnFilterSliderValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
-                                <TextBlock Canvas.Left="104" Canvas.Top="51" Text="{Binding MinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
-                                <TextBlock Canvas.Left="104" Canvas.Top="74" Text="{Binding MaxStar, StringFormat=Max★\{0:N0\}}" Height="16"/>
+                                <CheckBox x:Name="XaCheckBoxRank" Content="ランク" Canvas.Left="8" Canvas.Top="28" IsChecked="{Binding FilterValue.IsShowRank}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="ランク譜面を表示する" Height="15" Width="46"/>
+                                <CheckBox x:Name="XaCheckBoxUnRank" Content="アンランク" Canvas.Left="66" Canvas.Top="28" IsChecked="{Binding FilterValue.IsShowUnRank}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="アンランク譜面を表示する" Height="15" Width="64"/>
+                                <Slider Canvas.Left="8" Canvas.Top="51" Width="92" Maximum="20" Value="{Binding FilterValue.MinStar}" ValueChanged="OnFilterSliderValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                <Slider Canvas.Left="8" Canvas.Top="74" Width="92" Maximum="20" Value="{Binding FilterValue.MaxStar}" ValueChanged="OnFilterSliderValueChanged" SmallChange="1" Height="18" IsSnapToTickEnabled="True"/>
+                                <TextBlock Canvas.Left="104" Canvas.Top="51" Text="{Binding FilterValue.MinStar, StringFormat=Min★\{0:N0\}}" Height="16"/>
+                                <TextBlock Canvas.Left="104" Canvas.Top="74" Text="{Binding FilterValue.MaxStar, StringFormat=Max★\{0:N0\}}" Height="16"/>
                             </Canvas>
                         </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="80">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="プレイ結果" Height="16"/>
-                                <CheckBox x:Name="XaCheckBoxClear" Content="Clear" Canvas.Left="8" Canvas.Top="28" IsChecked="{Binding IsShowClear}" ToolTip="クリアした譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
-                                <CheckBox x:Name="XaCheckBoxFail" Content="Failure" Canvas.Left="8" Canvas.Top="51" IsChecked="{Binding IsShowFailure}" ToolTip="NFやSSがついた譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
-                                <CheckBox x:Name="XaCheckBoxNoPlayRank" Content="未プレイ" Canvas.Left="8" Canvas.Top="74" IsChecked="{Binding IsShowNotPlay}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="未プレイのランク譜面を表示する"/>
+                                <CheckBox x:Name="XaCheckBoxClear" Content="Clear" Canvas.Left="8" Canvas.Top="28" IsChecked="{Binding FilterValue.IsShowClear}" ToolTip="クリアした譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
+                                <CheckBox x:Name="XaCheckBoxFail" Content="Failure" Canvas.Left="8" Canvas.Top="51" IsChecked="{Binding FilterValue.IsShowFailure}" ToolTip="NFやSSがついた譜面を表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
+                                <CheckBox x:Name="XaCheckBoxNoPlayRank" Content="未プレイ" Canvas.Left="8" Canvas.Top="74" IsChecked="{Binding FilterValue.IsShowNotPlay}" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged" ToolTip="未プレイの譜面を表示する"/>
                             </Canvas>
                         </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="112">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="Check" Height="16"/>
-                                <CheckBox x:Name="XaCheckBoxCheckedOnly" Content="Checked Only" Canvas.Left="8" Canvas.Top="28" IsChecked="True" ToolTip="チェックした譜面だけを表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
+                                <CheckBox x:Name="XaCheckBoxCheckedOnly" Content="Checked Only" Canvas.Left="8" Canvas.Top="28" IsChecked="{Binding FilterValue.IsShowCheckedOnly}" ToolTip="チェックした譜面だけを表示する" Checked="OnFilterEnableChanged" Unchecked="OnFilterEnableChanged"/>
                                 <Button x:Name="XaButtonCheckFiltered" Canvas.Left="8" Canvas.Top="48" Content="Check Filtered" Width="96" Click="OnClickCheckFiltered"></Button>
                                 <Button x:Name="XaButtonClearFiltered" Canvas.Left="8" Canvas.Top="70" Content="Clear Filtered" Width="96" Click="OnClickClearFiltered"></Button>
                             </Canvas>
@@ -157,30 +205,30 @@
                 </StatusBarItem>
                 <Separator />
                 <StatusBarItem>
-                    <ProgressBar Width="60" Height="12" Minimum="0.0" Maximum="100.0" Value="{Binding Task1Progress}"/>
+                    <ProgressBar Width="60" Height="12" Minimum="0" Maximum="{Binding Task1ProgressMax}" Value="{Binding Task1ProgressValue}"/>
                 </StatusBarItem>
                 <StatusBarItem>
-                    <ProgressBar Width="60" Height="12" Minimum="0.0" Maximum="100.0" Value="{Binding Task2Progress}"/>
+                    <ProgressBar Width="60" Height="12" Minimum="0" Maximum="{Binding Task2ProgressMax}" Value="{Binding Task2ProgressValue}"/>
                 </StatusBarItem>
                 <StatusBarItem>
-                    <ProgressBar Width="60" Height="12" Minimum="0.0" Maximum="100.0" Value="{Binding Task3Progress}"/>
+                    <ProgressBar Width="60" Height="12" Minimum="0" Maximum="{Binding Task3ProgressMax}" Value="{Binding Task3ProgressValue}"/>
                 </StatusBarItem>
                 <Separator />
                 <StatusBarItem>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="PP=[" Height="16"/>
-                        <TextBlock Text="{Binding MinPp, StringFormat=\{0:N0\}}" Height="16"/>
+                        <TextBlock Text="{Binding FilterValue.MinPp, StringFormat=\{0:N0\}}" Height="16"/>
                         <TextBlock Text="～" Height="16"/>
-                        <TextBlock Text="{Binding MaxPp, StringFormat=\{0:N0\}}" Height="16"/>
+                        <TextBlock Text="{Binding FilterValue.MaxPp, StringFormat=\{0:N0\}}" Height="16"/>
                         <TextBlock Text=")" Height="16"/>
                     </StackPanel>
                 </StatusBarItem>
                 <StatusBarItem>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="ACC=[" Height="16"/>
-                        <TextBlock Text="{Binding MinAcc, StringFormat=\{0:N0\}}" Height="16"/>
+                        <TextBlock Text="{Binding FilterValue.MinAcc, StringFormat=\{0:N0\}}" Height="16"/>
                         <TextBlock Text="～" Height="16"/>
-                        <TextBlock Text="{Binding MaxAcc, StringFormat=\{0:N0\}}" Height="16"/>
+                        <TextBlock Text="{Binding FilterValue.MaxAcc, StringFormat=\{0:N0\}}" Height="16"/>
                         <TextBlock Text="%)" Height="16"/>
                     </StackPanel>
                 </StatusBarItem>
@@ -189,7 +237,7 @@
                     <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding StatusText}"/>
                 </StatusBarItem>
             </StatusBar>
-            <DataGrid x:Name="XaDataGrid" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" RowHeight="45">
+            <DataGrid x:Name="XaDataGrid" ItemsSource="{Binding GridData}" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" RowHeight="45" IsReadOnly="{Binding IsReadOnly}" MouseRightButtonUp="XaDataGrid_MouseRightButtonUp">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="" utility:TagBehavior.Tag="CheckBox" Width="32">
                         <DataGridTemplateColumn.CellTemplate>
@@ -199,10 +247,10 @@
                                         <Image.Style>
                                             <Style>
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Selected}" Value="True">
+                                                    <DataTrigger Binding="{Binding IsShowChekdOnlySelected}" Value="True">
                                                         <Setter Property="Image.Source" Value="Resources/checkon.png"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Selected}" Value="False">
+                                                    <DataTrigger Binding="{Binding IsShowChekdOnlySelected}" Value="False">
                                                         <Setter Property="Image.Source" Value="Resources/checkoff.png"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -214,9 +262,9 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="bsr" utility:TagBehavior.Tag="Bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="bsr" utility:TagBehavior.Tag="Map.Bsr" Binding="{Binding NumOfKey, Converter={StaticResource BsrConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTemplateColumn Header="カバー" utility:TagBehavior.Tag="Cover" Width="45">
+                    <DataGridTemplateColumn x:Name="XaDataGridColumnCover" Header="カバー" utility:TagBehavior.Tag="Map.Cover" Width="45">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Source="{Binding Cover}" CacheMode="BitmapCache"/>
@@ -224,36 +272,56 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" utility:TagBehavior.Tag="SongName" Width="220" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
+                    <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" utility:TagBehavior.Tag="Map.SongName" Width="220" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
 
-                    <DataGridTextColumn Header="更新日" utility:TagBehavior.Tag="Date"  Width="140" Binding="{Binding TimeSet, Converter={StaticResource DateConverter}}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Date"  Width="140" Binding="{Binding ScoreSaber.TimeSet, Converter={StaticResource DateConverter}}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>更新日</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="モード" utility:TagBehavior.Tag="Mode">
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Date"  Width="140" Binding="{Binding BeatLeader.TimeSet, Converter={StaticResource DateConverter}}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>更新日</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTemplateColumn Header="モード" utility:TagBehavior.Tag="Map.Mode">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Width="32">
                                     <Image.Style>
                                         <Style>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Standard}">
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.Standard}">
                                                     <Setter Property="Image.Source" Value="Resources/standard.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Lawless}">
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.Lawless}">
                                                     <Setter Property="Image.Source" Value="Resources/lawless.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.OneSaber}">
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.OneSaber}">
                                                     <Setter Property="Image.Source" Value="Resources/onesaber.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Lightshow}">
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.Lightshow}">
                                                     <Setter Property="Image.Source" Value="Resources/lightshow.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Degree90}">
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.Degree90}">
                                                     <Setter Property="Image.Source" Value="Resources/90degree.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.Degree360}">
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.Degree360}">
                                                     <Setter Property="Image.Source" Value="Resources/360degree.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding GameMode}" Value="{x:Static beatmap:BeatMapMode.NoArrows}">
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.NoArrows}">
                                                     <Setter Property="Image.Source" Value="Resources/noarrows.png"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -264,26 +332,26 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="難易度" utility:TagBehavior.Tag="Difficulty">
+                    <DataGridTemplateColumn Header="難易度" utility:TagBehavior.Tag="Map.Difficulty">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Width="32">
                                     <Image.Style>
                                         <Style>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Easy}">
+                                                <DataTrigger Binding="{Binding Map.MapDifficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Easy}">
                                                     <Setter Property="Image.Source" Value="Resources/easy.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Normal}">
+                                                <DataTrigger Binding="{Binding Map.MapDifficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Normal}">
                                                     <Setter Property="Image.Source" Value="Resources/normal.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Hard}">
+                                                <DataTrigger Binding="{Binding Map.MapDifficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Hard}">
                                                     <Setter Property="Image.Source" Value="Resources/hard.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Expert}">
+                                                <DataTrigger Binding="{Binding Map.MapDifficulty}" Value="{x:Static beatmap:BeatMapDifficulty.Expert}">
                                                     <Setter Property="Image.Source" Value="Resources/expert.png"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding Difficulty}" Value="{x:Static beatmap:BeatMapDifficulty.ExpertPlus}">
+                                                <DataTrigger Binding="{Binding Map.MapDifficulty}" Value="{x:Static beatmap:BeatMapDifficulty.ExpertPlus}">
                                                     <Setter Property="Image.Source" Value="Resources/expertplus.png"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -294,25 +362,225 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="★" utility:TagBehavior.Tag="Stars" Binding="{Binding Star, Converter={StaticResource StarConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="Map.ScoreSaber.Star" Binding="{Binding Map.ScoreSaber.Star, Converter={StaticResource StarConverter}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>★</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="#" utility:TagBehavior.Tag="ScoreRank" Binding="{Binding ScoreRank, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="Map.BeatLeader.Star" Binding="{Binding Map.BeatLeader.Star, Converter={StaticResource StarConverter}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>★</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="スコア" utility:TagBehavior.Tag="Score" Binding="{Binding ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource ClearStatus}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.WorldRank" Binding="{Binding ScoreSaber.WorldRank, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>#</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="精度" utility:TagBehavior.Tag="Acc" Binding="{Binding Acc, Converter={StaticResource AccConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.WorldRank" Binding="{Binding BeatLeader.WorldRank, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>#</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Diff" utility:TagBehavior.Tag="AccDiff" Binding="{Binding AccDifference, Converter={StaticResource AccDiffConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Score" Binding="{Binding ScoreSaber.ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource ScoreSaberClearStatus}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>スコア</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="✖" utility:TagBehavior.Tag="MissPlusBad" Binding="{Binding MissPlusBad}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Score" Binding="{Binding BeatLeader.ModifiedScore, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource BeatLeaderClearStatus}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>スコア</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="FC" utility:TagBehavior.Tag="FullCombo" Binding="{Binding FullCombo, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Acc" Binding="{Binding ScoreSaber.Acc, Converter={StaticResource AccConverter}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>精度</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="PP" utility:TagBehavior.Tag="Pp" Binding="{Binding PP, Converter={StaticResource PPConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Acc" Binding="{Binding BeatLeader.Acc, Converter={StaticResource AccConverter}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>精度</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Modifiers" utility:TagBehavior.Tag="Modifiers" Width="40"  Binding="{Binding Modifiers}" ElementStyle="{StaticResource WrapText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.AccDiff" Binding="{Binding ScoreSaber.AccDifference, Converter={StaticResource AccDiffConverter}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Diff</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="回数" utility:TagBehavior.Tag="ScoreCount" Binding="{Binding ScoreCount, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.AccDiff" Binding="{Binding BeatLeader.AccDifference, Converter={StaticResource AccDiffConverter}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Diff</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.MissPlusBad" Binding="{Binding ScoreSaber.MissPlusBad}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>✖</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.MissPlusBad" Binding="{Binding BeatLeader.MissPlusBad}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>✖</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.FullCombo" Binding="{Binding ScoreSaber.FullCombo, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>FC</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.FullCombo" Binding="{Binding BeatLeader.FullCombo, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>FC</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Pp" Binding="{Binding ScoreSaber.PP, Converter={StaticResource PPConverter}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>PP</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Pp" Binding="{Binding BeatLeader.PP, Converter={StaticResource PPConverter}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>PP</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Modifiers" Width="50"  Binding="{Binding ScoreSaber.Modifiers}" ElementStyle="{StaticResource WrapText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Modifiers</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Modifiers" Width="50"  Binding="{Binding BeatLeader.Modifiers}" ElementStyle="{StaticResource WrapText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Modifiers</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.ScoreCount" Binding="{Binding ScoreSaber.ScoreCount, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>回数</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.ScoreCount" Binding="{Binding BeatLeader.ScoreCount, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>回数</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
                     <DataGridTemplateColumn Header="" utility:TagBehavior.Tag="CopyBsr">
                         <DataGridTemplateColumn.CellTemplate>
@@ -367,27 +635,87 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="⌛" utility:TagBehavior.Tag="Duration" Binding="{Binding Duration, Converter={StaticResource TimeConverter}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="⌛" utility:TagBehavior.Tag="Map.Duration" Binding="{Binding Map.Duration, Converter={StaticResource TimeConverter}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="BPM" utility:TagBehavior.Tag="Bpm" Binding="{Binding Bpm, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="BPM" utility:TagBehavior.Tag="Map.Bpm" Binding="{Binding Map.Bpm, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="ノーツ" utility:TagBehavior.Tag="Notes" Binding="{Binding Notes, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="ノーツ" utility:TagBehavior.Tag="Map.Notes" Binding="{Binding Map.Notes, StringFormat=\{0:#\,0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="NPS" utility:TagBehavior.Tag="Nps" Binding="{Binding Nps, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="NPS" utility:TagBehavior.Tag="Map.Nps" Binding="{Binding Map.Nps, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="NJS" utility:TagBehavior.Tag="Njs" Binding="{Binding Njs, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="NJS" utility:TagBehavior.Tag="Map.Njs" Binding="{Binding Map.Njs, StringFormat=\{0:0.0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="💣" utility:TagBehavior.Tag="Bombs" Binding="{Binding Bombs, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="💣" utility:TagBehavior.Tag="Map.Bombs" Binding="{Binding Map.Bombs, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="壁" utility:TagBehavior.Tag="Obstacles" Binding="{Binding Obstacles, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn Header="壁" utility:TagBehavior.Tag="Map.Walls" Binding="{Binding Map.Walls, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
 
-                    <DataGridTextColumn Header="Miss" utility:TagBehavior.Tag="Miss" Binding="{Binding Miss, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Miss" Binding="{Binding ScoreSaber.Miss, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Miss</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Bad" utility:TagBehavior.Tag="Bad" Binding="{Binding Bad, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Miss" Binding="{Binding BeatLeader.Miss, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Miss</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Hash" utility:TagBehavior.Tag="Hash" Width="64" Binding="{Binding Hash}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Bad" Binding="{Binding ScoreSaber.Bad, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Bad</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="RankedDate"  Width="140" Binding="{Binding RankedDate, Converter={StaticResource DateConverter}}"/>
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Bad" Binding="{Binding BeatLeader.Bad, StringFormat=\{0:0\}}" CellStyle="{StaticResource RightText}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Bad</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Hash" utility:TagBehavior.Tag="Map.Hash" Width="64" Binding="{Binding Map.Hash}"/>
+
+                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.ScoreSaber.RankedDate"  Width="140" Binding="{Binding Map.ScoreSaber.RankedTime, Converter={StaticResource DateConverter}}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/scoresaber.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Ranked Date</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.BeatLeader.RankedDate"  Width="140" Binding="{Binding Map.BeatLeader.RankedTime, Converter={StaticResource DateConverter}}">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="Resources/beatleader.png" Height="16" Width="16"></Image>
+                                    <TextBlock>Ranked Date</TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
                 </DataGrid.Columns>
             </DataGrid>

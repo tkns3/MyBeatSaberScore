@@ -24,6 +24,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
+                _logger.Info(url);
                 var httpsResponse = await HttpTool.Client.GetAsync(url);
 
                 // metadata.totalと取得できるデータ数が一致しないことがある。
@@ -75,6 +76,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
+                _logger.Info(url);
                 var result = await HttpTool.GetAndDeserialize<LeaderboardInfoCollection>(url);
                 return result;
             }
@@ -112,6 +114,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
+                _logger.Info(url);
                 var result = await HttpTool.GetAndDeserialize<LeaderboardInfo>(url);
                 return result;
             }
@@ -129,6 +132,7 @@ namespace MyBeatSaberScore.APIs
 
             try
             {
+                _logger.Info(url);
                 var result = await HttpTool.GetAndDeserialize<PlayerProfile>(url);
                 return result;
             }
