@@ -11,7 +11,7 @@ namespace MyBeatSaberScore
     public partial class PageUpdater : Page
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
-        
+
         public PageUpdater()
         {
             InitializeComponent();
