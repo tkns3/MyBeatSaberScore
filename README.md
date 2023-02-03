@@ -1,6 +1,6 @@
-# なにこれ？
+# MyBeatSaberScore
 
-Beat Saberを遊んでScore Saberに送信したスコアを表示するWindowsアプリです。
+MyBeatSaberScoreはBeat Saberを遊んでScore SaberやBeat Leaderに送信したスコアを表示するWindowsアプリです。
 
 柔軟なフィルターとソートによって目的の譜面のスコアを簡単に確認することができます。
 
@@ -50,7 +50,7 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 「WindowsによってPCが保護されました」と表示された場合、メッセージ内の「詳細情報」をクリックすると現れる「実行」ボタンをクリックしてください。
 
-英語で「.NETが必要」の旨のメッセージが表示された場合、次の「.NETランタイムのインストール（一度だけ）」を行ってください。
+英語で「.NETが必要」の旨のメッセージが表示された場合、次の「.NETランタイムのインストール」を行ってください。
 
 ### .NETランタイムのインストール
 
@@ -64,13 +64,13 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 ## データ取得
 
-左上のテキストボックス（画像内①）にスコアセイバーのプロファイルIDを入力し「データ取得」（画像内②）ボタンをクリックします。
+Score Saberの個人ページURL`https://scoresaber.com/u/76561198003035723`やBeat Leaderの個人ページURL`https://www.beatleader.xyz/u/76561198003035723`の数字部分`76561198003035723`がプロフィールIDです。
+
+左上のテキストボックス（画像内①）にプロフィールIDを入力し「データ取得」（画像内②）ボタンをクリックします。
 
 <img src="image/usage_get.png" alt="attach:usage_get" title="attach:usage_get">
 
-スコアセイバーの個人ページURLが`https://scoresaber.com/u/76561198003035723`であれば`76561198003035723`の部分がプロファイルIDです。
-
-初回は全プレイ履歴やカバー画像を取得するためダウンロードに時間がかかります。気長に待ってください。
+初回は全プレイ履歴とカバー画像を取得するためダウンロードに時間がかかります。気長に待ってください。
 
 取得したデータは`MyBeatSaberScore.exe`と同じ階層の`data`フォルダに保存しています。
 
@@ -83,8 +83,14 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 次のようなケースは「全部」を試してください。
 
 - 譜面ごとの順位の最新情報が欲しい。
-- リウェイトや星変化によって譜面のppがScoreSaberと一致しなくなっている。
+- リウェイトや星変化によって譜面のppがScore SaberやBeat Leaderと一致しなくなっている。
 - アンランク時代にプレイ済みの譜面がランク化されたが、ランク譜面としてプレイ済みになっていない。
+
+## Score SaberとBeat Leaderの表示切り替え
+
+Score Saberアイコン、Beat Leaderアイコンをクリックすることで表示を切り替えることができます。
+
+<img src="image/usage_select_leaderboard.png" alt="attach:usage_select_leaderboard" title="attach:usage_select_leaderboard">
 
 ## ユーザー切り替え
 
@@ -92,11 +98,13 @@ Beat Saberを遊んでScore Saberに送信したスコアを表示するWindows�
 
 <img src="image/usage_userselect.png" alt="attach:usage_userselect" title="attach:usage_userselect">
 
-スコアセイバーのプロファイルIDを入力（画像内①）してプラスボタン（画像内②）をクリックするとユーザを追加します。
+プロフィールIDを入力（画像内①）してプラスボタン（画像内②）をクリックするとユーザを追加します。
 
-ユーザごとのマイナスボタン（画像内③）をクリックするとそのユーザを削除します。
+ユーザごとのリロードボタン（画像内③）をクリックするとそのユーザのアイコン、画像を最新に更新します。
 
-ユーザをクリック（画像内④）するとメインページに遷移しそのユーザのスコアを表示します。
+ユーザごとのマイナスボタン（画像内④）をクリックするとそのユーザを削除します。
+
+ユーザ（画像内⑤）をクリックするとメインページに遷移しそのユーザのスコアを表示します。
 
 この画面からユーザを削除しても取得済みのスコアは削除されません。
 
@@ -118,9 +126,9 @@ Twitchのアイコンをクリックすると「!bsr key」をクリップボー
 
 <img src="image/usage_CopyBSR.png" alt="attach:usage_CopyBSR" title="attach:usage_CopyBSR">
 
-## BeatSaver、ScoreSaber、BeatLeaderをひらく
+## Beat Saver、Score Saber、Beat Leaderの譜面ページをブラウザでひらく
 
-BeatSaverアイコン（画像内①）、ScoreSaberアイコン（画像内②）、BeatLeadrアイコン（画像内③）をクリックすると譜面のページをブラウザでひらきます。
+Beat Saverアイコン（画像内①）、Score Saberアイコン（画像内②）、Beat Leadrアイコン（画像内③）をクリックすると譜面のページをブラウザでひらきます。
 
 <img src="image/usage_JumpBSSSBL.png" alt="attach:usage_JumpBSSSBL" title="attach:usage_JumpBSSSBL">
 
@@ -140,17 +148,17 @@ BeatSaverアイコン（画像内①）、ScoreSaberアイコン（画像内②�
 
 ## bsr、精度が表示されない譜面があります
 
-以下のいずれかの条件があてはまる譜面のbsr、精度は表示しません。
+Beat Leaderにスコアが残っていない譜面（Score Saberだけにスコアが残っている譜面）のうち以下のいずれかの条件があてはまる譜面のbsr、精度は表示しません。
 
 - リリースされた直後。
 - リパブリッシュされている。
-- BeatSaverから削除されている。
+- Beat Saverから削除されている。
 
 リリースされた直後の譜面は数時間たってから「データ取得」を行うと表示されるようになります。
 これは「データ取得」で譜面情報を取得しますが取得先のデータがBeatSaverに同期するまで数時間かかります。
 
 リパブリッシュされた譜面のbsr、精度が表示されることはありません。
-BeatSaverアイコンをクリックするとブラウザでBeatSaverを開きリパブリッシュ後の譜面情報を確認することができます。
+Beat SaverアイコンをクリックするとブラウザでBeat Saverを開きリパブリッシュ後の譜面情報を確認することができます。
 
 ## プレイ結果のFailureの条件は？
 
@@ -170,25 +178,27 @@ Modifiersに「NF」(No Fail)または「SS」(Slow Song)がついている譜�
       ]
     }
 
-## 本ツールとScoreSaberで譜面の順位の値が違う
+## 本ツールとScore Saber/Beat Leaderで譜面の順位の値が違う
 
-「差分/全部」のラジオボックスから「全部」を選択して「データ取得」を行うとScoreSaberと同じ順位が表示されるようになります。
+「差分/全部」のラジオボックスから「全部」を選択して「データ取得」を行うとScore Saber/Beat Leaderと同じ順位が表示されるようになります。
 
-「差分」の取得は過去に取得した譜面の順位を取得しなおさないのでScoreSaberとズレが発生します。
+「差分」の取得は過去に取得した譜面の順位を取得しなおさないのでScore Saber/Beat Leaderとズレが発生します。
 
-## 本ツールとScoreSaberでppの値が違う
+## 本ツールとScore Saber/Beat Leaderでppの値が違う
 
-「差分/全部」のラジオボックスから「全部」を選択して「データ取得」を行うとScoreSaberと同じppの値が表示されるようになります。
+「差分/全部」のラジオボックスから「全部」を選択して「データ取得」を行うとScore Saber/Beat Leaderと同じppの値が表示されるようになります。
 
-ScoreSaberのpp評価方法は変更されることがあります。
+「差分」の取得は過去に取得した譜面のppを取得しなおさないのでScore Saber/Beat Leaderとズレが発生します。
 
-ただし本ツールはその変更を自動的に検知することができないため手動での対応をお願いします。
+## 本ツールとScore Saber/Beat Leaderで星の値が違う
 
-## 本ツールとScoreSaberで星の値が違う
+MyBeatSaberScoreが参照している譜面データが更新されてから「データ取得」を行うとScore Saber/Beat Leaderと同じ星の値が表示されるようになります。
 
-数時間たってから「データ取得」を行うとScoreSaberと同じ星の値が表示されるようになります。
+Score Saber/Beat Leaderの星の値は変更されることがあります。
 
-ScoreSaberの星評価方法は変更されることがあります。
+ただしMyBeatSaberScoreが参照している譜面データはScore Saber/Beat Leaderでの変化をリアルタイムに反映していません。
 
-「データ取得」で譜面情報を取得しますが取得先のデータがScoreSaberに同期するまで数時間かかります。
+Score Saberの星情報を含む譜面データは`https://github.com/andruzzzhka/BeatSaberScrappedData`から取得しています。このデータは数時間ごとに更新されます。
+
+Beat Leaderの星情報を含む譜面データは`https://github.com/tkns3/BeatLeaderRankedData`から取得しています。このデータはJSTの20時10分頃に更新されます。
 
