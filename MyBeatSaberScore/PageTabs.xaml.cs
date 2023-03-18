@@ -13,11 +13,12 @@ namespace MyBeatSaberScore
     {
         private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
 
+        public static PageTabs? Instance { get; private set; }
+
         public PageTabs()
         {
             InitializeComponent();
-
-            AppData.XaTabMain = XaTabMain;
+            Instance = this;
         }
 
         private void Page_Initialized(object sender, EventArgs e)
@@ -25,6 +26,14 @@ namespace MyBeatSaberScore
             if (Updater.IsExistNewVersion)
             {
                 XaImageMenuUpdate.Source = new BitmapImage(new Uri("Resources/menu_update.png", UriKind.Relative));
+            }
+        }
+
+        public void SelectMainTab()
+        {
+            if (XaTabMain != null)
+            {
+                XaTabMain.IsSelected = true;
             }
         }
     }

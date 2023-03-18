@@ -64,11 +64,7 @@ namespace MyBeatSaberScore
             if (((FrameworkElement)sender).DataContext is Config.User obj)
             {
                 Config.ScoreSaberProfileId = obj.id;
-
-                if (AppData.XaTabMain != null)
-                {
-                    AppData.XaTabMain.IsSelected = true;
-                }
+                PageTabs.Instance?.SelectMainTab();
             }
         }
 

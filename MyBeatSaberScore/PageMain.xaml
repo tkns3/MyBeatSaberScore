@@ -237,7 +237,7 @@
                     <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding StatusText}"/>
                 </StatusBarItem>
             </StatusBar>
-            <DataGrid x:Name="XaDataGrid" ItemsSource="{Binding GridData}" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" RowHeight="45" IsReadOnly="{Binding IsReadOnly}" MouseRightButtonUp="XaDataGrid_MouseRightButtonUp">
+            <DataGrid x:Name="XaDataGrid" ItemsSource="{Binding GridData}" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="CellOrRowHeader" RowHeight="45" IsReadOnly="{Binding IsReadOnly}" MouseRightButtonUp="XaDataGrid_MouseRightButtonUp" ColumnDisplayIndexChanged="XaDataGrid_ColumnDisplayIndexChanged" ColumnReordering="XaDataGrid_ColumnReordering" ColumnReordered="XaDataGrid_ColumnReordered">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="" utility:TagBehavior.Tag="CheckBox" Width="32">
                         <DataGridTemplateColumn.CellTemplate>

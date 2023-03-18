@@ -27,11 +27,46 @@ namespace MyBeatSaberScore
 
         private PageMainViewModel _viewModel;
 
+        private Dictionary<string, DataGridColumn> _dataGridColumnsDic;
+
+        private int _preDisplayIndex;
+
+        public static PageMain? Instance { get; private set; }
+
         public PageMain()
         {
             InitializeComponent();
             _viewModel = (PageMainViewModel)DataContext;
             _viewModel.GridItemsViewSource.Filter += new FilterEventHandler(DataGridFilter);
+
+            _dataGridColumnsDic = new();
+            foreach (var column in XaDataGrid.Columns)
+            {
+                var tagname1 = TagBehavior.GetTag(column).ToString();
+                if (tagname1 != null)
+                {
+                    _dataGridColumnsDic.Add(tagname1, column);
+                }
+            }
+
+            Instance = this;
+        }
+
+        internal List<Config.GridColumnParam>? GetGridColumnParams()
+        {
+            if (XaDataGrid != null)
+            {
+                var list = new List<Config.GridColumnParam>();
+                foreach (var column in XaDataGrid.Columns)
+                {
+                    list.Add(new Config.GridColumnParam(column));
+                }
+                return list;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private void RefreshGrid()
@@ -420,7 +455,7 @@ namespace MyBeatSaberScore
             foreach (var column in XaDataGrid.Columns)
             {
                 var tagname = TagBehavior.GetTag(column).ToString();
-                column.Visibility = (tagname != null && Config.GridSetting.notDisplayColumns.Contains(tagname)) ? Visibility.Hidden : Visibility.Visible;
+                column.Visibility = (tagname != null && Config.Grid.notDisplayColumns.Contains(tagname)) ? Visibility.Hidden : Visibility.Visible;
                 if ((tagname?.Contains("BeatLeader.") ?? false) && !AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
                 {
                     column.Visibility = Visibility.Hidden;
@@ -428,6 +463,44 @@ namespace MyBeatSaberScore
                 if ((tagname?.Contains("ScoreSaber.") ?? false) && !AppData.ViewTarget.HasFlag(ViewTarget.ScoreSaber))
                 {
                     column.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        private void RestoreColumnParam(List<Config.GridColumnParam> columnParams, bool restoreOrder, bool restoreWidth)
+        {
+            int invalidIndex = columnParams.Count;
+            foreach (var column in XaDataGrid.Columns)
+            {
+                var tagname = TagBehavior.GetTag(column).ToString();
+                var param = columnParams.Find(x => x.name == tagname);
+
+                if (restoreOrder)
+                {
+                    if (param == null || param.displayIndex == -1)
+                    {
+                        column.DisplayIndex = invalidIndex;
+                        invalidIndex++;
+                    }
+                    else
+                    {
+                        column.DisplayIndex = param.displayIndex;
+                    }
+                }
+
+                if (restoreWidth)
+                {
+                    if (param != null)
+                    {
+                        if (param.width.Equals("Auto"))
+                        {
+                            column.Width = DataGridLength.Auto;
+                        }
+                        else
+                        {
+                            column.Width = int.Parse(param.width);
+                        }
+                    }
                 }
             }
         }
@@ -441,14 +514,31 @@ namespace MyBeatSaberScore
         {
             XaButtonGetData.IsEnabled = false;
 
+            // 設定にあわせて列の表示/非表示、行幅を変更
             UpdateDataGridColumnVisibility();
-            XaDataGridColumnCover.Width = Config.GridSetting.rowHeight;
-            XaDataGrid.RowHeight = Config.GridSetting.rowHeight;
+            XaDataGridColumnCover.Width = Config.Grid.rowHeight;
+            XaDataGrid.RowHeight = Config.Grid.rowHeight;
 
             if (AppData.IsFirst)
             {
                 // 起動直後の場合
                 AppData.IsFirst = false;
+
+                // 設定にあわせて列の順番・幅を変更
+                if (Config.Grid.columnRestore.mode == Config.RestoreMode.Last)
+                {
+                    RestoreColumnParam(Config.Grid.columnRestore.lastParams, restoreOrder: true, restoreWidth: true);
+                }
+                else if (Config.Grid.columnRestore.mode == Config.RestoreMode.Saved)
+                {
+                    RestoreColumnParam(Config.Grid.columnRestore.savedParams, restoreOrder: true, restoreWidth: true);
+                }
+                else
+                {
+                    // do nothing, use default
+                }
+
+                // 設定にあわせてプロフィールを変更
                 if (Config.ViewTarget.HasFlag(ViewTarget.BeatLeader))
                 {
                     _viewModel.SetPlayerProfile(AppData.SelectedUser.BeatLeader.Profile);
@@ -459,6 +549,19 @@ namespace MyBeatSaberScore
                     _viewModel.SetPlayerProfile(AppData.SelectedUser.ScoreSaber.Profile);
                     _viewModel.ViewTargetHasScoreSaber = true;
                 }
+
+                // 列幅変更のイベントハンドラ登録
+                var evsetter = new EventSetter();
+                evsetter.Event = FrameworkElement.SizeChangedEvent;
+                evsetter.Handler = new SizeChangedEventHandler(XaDataGrid_ColumnSizeChanged);
+
+                var headerStyle = new Style();
+                headerStyle.TargetType = new System.Windows.Controls.Primitives.DataGridColumnHeader().GetType();
+                headerStyle.Setters.Add(evsetter);
+
+                XaDataGrid.ColumnHeaderStyle = headerStyle;
+
+                // 行に表示するデータを設定
                 _viewModel.GridItemsViewSource.Source = AppData.SelectedUser.ScoresOfPlayedAndAllRanked;
                 XaDataGrid.ItemsSource = _viewModel.GridItemsViewSource.View;
                 XaDataGrid.SelectedIndex = -1;
@@ -1112,6 +1215,123 @@ namespace MyBeatSaberScore
             _viewModel.SetPlayerProfile(AppData.SelectedUser.BeatLeader.Profile);
             UpdateDataGridColumnVisibility();
             RefreshGrid();
+        }
+
+        private void debugPrintColumns(string pre)
+        {
+            var s = pre;
+            foreach (var c in XaDataGrid.Columns)
+            {
+                s += $"{TagBehavior.GetTag(c).ToString()}={c.DisplayIndex}, ";
+            }
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+
+        private void XaDataGrid_ColumnDisplayIndexChanged(object? sender, DataGridColumnEventArgs e)
+        {
+            // do nothing
+        }
+
+        private void XaDataGrid_ColumnReordering(object sender, DataGridColumnReorderingEventArgs e)
+        {
+            _preDisplayIndex = e.Column.DisplayIndex;
+            debugPrintColumns("1: ");
+        }
+
+        private void XaDataGrid_ColumnReordered(object sender, DataGridColumnEventArgs e)
+        {
+            var alreadyMovedTagName = TagBehavior.GetTag(e.Column).ToString();
+            if (alreadyMovedTagName == null)
+            {
+                return;
+            }
+
+            var pairTagName = Config.GetPairTagName(alreadyMovedTagName);
+            debugPrintColumns("2: ");
+
+            if (!pairTagName.Equals("unknown"))
+            {
+                // ScoreSaber、BeatLeader のペアが存在する列のいずれかが移動されたとき
+                // 仮にペアを「T1, T2」として「T1, T2, A, B, C」という列が存在したとすると
+                // T1 または T2 のいずれかの列が移動されたときは  T1 と T2 が隣り合い T1, T2 の順番となるようにしたい
+                // 例1. GUI で T1 を左に動かしたとき
+                //   ① A, B, C, T1, T2: GUIで動かす前
+                //   ② A, T1, B, C, T2: GUIで動かした後 (この関数が開始した時点の順番)
+                //   ③ A, T1, T2, B, C: T2 を T1 の右にくるように移動させる (この関数の処理)
+                //   → T2 に設定する DisplayIndex は②時点の T1 の DisplayIndex + 1 となる
+                // 例2. GUI で T2 を左に動かしたとき
+                //   ① A, B, C, T1, T2: GUIで動かす前
+                //   ② A, T2, B, C, T1: GUIで動かした後 (この関数が開始した時点の順番)
+                //   ③ A, T1, T2, B, C: T1 を T2 の左にくるように移動させる (この関数の処理)
+                //   → T1 に設定する DisplayIndex は②時点の T2 の DisplayIndex となる
+                // 例3. GUI で T1 を右に動かしたとき
+                //   ① T1, T2, A, B, C: GUIで動かす前
+                //   ② T2, A, T1, B, C: GUIで動かした後 (この関数が開始した時点の順番)
+                //   ③ A, T1, T2, B, C: T2 を T1 の右にくるように移動させる (この関数の処理)
+                //   → T2 を動かすと A, T1 の位置が左にずれるので T2 に設定する DisplayIndex は②時点の T1 の DisplayIndex となる
+                // 例4. GUI で T2 を右に動かしたとき
+                //   ① T1, T2, A, B, C: GUIで動かす前
+                //   ② T1, A, T2, B, C: GUIで動かした後 (この関数が開始した時点の順番)
+                //   ③ A, T1, T2, B, C: T1 を T2 の左にくるように移動させる (この関数の処理)
+                //   → T1 を動かすと A, T2 の位置が左にずれるので T1 に設定する DisplayIndex は②時点の T2 の DisplayIndex - 1 となる
+
+                // GUI で移動した列の DisplayIndex に対してペアとなる列の DisplayIndex の差分。
+                static int diffrenceDisplayIndex(bool moveNowItemIsScoreSaber, bool isMoveToRight)
+                {
+                    int diff = 0;
+
+                    // ScoreSaberの項目を移動させるときはBeatLeaderのDisplyIndexを指定すればよい。同じ値になったBeatLeaderは勝手に右にずれる。
+                    // BeatLeaderの項目を移動させるときはScoreSaberのDisplayIndex+1を指定すればよい。
+                    diff += (moveNowItemIsScoreSaber) ? 0 : 1;
+
+                    // 左から右に移動するときは自身が抜けて他の列が左にずれる分を考慮してマイナスが必要。
+                    diff += (isMoveToRight) ? -1 : 0;
+                    return diff;
+                }
+
+                var moveNowItemIsScoreSaber = pairTagName.Contains("ScoreSaber");
+                bool isMoveToRight = _preDisplayIndex < e.Column.DisplayIndex;
+                _dataGridColumnsDic[pairTagName].DisplayIndex = e.Column.DisplayIndex + diffrenceDisplayIndex(moveNowItemIsScoreSaber, isMoveToRight);
+            }
+
+            // さらに ScoreSaber と BeatLeader のペアとなる列が隣り合わなくなっている場所は隣りあうように移動させる。
+            static void moveSideBySide(Dictionary<string, DataGridColumn> d, bool viewTargetIsScoreSaber, string scoresaberTag, string beatleaderTag)
+            {
+                if (d[beatleaderTag].DisplayIndex != d[scoresaberTag].DisplayIndex + 1)
+                {
+                    if (viewTargetIsScoreSaber)
+                    {
+                        // ScoreSaber の列を表示しているときは非表示の BeatLeader の列を移動させる
+                        d[beatleaderTag].DisplayIndex = d[scoresaberTag].DisplayIndex + 1;
+                    }
+                    else
+                    {
+                        // BeatLeader の列を表示しているときは非表示の ScoreSaber の列を移動させる
+                        d[scoresaberTag].DisplayIndex = d[beatleaderTag].DisplayIndex - 1;
+                    }
+                }
+            }
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberDate, Config.ColumnTagBeatLeaderDate);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberWorldRank, Config.ColumnTagBeatLeaderWorldRank);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberScore, Config.ColumnTagBeatLeaderScore);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberAcc, Config.ColumnTagBeatLeaderAcc);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberAccDiff, Config.ColumnTagBeatLeaderAccDiff);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberMissPlusBad, Config.ColumnTagBeatLeaderMissPlusBad);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberFullCombo, Config.ColumnTagBeatLeaderFullCombo);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberPp, Config.ColumnTagBeatLeaderPp);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberModifiers, Config.ColumnTagBeatLeaderModifiers);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberScoreCount, Config.ColumnTagBeatLeaderScoreCount);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberMiss, Config.ColumnTagBeatLeaderMiss);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagScoreSaberBad, Config.ColumnTagBeatLeaderBad);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagMapScoreSaberRankedDate, Config.ColumnTagMapBeatLeaderRankedDate);
+            moveSideBySide(_dataGridColumnsDic, _viewModel.ViewTargetHasScoreSaber, Config.ColumnTagMapScoreSaberStar, Config.ColumnTagMapBeatLeaderStar);
+
+            debugPrintColumns("3: ");
+        }
+
+        private void XaDataGrid_ColumnSizeChanged(object? sender, SizeChangedEventArgs e)
+        {
+            // do nothing
         }
     }
 

@@ -10,8 +10,6 @@ namespace MyBeatSaberScore
 
         public static UserData SelectedUser { get; set; } = new();
 
-        public static TabItem? XaTabMain { get; set; }
-
         public static FilterValue FilterValue { get; set; } = new();
 
         public static ViewTarget ViewTarget { get => Config.ViewTarget; set => Config.ViewTarget = value; }
