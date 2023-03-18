@@ -1,9 +1,12 @@
 ﻿using MyBeatSaberScore.APIs;
+using MyBeatSaberScore.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection;
+using System.Windows.Controls;
 
 namespace MyBeatSaberScore
 {
@@ -85,9 +88,11 @@ namespace MyBeatSaberScore
 
         public static ObservableCollection<User> FavoriteUsers => _data.favoUsers;
 
-        public static Grid GridSetting => _data.grid;
-
         public static ViewTarget ViewTarget { get => _data.viewTarget; set => _data.viewTarget = value; }
+
+        public static GridConfig Grid => _data.grid;
+
+        public static WindowConfig Window => _data.window;
 
         public static void LoadFromLocalFile()
         {
@@ -121,6 +126,43 @@ namespace MyBeatSaberScore
             }
         }
 
+        public static string GetPairTagName(string tagName)
+        {
+            return tagName switch
+            {
+                ColumnTagScoreSaberDate => ColumnTagBeatLeaderDate,
+                ColumnTagScoreSaberScore => ColumnTagBeatLeaderScore,
+                ColumnTagScoreSaberAcc => ColumnTagBeatLeaderAcc,
+                ColumnTagScoreSaberAccDiff => ColumnTagBeatLeaderAccDiff,
+                ColumnTagScoreSaberMissPlusBad => ColumnTagBeatLeaderMissPlusBad,
+                ColumnTagScoreSaberFullCombo => ColumnTagBeatLeaderFullCombo,
+                ColumnTagScoreSaberPp => ColumnTagBeatLeaderPp,
+                ColumnTagScoreSaberModifiers => ColumnTagBeatLeaderModifiers,
+                ColumnTagScoreSaberScoreCount => ColumnTagBeatLeaderScoreCount,
+                ColumnTagScoreSaberMiss => ColumnTagBeatLeaderMiss,
+                ColumnTagScoreSaberBad => ColumnTagBeatLeaderBad,
+                ColumnTagScoreSaberWorldRank => ColumnTagBeatLeaderWorldRank,
+                ColumnTagMapScoreSaberRankedDate => ColumnTagMapBeatLeaderRankedDate,
+                ColumnTagMapScoreSaberStar => ColumnTagMapBeatLeaderStar,
+                ColumnTagBeatLeaderDate => ColumnTagScoreSaberDate,
+                ColumnTagBeatLeaderScore => ColumnTagScoreSaberScore,
+                ColumnTagBeatLeaderAcc => ColumnTagScoreSaberAcc,
+                ColumnTagBeatLeaderAccDiff => ColumnTagScoreSaberAccDiff,
+                ColumnTagBeatLeaderMissPlusBad => ColumnTagScoreSaberMissPlusBad,
+                ColumnTagBeatLeaderFullCombo => ColumnTagScoreSaberFullCombo,
+                ColumnTagBeatLeaderPp => ColumnTagScoreSaberPp,
+                ColumnTagBeatLeaderModifiers => ColumnTagScoreSaberModifiers,
+                ColumnTagBeatLeaderScoreCount => ColumnTagScoreSaberScoreCount,
+                ColumnTagBeatLeaderMiss => ColumnTagScoreSaberMiss,
+                ColumnTagBeatLeaderBad => ColumnTagScoreSaberBad,
+                ColumnTagBeatLeaderWorldRank => ColumnTagScoreSaberWorldRank,
+                ColumnTagMapBeatLeaderRankedDate => ColumnTagMapScoreSaberRankedDate,
+                ColumnTagMapBeatLeaderStar => ColumnTagMapScoreSaberStar,
+                _ => "unknown"
+            };
+        }
+
+#pragma warning disable IDE1006 // 命名スタイル
         public class ConfigData
         {
             public string scoreSaberProfileId { get; set; } = string.Empty;
@@ -131,7 +173,9 @@ namespace MyBeatSaberScore
 
             public ObservableCollection<User> favoUsers { get; set; } = new();
 
-            public Grid grid { get; set; } = new();
+            public WindowConfig window { get; set; } = new();
+
+            public GridConfig grid { get; set; } = new();
 
             public void Normalize()
             {
@@ -174,17 +218,106 @@ namespace MyBeatSaberScore
             }
         }
 
-        public class Grid
+        public class GridConfig
         {
-            public int rowHeight { get; set; }
+            public int rowHeight { get; set; } = 45;
 
-            public List<String> notDisplayColumns { get; set; }
+            public List<String> notDisplayColumns { get; set; } = new();
 
-            public Grid()
+            public GridColumnRestoreParam columnRestore { get; set; } = new();
+        }
+
+        public class GridColumnRestoreParam
+        {
+            public RestoreMode mode { get; set; } = RestoreMode.Last;
+
+            public DateTime? savedDate { get; set; }
+
+            public List<GridColumnParam> lastParams { get; set; } = new();
+
+            public List<GridColumnParam> savedParams { get; set; } = new();
+        }
+
+        public class GridColumnParam
+        {
+            public string name { get; set; } = "";
+
+            /// <summary>
+            /// "Auto" または double.Parse() が可能な文字列。
+            /// </summary>
+            public string width { get; set; } = "Auto";
+
+            public int displayIndex { get; set; } = -1;
+
+            public GridColumnParam()
             {
-                rowHeight = 45;
-                notDisplayColumns = new List<String>();
+            }
+
+            public GridColumnParam(DataGridColumn column)
+            {
+                name = TagBehavior.GetTag(column).ToString() ?? "";
+                displayIndex = column.DisplayIndex;
+                width = column.Width.ToString();
             }
         }
+
+        public class WindowConfig
+        {
+            public WindowBoundsRestoreParam boundsRestore { get; set; } = new();
+        }
+
+        public class WindowBoundsRestoreParam
+        {
+            public RestoreMode mode { get; set; } = RestoreMode.Last;
+
+            public DateTime? savedDate { get; set; }
+
+            public WindowBounds last { get; set; } = new();
+
+            public WindowBounds saved { get; set; } = new();
+        }
+
+        public class WindowBounds
+        {
+            public double top { get; set; } = 100;
+
+            public double left { get; set; } = 100;
+
+            public double width { get; set; } = 1200;
+
+            public double height { get; set; } = 800;
+
+            public double vtop { get; set; } = 0;
+
+            public double vleft { get; set; } = 0;
+
+            public double vwidth { get; set; } = 0;
+
+            public double vheight { get; set; } = 0;
+
+            public bool maximized { get; set; } = false;
+        }
+
+        /// <summary>
+        /// 復元方法。
+        /// </summary>
+        public enum RestoreMode
+        {
+            /// <summary>
+            /// デフォルトパラメータで福毛
+            /// </summary>
+            Default,
+
+            /// <summary>
+            /// 前回終了時のパラメータで復元
+            /// </summary>
+            Last,
+
+            /// <summary>
+            /// 保存しているパラメータで復元
+            /// </summary>
+            Saved,
+        }
+#pragma warning restore IDE1006 // 命名スタイル
     }
 }
