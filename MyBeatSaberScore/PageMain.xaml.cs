@@ -469,39 +469,20 @@ namespace MyBeatSaberScore
 
         private void RestoreColumnParam(List<Config.GridColumnParam> columnParams, bool restoreOrder, bool restoreWidth)
         {
-            int invalidIndex = columnParams.Count;
-            foreach (var column in XaDataGrid.Columns)
+            debugPrintColumns("0-1: ");
+            var orderdList = columnParams.OrderBy(c => c.displayIndex);
+            foreach (var param in orderdList)
             {
-                var tagname = TagBehavior.GetTag(column).ToString();
-                var param = columnParams.Find(x => x.name == tagname);
-
-                if (restoreOrder)
+                try
                 {
-                    if (param == null || param.displayIndex == -1)
-                    {
-                        column.DisplayIndex = invalidIndex;
-                        invalidIndex++;
-                    }
-                    else
-                    {
-                        column.DisplayIndex = param.displayIndex;
-                    }
+                    _dataGridColumnsDic[param.name].DisplayIndex = param.displayIndex;
+                    _dataGridColumnsDic[param.name].Width = param.width.Equals("Auto") ? DataGridLength.Auto : double.Parse(param.width);
                 }
-
-                if (restoreWidth)
+                catch (Exception ex)
                 {
-                    if (param != null)
-                    {
-                        if (param.width.Equals("Auto"))
-                        {
-                            column.Width = DataGridLength.Auto;
-                        }
-                        else
-                        {
-                            column.Width = int.Parse(param.width);
-                        }
-                    }
+                    _logger.Warn(ex);
                 }
+                debugPrintColumns("0-2: ");
             }
         }
 
