@@ -75,10 +75,10 @@ namespace MyBeatSaberScore.Model
             bool result = false;
             if (File.Exists(_profilePath))
             {
-                var tmp = Json.DeserializeFromLocalFile<ScoreSaber.PlayerProfile>(_profilePath);
-                if (tmp != null)
+                var profile = Json.DeserializeFromLocalFile<ScoreSaber.PlayerProfile>(_profilePath);
+                if (profile != null && profile.id.Equals(ProfileId))
                 {
-                    Profile = tmp;
+                    Profile = profile;
                     result = true;
                 }
             }
@@ -140,7 +140,7 @@ namespace MyBeatSaberScore.Model
         public async Task<bool> FetchLatestProfileAsync()
         {
             var profile = await ScoreSaber.GetPlayerInfo(ProfileId);
-            if (profile.id.Length > 0)
+            if (profile.id.Length > 0 && profile.id.Equals(ProfileId))
             {
                 Profile = profile;
                 Json.SerializeToLocalFile(Profile, _profilePath, Formatting.Indented);
