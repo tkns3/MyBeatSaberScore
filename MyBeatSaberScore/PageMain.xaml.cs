@@ -601,75 +601,113 @@ namespace MyBeatSaberScore
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             XaButtonGetData.IsEnabled = false;
-            Config.ScoreSaberProfileId = XaProfileId.Text;
             await DownaloadAndRefleshView(XaRadioGetModeAll.IsChecked ?? false);
             XaButtonGetData.IsEnabled = true;
         }
 
         private async Task DownaloadAndRefleshView(bool isGetAll)
         {
+            static string statusText(bool ssProfile, bool ssScores, bool bsProfile, bool bsScores)
+            {
+                static string okng(bool a) { return a ? "OK" : "NG"; }
+                return $"ScoreSaber: {{ Profile: {okng(ssProfile)}, Scores: {okng(ssScores)} }}, BeatLeader: {{ Profile: {okng(bsProfile)}, Scores: {okng(bsScores)} }}";
+            }
+
+            _viewModel.StatusText = "";
             _viewModel.Task1ProgressValue = 0;
             _viewModel.Task2ProgressValue = 0;
             _viewModel.Task3ProgressValue = 0;
 
-            Application.Current.Dispatcher.Invoke(() =>
+            var scoreSaberUserData = AppData.SelectedUser.ScoreSaber;
+            var beatLeaderUserData = AppData.SelectedUser.BeatLeader;
+
+            // ProfileID入力欄を手動で変更している場合
+            if (!AppData.SelectedUser.ProfileId.Equals(XaProfileId.Text))
             {
-                _viewModel.GridItemsViewSource.Source = new ObservableCollection<IntegrationScore>();
-            });
+                // 表示切替用に新しいProfileIDのUserDataを生成、有効なProfileIDだとわかるまで一時データとして扱う
+                scoreSaberUserData = new ScoreSaberUserData(XaProfileId.Text);
+                beatLeaderUserData = new BeatLeaderUserData(XaProfileId.Text);
+
+                // プロフィール、スコアの表示をクリア
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _viewModel.SetPlayerProfile(new APIs.ScoreSaber.PlayerProfile() { id = XaProfileId.Text });
+                    _viewModel.GridItemsViewSource.Source = new ObservableCollection<IntegrationScore>();
+                    XaDataGrid.ItemsSource = _viewModel.GridItemsViewSource.View;
+                });
+            }
 
             // 譜面リストを取得
             Task downloadRankedMaps = TaskDownloadMapList();
 
             // ScoreSaberのプロフィール取得
-            Task fetchScoreSaberLatestProfile = AppData.SelectedUser.ScoreSaber.FetchLatestProfileAsync();
+            Task<bool> fetchScoreSaberLatestProfile = scoreSaberUserData.FetchLatestProfileAsync();
 
             // BeatLeaderのプロフィール取得
-            Task fetchBeatLeaderLatestProfile = AppData.SelectedUser.BeatLeader.FetchLatestProfileAsync();
+            Task<bool> fetchBeatLeaderLatestProfile = beatLeaderUserData.FetchLatestProfileAsync();
 
             await Task.WhenAll(fetchScoreSaberLatestProfile, fetchBeatLeaderLatestProfile);
 
-            Application.Current.Dispatcher.Invoke(() =>
+            if (scoreSaberUserData.IsExistProfile || beatLeaderUserData.IsExistProfile)
             {
-                if (_viewModel.ViewTargetHasBeatLeader)
+                Config.ScoreSaberProfileId = XaProfileId.Text;
+                AppData.SelectedUser.ProfileId = XaProfileId.Text;
+                AppData.SelectedUser.BeatLeader = beatLeaderUserData;
+                AppData.SelectedUser.ScoreSaber = scoreSaberUserData;
+
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    _viewModel.SetPlayerProfile(AppData.SelectedUser.BeatLeader.Profile);
-                }
-                if (_viewModel.ViewTargetHasScoreSaber)
+                    if (_viewModel.ViewTargetHasBeatLeader)
+                    {
+                        _viewModel.SetPlayerProfile(AppData.SelectedUser.BeatLeader.Profile);
+                    }
+                    if (_viewModel.ViewTargetHasScoreSaber)
+                    {
+                        _viewModel.SetPlayerProfile(AppData.SelectedUser.ScoreSaber.Profile);
+                    }
+                });
+
+                // ScoreSaber、BeatLeaderから最新スコアを取得
+                Task<(bool ssResult, bool blResult)> downloadLatestScores = TaskDownloadLatestScores(isGetAll);
+
+                await Task.WhenAll(downloadRankedMaps, downloadLatestScores);
+
+                _viewModel.StatusText = statusText(fetchScoreSaberLatestProfile.Result, downloadLatestScores.Result.ssResult, fetchBeatLeaderLatestProfile.Result, downloadLatestScores.Result.blResult);
+
+                AppData.SelectedUser.ConstractScoresOfPlayedAndAllRanked();
+
+                // GridItemを構築。未取得のカバー画像は後で取得する。
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    _viewModel.SetPlayerProfile(AppData.SelectedUser.ScoreSaber.Profile);
-                }
-            });
+                    _viewModel.GridItemsViewSource.Source = AppData.SelectedUser.ScoresOfPlayedAndAllRanked;
+                    XaDataGrid.ItemsSource = _viewModel.GridItemsViewSource.View;
+                    XaDataGrid.SelectedIndex = -1;
+                });
 
-            // ScoreSaber、BeatLeaderから最新スコアを取得
-            Task downloadLatestScores = TaskDownloadLatestScores(isGetAll);
+                // 未取得のカバー画像を取得しながら逐次表示を更新する
+                await TaskDownloadUnacquiredCover();
 
-            await Task.WhenAll(downloadRankedMaps, downloadLatestScores);
-
-            AppData.SelectedUser.ConstractScoresOfPlayedAndAllRanked();
-
-            // GridItemを構築。未取得のカバー画像は後で取得する。
-            Application.Current.Dispatcher.Invoke(() =>
+                RefreshGrid();
+            }
+            else
             {
-                _viewModel.GridItemsViewSource.Source = AppData.SelectedUser.ScoresOfPlayedAndAllRanked;
-                XaDataGrid.ItemsSource = _viewModel.GridItemsViewSource.View;
-                XaDataGrid.SelectedIndex = -1;
-            });
-
-            // 未取得のカバー画像を取得しながら逐次表示を更新する
-            await TaskDownloadUnacquiredCover();
-
-            RefreshGrid();
+                await downloadRankedMaps;
+                _viewModel.Task1ProgressValue = 0;
+                _viewModel.Task2ProgressValue = 0;
+                _viewModel.Task3ProgressValue = 0;
+                _viewModel.StatusText = statusText(fetchScoreSaberLatestProfile.Result, false, fetchBeatLeaderLatestProfile.Result, false);
+                MessageBox.Show($"プロフィールデータを取得できません。IDが間違っているもしくは通信に失敗した可能性があります。");
+            }
         }
 
-        private async Task TaskDownloadLatestScores(bool isGetAll)
+        private async Task<(bool ssResult, bool blResult)> TaskDownloadLatestScores(bool isGetAll)
         {
-            _viewModel.StatusText = "";
             var ssExecuter = AppData.SelectedUser.ScoreSaber.FetchLatestScores(isGetAll);
             var blExecuter = AppData.SelectedUser.BeatLeader.FetchLatestScores(isGetAll);
             int progressMax = ssExecuter.TotalStepCount + blExecuter.TotalStepCount + 2;
             _viewModel.Task2ProgressMax = progressMax;
 
-            Task ss = Task.Run(() =>
+            Task<bool> ss = Task.Run<bool>(() =>
             {
                 while (ssExecuter.CurrentStatus == IStepExecuter.Status.Processing)
                 {
@@ -681,14 +719,11 @@ namespace MyBeatSaberScore
                 {
                     AppData.SelectedUser.ScoreSaber.SaveAllToLocalFile();
                 }
-                else if (ssExecuter.CurrentStatus == IStepExecuter.Status.Failed)
-                {
-                    _viewModel.StatusText += "[ScoreSaberのスコア取得に失敗]";
-                }
                 _viewModel.Task2ProgressValue += 1;
+                return ssExecuter.CurrentStatus == IStepExecuter.Status.Completed;
             });
 
-            Task bl = Task.Run(() =>
+            Task<bool> bl = Task.Run<bool>(() =>
             {
                 while (blExecuter.CurrentStatus == IStepExecuter.Status.Processing)
                 {
@@ -700,16 +735,15 @@ namespace MyBeatSaberScore
                 {
                     AppData.SelectedUser.BeatLeader.SaveAllToLocalFile();
                 }
-                else if (blExecuter.CurrentStatus == IStepExecuter.Status.Failed)
-                {
-                    _viewModel.StatusText += "[BeatLeaderのスコア取得に失敗]";
-                }
                 _viewModel.Task2ProgressValue += 1;
+                return blExecuter.CurrentStatus == IStepExecuter.Status.Completed;
             });
 
             await Task.WhenAll(ss, bl);
 
             _viewModel.Task2ProgressValue = progressMax;
+
+            return (ss.Result, bl.Result);
         }
 
         private async Task TaskDownloadMapList()

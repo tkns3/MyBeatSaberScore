@@ -46,7 +46,7 @@ namespace MyBeatSaberScore
             }
             else
             {
-                MessageBox.Show($"ユーザーのデータを取得できません。IDが間違っているもしくは通信に失敗した可能性があります。");
+                MessageBox.Show($"プロフィールデータを取得できません。IDが間違っているもしくは通信に失敗した可能性があります。");
             }
         }
 
