@@ -103,10 +103,10 @@ namespace MyBeatSaberScore
                     var data = Utility.Json.DeserializeFromLocalFile<ConfigData>(_configPath);
                     if (data != null)
                     {
-                        data.Normalize();
                         _data = data;
                     }
                 }
+                _data.Normalize();
             }
             catch (Exception ex)
             {
