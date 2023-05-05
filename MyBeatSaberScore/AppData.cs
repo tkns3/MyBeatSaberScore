@@ -1,6 +1,8 @@
 ﻿using MyBeatSaberScore.Model;
 using System;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Xml.Linq;
 
 namespace MyBeatSaberScore
 {
@@ -25,76 +27,128 @@ namespace MyBeatSaberScore
 
     public class FilterValue : ObservableBase
     {
-        private string _SongName = "";
-        private string _Bsr = "";
-        private string _Hash = "";
-        private bool _IsShowRank = true;
-        private bool _IsShowUnRank = true;
-        private bool _IsShowClear = true;
-        private bool _IsShowFailure = true;
-        private bool _IsShowNotPlay = true;
-        private bool _IsShowFullCombo = true;
-        private bool _IsShowNotFullCombo = true;
-        private bool _IsShowStandard = true;
-        private bool _IsShowLawless = true;
-        private bool _IsShowOneSaber = true;
-        private bool _IsShowLightShow = true;
-        private bool _IsShow90Degree = true;
-        private bool _IsShow360Degree = true;
-        private bool _IsShowNoArrows = true;
-        private bool _IsShowEasy = true;
-        private bool _IsShowNormal = true;
-        private bool _IsShowHard = true;
-        private bool _IsShowExpert = true;
-        private bool _IsShowExpertPlus = true;
-        private bool _IsShowCheckedOnly = true;
-        private double _MinStar = 0.0;
-        private double _MaxStar = 20.0;
-        private double _MinPp = 0.0;
-        private double _MaxPp = 1000.0;
-        private double _MinAcc = 0.0;
-        private double _MaxAcc = 101.0;
-        private long _MinScoreRank = 0;
-        private long _MaxScoreRank = 9999999;
-        private DateTime? _DateStart;
-        private DateTime? _DateEnd;
-        private DateTime? _RankedDateStart;
-        private DateTime? _RankedDateEnd;
+        // 譜面情報
+        internal FilterStringSearch _MapFullName = new(IntegrationScore.GetFilterTargetMapName);
+        internal FilterStringSearch _MapBsr = new(IntegrationScore.GetFilterTargetMapName);
+        internal FilterStringSearch _MapHash = new(IntegrationScore.GetFilterTargetMapHash);
+        internal FilterMapRankStatus _MapRankStatus = new(IntegrationScore.GetFilterTargetMapTypeIsRanked);
+        internal FilterMapMode _MapMode = new(IntegrationScore.GetFilterTargetMapMode);
+        internal FilterMapDifficulty _MapDifficulty = new(IntegrationScore.GetFilterTargetMapDifficulty);
+        internal FilterDoubleRange _MapStar = new(0, 20, IntegrationScore.GetFilterTargetMapStar);
+        internal FilterDoubleRange _MapDuration = new(double.MinValue, double.MaxValue, IntegrationScore.GetFilterTargetMapDuration);
+        internal FilterDoubleRange _MapBpm = new(double.MinValue, double.MaxValue, IntegrationScore.GetFilterTargetMapBpm);
+        internal FilterLongRange _MapNotes = new(long.MinValue, long.MaxValue, IntegrationScore.GetFilterTargetMapNotes);
+        internal FilterLongRange _MapBombs = new(long.MinValue, long.MaxValue, IntegrationScore.GetFilterTargetMapBombs);
+        internal FilterLongRange _MapWalls = new(long.MinValue, long.MaxValue, IntegrationScore.GetFilterTargetMapWalls);
+        internal FilterDoubleRange _MapNps = new(double.MinValue, double.MaxValue, IntegrationScore.GetFilterTargetMapNps);
+        internal FilterDoubleRange _MapNjs = new(double.MinValue, double.MaxValue, IntegrationScore.GetFilterTargetMapNjs);
+        internal FilterDateTimeRange _MapRankedDate = new(null, null, IntegrationScore.GetFilterTargetMapRankedDate);
 
-        public string SongName { get { return _SongName; } set { SetProperty(ref _SongName, value); } }
-        public string Bsr { get { return _Bsr; } set { SetProperty(ref _Bsr, value); } }
-        public string Hash { get { return _Hash; } set { SetProperty(ref _Hash, value); } }
-        public bool IsShowRank { get { return _IsShowRank; } set { SetProperty(ref _IsShowRank, value); } }
-        public bool IsShowUnRank { get { return _IsShowUnRank; } set { SetProperty(ref _IsShowUnRank, value); } }
-        public bool IsShowClear { get { return _IsShowClear; } set { SetProperty(ref _IsShowClear, value); } }
-        public bool IsShowFailure { get { return _IsShowFailure; } set { SetProperty(ref _IsShowFailure, value); } }
-        public bool IsShowNotPlay { get { return _IsShowNotPlay; } set { SetProperty(ref _IsShowNotPlay, value); } }
-        public bool IsShowFullCombo { get { return _IsShowFullCombo; } set { SetProperty(ref _IsShowFullCombo, value); } }
-        public bool IsShowNotFullCombo { get { return _IsShowNotFullCombo; } set { SetProperty(ref _IsShowNotFullCombo, value); } }
-        public bool IsShowStandard { get { return _IsShowStandard; } set { SetProperty(ref _IsShowStandard, value); } }
-        public bool IsShowLawless { get { return _IsShowLawless; } set { SetProperty(ref _IsShowLawless, value); } }
-        public bool IsShowOneSaber { get { return _IsShowOneSaber; } set { SetProperty(ref _IsShowOneSaber, value); } }
-        public bool IsShowLightShow { get { return _IsShowLightShow; } set { SetProperty(ref _IsShowLightShow, value); } }
-        public bool IsShow90Degree { get { return _IsShow90Degree; } set { SetProperty(ref _IsShow90Degree, value); } }
-        public bool IsShow360Degree { get { return _IsShow360Degree; } set { SetProperty(ref _IsShow360Degree, value); } }
-        public bool IsShowNoArrows { get { return _IsShowNoArrows; } set { SetProperty(ref _IsShowNoArrows, value); } }
-        public bool IsShowEasy { get { return _IsShowEasy; } set { SetProperty(ref _IsShowEasy, value); } }
-        public bool IsShowNormal { get { return _IsShowNormal; } set { SetProperty(ref _IsShowNormal, value); } }
-        public bool IsShowHard { get { return _IsShowHard; } set { SetProperty(ref _IsShowHard, value); } }
-        public bool IsShowExpert { get { return _IsShowExpert; } set { SetProperty(ref _IsShowExpert, value); } }
-        public bool IsShowExpertPlus { get { return _IsShowExpertPlus; } set { SetProperty(ref _IsShowExpertPlus, value); } }
-        public bool IsShowCheckedOnly { get { return _IsShowCheckedOnly; } set { SetProperty(ref _IsShowCheckedOnly, value); } }
-        public double MinStar { get { return _MinStar; } set { SetProperty(ref _MinStar, value); } }
-        public double MaxStar { get { return _MaxStar; } set { SetProperty(ref _MaxStar, value); } }
-        public double MinPp { get { return _MinPp; } set { SetProperty(ref _MinPp, value); } }
-        public double MaxPp { get { return _MaxPp; } set { SetProperty(ref _MaxPp, value); } }
-        public double MinAcc { get { return _MinAcc; } set { SetProperty(ref _MinAcc, value); } }
-        public double MaxAcc { get { return _MaxAcc; } set { SetProperty(ref _MaxAcc, value); } }
-        public long MinScoreRank { get { return _MinScoreRank; } set { SetProperty(ref _MinScoreRank, value); } }
-        public long MaxScoreRank { get { return _MaxScoreRank; } set { SetProperty(ref _MaxScoreRank, value); } }
-        public DateTime? DateStart { get { return _DateStart; } set { SetProperty(ref _DateStart, value); } }
-        public DateTime? DateEnd { get { return _DateEnd; } set { SetProperty(ref _DateEnd, value); } }
-        public DateTime? RankedDateStart { get { return _RankedDateStart; } set { SetProperty(ref _RankedDateStart, value); } }
-        public DateTime? RankedDateEnd { get { return _RankedDateEnd; } set { SetProperty(ref _RankedDateEnd, value); } }
+        // プレイ結果
+        internal FilterDateTimeRange _PlayUpdateDate = new(null, null, IntegrationScore.GetFilterTargetPlayUpdateDate);
+        internal FilterPlayResult _PlayResult = new(IntegrationScore.GetFilterTargetPlayResultType);
+        internal FilterPlayFullCombo _PlayFullCombo = new(IntegrationScore.GetFilterTargetPlayIsFullCombo);
+        internal FilterDoubleRange _PlayPp = new(double.MinValue, double.MaxValue, IntegrationScore.GetFilterTargetPlayPp);
+        internal FilterDoubleRange _PlayAcc = new(double.MinValue, double.MaxValue, IntegrationScore.GetFilterTargetPlayAcc);
+        internal FilterLongRange _PlayWorldRank = new(long.MinValue, long.MaxValue, IntegrationScore.GetFilterTargetPlayWorldRank);
+        internal FilterLongRange _PlayMissPlusBad = new(long.MinValue, long.MaxValue, IntegrationScore.GetFilterTargetPlayMissPlusBad);
+        internal FilterLongRange _PlayMiss = new(long.MinValue, long.MaxValue, IntegrationScore.GetFilterTargetPlayMiss);
+        internal FilterLongRange _PlayBad = new(long.MinValue, long.MaxValue, IntegrationScore.GetFilterTargetPlayBad);
+        internal FilterPlayModifiers _PlayModifiers = new(IntegrationScore.GetFilterTargetPlayModifiers);
+
+        // Etc
+        internal FilterEtcCheckedOnly _EtcCheckedOnly = new(IntegrationScore.GetFilterTargetEtcCheckedOnly);
+
+
+        // 譜面情報
+        public string SongName { get { return _MapFullName.SearchValue; } set { SetProperty(ref _MapFullName.SearchValue, value); } }
+        public string Bsr { get { return _MapBsr.SearchValue; } set { SetProperty(ref _MapBsr.SearchValue, value); } }
+        public string Hash { get { return _MapHash.SearchValue; } set { SetProperty(ref _MapHash.SearchValue, value); } }
+        public bool IsShowRank { get { return _MapRankStatus.ShowRanked; } set { SetProperty(ref _MapRankStatus.ShowRanked, value); } }
+        public bool IsShowUnRank { get { return _MapRankStatus.ShowUnRanked; } set { SetProperty(ref _MapRankStatus.ShowUnRanked, value); } }
+        public bool IsShowStandard { get { return _MapMode.ShowStandard; } set { SetProperty(ref _MapMode.ShowStandard, value); } }
+        public bool IsShowLawless { get { return _MapMode.ShowLawless; } set { SetProperty(ref _MapMode.ShowLawless, value); } }
+        public bool IsShowOneSaber { get { return _MapMode.ShowOneSaber; } set { SetProperty(ref _MapMode.ShowOneSaber, value); } }
+        public bool IsShowLightShow { get { return _MapMode.ShowLightShow; } set { SetProperty(ref _MapMode.ShowLightShow, value); } }
+        public bool IsShow90Degree { get { return _MapMode.ShowDegree90; } set { SetProperty(ref _MapMode.ShowDegree90, value); } }
+        public bool IsShow360Degree { get { return _MapMode.ShowDegree360; } set { SetProperty(ref _MapMode.ShowDegree360, value); } }
+        public bool IsShowNoArrows { get { return _MapMode.ShowNoArrows; } set { SetProperty(ref _MapMode.ShowNoArrows, value); } }
+        public bool IsShowEasy { get { return _MapDifficulty.ShowEasy; } set { SetProperty(ref _MapDifficulty.ShowEasy, value); } }
+        public bool IsShowNormal { get { return _MapDifficulty.ShowNormal; } set { SetProperty(ref _MapDifficulty.ShowNormal, value); } }
+        public bool IsShowHard { get { return _MapDifficulty.ShowHard; } set { SetProperty(ref _MapDifficulty.ShowHard, value); } }
+        public bool IsShowExpert { get { return _MapDifficulty.ShowExpert; } set { SetProperty(ref _MapDifficulty.ShowExpert, value); } }
+        public bool IsShowExpertPlus { get { return _MapDifficulty.ShowExpertPlus; } set { SetProperty(ref _MapDifficulty.ShowExpertPlus, value); } }
+        public double MinStar { get { return _MapStar.MinValue; } set { SetProperty(ref _MapStar.MinValue, value); } }
+        public double MaxStar { get { return _MapStar.MaxValue; } set { SetProperty(ref _MapStar.MaxValue, value); } }
+        public double MinDuration { get { return _MapDuration.MinValue; } set { SetProperty(ref _MapDuration.MinValue, value); } }
+        public double MaxDuration { get { return _MapDuration.MaxValue; } set { SetProperty(ref _MapDuration.MaxValue, value); } }
+        public double MinBpm { get { return _MapBpm.MinValue; } set { SetProperty(ref _MapBpm.MinValue, value); } }
+        public double MaxBpm { get { return _MapBpm.MaxValue; } set { SetProperty(ref _MapBpm.MaxValue, value); } }
+        public long MinNote { get { return _MapNotes.MinValue; } set { SetProperty(ref _MapNotes.MinValue, value); } }
+        public long MaxNote { get { return _MapNotes.MaxValue; } set { SetProperty(ref _MapNotes.MaxValue, value); } }
+        public long MinBomb { get { return _MapBombs.MinValue; } set { SetProperty(ref _MapBombs.MinValue, value); } }
+        public long MaxBomb { get { return _MapBombs.MaxValue; } set { SetProperty(ref _MapBombs.MaxValue, value); } }
+        public long MinWall { get { return _MapWalls.MinValue; } set { SetProperty(ref _MapWalls.MinValue, value); } }
+        public long MaxWall { get { return _MapWalls.MaxValue; } set { SetProperty(ref _MapWalls.MaxValue, value); } }
+        public double MinNps { get { return _MapNps.MinValue; } set { SetProperty(ref _MapNps.MinValue, value); } }
+        public double MaxNps { get { return _MapNps.MaxValue; } set { SetProperty(ref _MapNps.MaxValue, value); } }
+        public double MinNjs { get { return _MapNjs.MinValue; } set { SetProperty(ref _MapNjs.MinValue, value); } }
+        public double MaxNjs { get { return _MapNjs.MaxValue; } set { SetProperty(ref _MapNjs.MaxValue, value); } }
+        public DateTime? RankedDateStart { get { return _MapRankedDate.MinValue; } set { SetProperty(ref _MapRankedDate.MinValue, value); } }
+        public DateTime? RankedDateEnd { get { return _MapRankedDate.MaxValue; } set { SetProperty(ref _MapRankedDate.MaxValue, value); } }
+
+        // プレイ結果
+        public DateTime? DateStart { get { return _PlayUpdateDate.MinValue; } set { SetProperty(ref _PlayUpdateDate.MinValue, value); } }
+        public DateTime? DateEnd { get { return _PlayUpdateDate.MaxValue; } set { SetProperty(ref _PlayUpdateDate.MaxValue, value); } }
+        public bool IsShowClear { get { return _PlayResult.ShowClear; } set { SetProperty(ref _PlayResult.ShowClear, value); } }
+        public bool IsShowFailure { get { return _PlayResult.ShowFailure; } set { SetProperty(ref _PlayResult.ShowFailure, value); } }
+        public bool IsShowNotPlay { get { return _PlayResult.ShowNotPlay; } set { SetProperty(ref _PlayResult.ShowNotPlay, value); } }
+        public bool IsShowFullCombo { get { return _PlayFullCombo.ShowFullCombo; } set { SetProperty(ref _PlayFullCombo.ShowFullCombo, value); } }
+        public bool IsShowNotFullCombo { get { return _PlayFullCombo.ShowNotFullCombo; } set { SetProperty(ref _PlayFullCombo.ShowNotFullCombo, value); } }
+        public double MinPp { get { return _PlayPp.MinValue; } set { SetProperty(ref _PlayPp.MinValue, value); } }
+        public double MaxPp { get { return _PlayPp.MaxValue; } set { SetProperty(ref _PlayPp.MaxValue, value); } }
+        public double MinAcc { get { return _PlayAcc.MinValue; } set { SetProperty(ref _PlayAcc.MinValue, value); } }
+        public double MaxAcc { get { return _PlayAcc.MaxValue; } set { SetProperty(ref _PlayAcc.MaxValue, value); } }
+        public long MinScoreRank { get { return _PlayWorldRank.MinValue; } set { SetProperty(ref _PlayWorldRank.MinValue, value); } }
+        public long MaxScoreRank { get { return _PlayWorldRank.MaxValue; } set { SetProperty(ref _PlayWorldRank.MaxValue, value); } }
+        public long MinMissPlusBad { get { return _PlayMissPlusBad.MinValue; } set { SetProperty(ref _PlayMissPlusBad.MinValue, value); } }
+        public long MaxMissPusBad { get { return _PlayMissPlusBad.MaxValue; } set { SetProperty(ref _PlayMissPlusBad.MaxValue, value); } }
+        public long MinMiss { get { return _PlayMiss.MinValue; } set { SetProperty(ref _PlayMiss.MinValue, value); } }
+        public long MaxMiss { get { return _PlayMiss.MaxValue; } set { SetProperty(ref _PlayMiss.MaxValue, value); } }
+        public long MinBad { get { return _PlayBad.MinValue; } set { SetProperty(ref _PlayBad.MinValue, value); } }
+        public long MaxBad { get { return _PlayBad.MaxValue; } set { SetProperty(ref _PlayBad.MaxValue, value); } }
+        public bool ModifierAny { get { return _PlayModifiers.Any; } set { SetProperty(ref _PlayModifiers.Any, value); } }
+        public bool ModifierNone { get { return _PlayModifiers.None; } set { SetProperty(ref _PlayModifiers.None, value); } }
+        public bool ModifierBE { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.BE); } set { SetModifiersFlag(ModifiersFlag.BE, value); } }
+        public bool ModifierDA { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.DA); } set { SetModifiersFlag(ModifiersFlag.DA, value); } }
+        public bool ModifierFS { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.FS); } set { SetModifiersFlag(ModifiersFlag.FS, value); } }
+        public bool ModifierGN { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.GN); } set { SetModifiersFlag(ModifiersFlag.GN, value); } }
+        public bool ModifierIF { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.IF); } set { SetModifiersFlag(ModifiersFlag.IF, value); } }
+        public bool ModifierNA { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.NA); } set { SetModifiersFlag(ModifiersFlag.NA, value); } }
+        public bool ModifierNB { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.NB); } set { SetModifiersFlag(ModifiersFlag.NB, value); } }
+        public bool ModifierNF { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.NF); } set { SetModifiersFlag(ModifiersFlag.NF, value); } }
+        public bool ModifierNO { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.NO); } set { SetModifiersFlag(ModifiersFlag.NO, value); } }
+        public bool ModifierOD { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.OD); } set { SetModifiersFlag(ModifiersFlag.OD, value); } }
+        public bool ModifierOP { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.OP); } set { SetModifiersFlag(ModifiersFlag.OP, value); } }
+        public bool ModifierPM { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.PM); } set { SetModifiersFlag(ModifiersFlag.PM, value); } }
+        public bool ModifierSC { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.SC); } set { SetModifiersFlag(ModifiersFlag.SC, value); } }
+        public bool ModifierSF { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.SF); } set { SetModifiersFlag(ModifiersFlag.SF, value); } }
+        public bool ModifierSS { get { return _PlayModifiers.Flag.HasFlag(ModifiersFlag.SS); } set { SetModifiersFlag(ModifiersFlag.SS, value); } }
+
+        // Etc
+        public bool IsShowCheckedOnly { get { return _EtcCheckedOnly.ShowChecked; } set { SetProperty(ref _EtcCheckedOnly.ShowChecked, value); } }
+
+        void SetModifiersFlag(ModifiersFlag flag, bool on, [CallerMemberName] string? name = null)
+        {
+            if (on)
+            {
+                _PlayModifiers.Flag |= flag;
+            }
+            else
+            {
+                _PlayModifiers.Flag &= ~flag;
+            }
+            OnPropertyChanged(name);
+        }
     }
 }
