@@ -6,7 +6,7 @@ using System.IO;
 
 namespace MyBeatSaberScore.Model
 {
-    internal class ScoreSaberPlayHistory
+    public class ScoreSaberPlayHistory
     {
         readonly Dictionary<long, SpecificMapPlayHistory> _resultsByLeaderboardId = new();
         readonly SortedList<DateTime, PlayResult> _allResults = new();

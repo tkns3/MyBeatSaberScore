@@ -91,32 +91,32 @@ namespace MyBeatSaberScore
             if (e.Item is IntegrationScore item)
             {
                 e.Accepted =
-                    AppData.FilterValue._MapFullName.IsShow(item) &&
-                    AppData.FilterValue._MapBsr.IsShow(item) &&
-                    AppData.FilterValue._MapHash.IsShow(item) &&
-                    AppData.FilterValue._MapRankStatus.IsShow(item) &&
-                    AppData.FilterValue._MapMode.IsShow(item) &&
-                    AppData.FilterValue._MapDifficulty.IsShow(item) &&
-                    AppData.FilterValue._MapStar.IsShow(item) &&
-                    AppData.FilterValue._MapDuration.IsShow(item) &&
-                    AppData.FilterValue._MapBpm.IsShow(item) &&
-                    AppData.FilterValue._MapNotes.IsShow(item) &&
-                    AppData.FilterValue._MapBombs.IsShow(item) &&
-                    AppData.FilterValue._MapWalls.IsShow(item) &&
-                    AppData.FilterValue._MapNps.IsShow(item) &&
-                    AppData.FilterValue._MapNjs.IsShow(item) &&
-                    AppData.FilterValue._MapRankedDate.IsShow(item) &&
-                    AppData.FilterValue._PlayUpdateDate.IsShow(item) &&
-                    AppData.FilterValue._PlayResult.IsShow(item) &&
-                    AppData.FilterValue._PlayFullCombo.IsShow(item) &&
-                    AppData.FilterValue._PlayPp.IsShow(item) &&
-                    AppData.FilterValue._PlayAcc.IsShow(item) &&
-                    AppData.FilterValue._PlayWorldRank.IsShow(item) &&
-                    AppData.FilterValue._PlayMissPlusBad.IsShow(item) &&
-                    AppData.FilterValue._PlayMiss.IsShow(item) &&
-                    AppData.FilterValue._PlayBad.IsShow(item) &&
-                    AppData.FilterValue._PlayModifiers.IsShow(item) &&
-                    AppData.FilterValue._EtcCheckedOnly.IsShow(item);
+                    AppData.MainPageFilter.Value.MapFullName.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapBsr.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapHash.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapRankStatus.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapMode.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapDifficulty.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapStar.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapDuration.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapBpm.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapNotes.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapBombs.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapWalls.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapNps.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapNjs.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapRankedDate.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayUpdateDate.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayResult.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayFullCombo.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayPp.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayAcc.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayWorldRank.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayMissPlusBad.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayMiss.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayBad.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayModifiers.IsShow(item) &&
+                    AppData.MainPageFilter.Value.EtcCheckedOnly.IsShow(item);
             }
         }
 
@@ -1058,7 +1058,7 @@ namespace MyBeatSaberScore
 
         public ICollectionView GridData { get => GridItemsViewSource.View; }
 
-        public FilterValue FilterValue { get => AppData.FilterValue; }
+        public MainPageFilterViewModel FilterValue { get => AppData.MainPageFilter; }
 
         public bool IsReadOnly { get => _IsReadOnly; set => SetProperty(ref _IsReadOnly, value); }
 

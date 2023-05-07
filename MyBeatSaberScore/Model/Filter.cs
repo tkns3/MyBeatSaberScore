@@ -14,7 +14,7 @@ namespace MyBeatSaberScore.Model
         NotPlay,
     }
 
-    internal abstract class FilterItemBase
+    public abstract class FilterItemBase
     {
         public virtual bool IsShow(object obj)
         {
@@ -22,7 +22,7 @@ namespace MyBeatSaberScore.Model
         }
     }
 
-    internal class FilterLongRange : FilterItemBase
+    public class FilterLongRange : FilterItemBase
     {
         public long MinValue;
         public long MaxValue;
@@ -40,9 +40,17 @@ namespace MyBeatSaberScore.Model
             long value = GetFilterTargetValue(obj);
             return MinValue <= value && value < MaxValue;
         }
+
+        public FilterLongRange CopyFrom(FilterLongRange other)
+        {
+            this.MinValue = other.MinValue;
+            this.MaxValue = other.MaxValue;
+            this.GetFilterTargetValue = other.GetFilterTargetValue;
+            return this;
+        }
     }
 
-    internal class FilterDoubleRange : FilterItemBase
+    public class FilterDoubleRange : FilterItemBase
     {
         public double MinValue;
         public double MaxValue;
@@ -60,9 +68,17 @@ namespace MyBeatSaberScore.Model
             double value = GetFilterTargetValue(obj);
             return MinValue <= value && value < MaxValue;
         }
+
+        public FilterDoubleRange CopyFrom(FilterDoubleRange other)
+        {
+            this.MinValue = other.MinValue;
+            this.MaxValue = other.MaxValue;
+            this.GetFilterTargetValue = other.GetFilterTargetValue;
+            return this;
+        }
     }
 
-    internal class FilterDateTimeRange : FilterItemBase
+    public class FilterDateTimeRange : FilterItemBase
     {
         public DateTime? MinValue;
         public DateTime? MaxValue;
@@ -98,9 +114,17 @@ namespace MyBeatSaberScore.Model
             }
             return true;
         }
+
+        public FilterDateTimeRange CopyFrom(FilterDateTimeRange other)
+        {
+            this.MinValue = other.MinValue;
+            this.MaxValue = other.MaxValue;
+            this.GetFilterTargetValue = other.GetFilterTargetValue;
+            return this;
+        }
     }
 
-    internal class FilterStringSearch : FilterItemBase
+    public class FilterStringSearch : FilterItemBase
     {
         public string SearchValue;
         public Func<object, string> GetFilterTargetValue;
@@ -120,9 +144,16 @@ namespace MyBeatSaberScore.Model
             }
             return true;
         }
+
+        public FilterStringSearch CopyFrom(FilterStringSearch other)
+        {
+            this.SearchValue = other.SearchValue;
+            this.GetFilterTargetValue = other.GetFilterTargetValue;
+            return this;
+        }
     }
 
-    internal class FilterMapRankStatus : FilterItemBase
+    public class FilterMapRankStatus : FilterItemBase
     {
         public bool ShowRanked = true;
         public bool ShowUnRanked = true;
@@ -138,9 +169,17 @@ namespace MyBeatSaberScore.Model
             bool value = GetFilterTargetMapIsRanked(obj);
             return (value && ShowRanked) || (!value && ShowUnRanked);
         }
+
+        public FilterMapRankStatus CopyFrom(FilterMapRankStatus other)
+        {
+            this.ShowRanked = other.ShowRanked;
+            this.ShowUnRanked = other.ShowUnRanked;
+            this.GetFilterTargetMapIsRanked = other.GetFilterTargetMapIsRanked;
+            return this;
+        }
     }
 
-    internal class FilterMapMode : FilterItemBase
+    public class FilterMapMode : FilterItemBase
     {
         public bool ShowStandard = true;
         public bool ShowLawless = true;
@@ -172,9 +211,22 @@ namespace MyBeatSaberScore.Model
             };
             return isShow;
         }
+
+        public FilterMapMode CopyFrom(FilterMapMode other)
+        {
+            this.ShowStandard = other.ShowStandard;
+            this.ShowLawless = other.ShowLawless;
+            this.ShowOneSaber = other.ShowOneSaber;
+            this.ShowLightShow = other.ShowLightShow;
+            this.ShowDegree90 = other.ShowDegree90;
+            this.ShowDegree360 = other.ShowDegree360;
+            this.ShowNoArrows = other.ShowNoArrows;
+            this.GetFilterTargetValue = other.GetFilterTargetValue;
+            return this;
+        }
     }
 
-    internal class FilterMapDifficulty : FilterItemBase
+    public class FilterMapDifficulty : FilterItemBase
     {
         public bool ShowEasy = true;
         public bool ShowNormal = true;
@@ -202,9 +254,20 @@ namespace MyBeatSaberScore.Model
             };
             return isShow;
         }
+
+        public FilterMapDifficulty CopyFrom(FilterMapDifficulty other)
+        {
+            this.ShowEasy = other.ShowEasy;
+            this.ShowNormal = other.ShowNormal;
+            this.ShowHard = other.ShowHard;
+            this.ShowExpert = other.ShowExpert;
+            this.ShowExpertPlus = other.ShowExpertPlus;
+            this.GetFilterTargetValue = other.GetFilterTargetValue;
+            return this;
+        }
     }
 
-    internal class FilterPlayResult : FilterItemBase
+    public class FilterPlayResult : FilterItemBase
     {
         public bool ShowClear = true;
         public bool ShowFailure = true;
@@ -228,9 +291,18 @@ namespace MyBeatSaberScore.Model
             };
             return isShow;
         }
+
+        public FilterPlayResult CopyFrom(FilterPlayResult other)
+        {
+            this.ShowClear = other.ShowClear;
+            this.ShowFailure = other.ShowFailure;
+            this.ShowNotPlay = other.ShowNotPlay;
+            this.GetFilterTargetValue = other.GetFilterTargetValue;
+            return this;
+        }
     }
 
-    internal class FilterPlayFullCombo : FilterItemBase
+    public class FilterPlayFullCombo : FilterItemBase
     {
         public bool ShowFullCombo = true;
         public bool ShowNotFullCombo = true;
@@ -246,9 +318,16 @@ namespace MyBeatSaberScore.Model
             bool value = GetFilterTargetPlayIsFullCombo(obj);
             return (value && ShowFullCombo) || (!value && ShowNotFullCombo);
         }
+
+        public FilterPlayFullCombo CopyFrom(FilterPlayFullCombo other)
+        {
+            this.ShowFullCombo = other.ShowFullCombo;
+            this.ShowNotFullCombo = other.ShowNotFullCombo;
+            return this;
+        }
     }
 
-    internal class FilterPlayModifiers : FilterItemBase
+    public class FilterPlayModifiers : FilterItemBase
     {
         public bool Any = true;
         public bool None = false;
@@ -328,11 +407,20 @@ namespace MyBeatSaberScore.Model
                 return false;
             }
         }
+
+        public FilterPlayModifiers CopyFrom(FilterPlayModifiers other)
+        {
+            this.Any = other.Any;
+            this.None = other.None;
+            this.Flag = other.Flag;
+            this.GetFilterTargetValue = other.GetFilterTargetValue;
+            return this;
+        }
     }
 
-    internal class FilterEtcCheckedOnly : FilterItemBase
+    public class FilterEtcCheckedOnly : FilterItemBase
     {
-        public bool ShowChecked = true;
+        public bool ShowCheckedOnly = true;
         public Func<object, bool> GetFilterTargetPlayIsFullCombo;
 
         public FilterEtcCheckedOnly(Func<object, bool> getFilterTargetPlayIsFullCombo)
@@ -343,7 +431,14 @@ namespace MyBeatSaberScore.Model
         public override bool IsShow(object obj)
         {
             bool value = GetFilterTargetPlayIsFullCombo(obj);
-            return ShowChecked ? value : true;
+            return ShowCheckedOnly ? value : true;
+        }
+
+        public FilterEtcCheckedOnly CopyFrom(FilterEtcCheckedOnly other)
+        {
+            this.ShowCheckedOnly = other.ShowCheckedOnly;
+            this.GetFilterTargetPlayIsFullCombo = other.GetFilterTargetPlayIsFullCombo;
+            return this;
         }
     }
 }

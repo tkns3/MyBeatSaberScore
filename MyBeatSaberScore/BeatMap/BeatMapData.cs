@@ -3,7 +3,7 @@ using System;
 
 namespace MyBeatSaberScore.BeatMap
 {
-    internal class BeatMapData
+    public class BeatMapData
     {
         public string Key { get; set; } = "";
         public string Hash { get; set; } = "";

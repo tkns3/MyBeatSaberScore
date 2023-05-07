@@ -5,12 +5,29 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MyBeatSaberScore"
       xmlns:convert="clr-namespace:MyBeatSaberScore.Convertes"
+      xmlns:b="clr-namespace:MyBeatSaberScore.Utility"
       mc:Ignorable="d" 
       d:DesignWidth="1070"
       Title="PageFilter">
 
     <Page.Resources>
         <convert:UnlimitableNumericConverter x:Key="UnlimitableNumericConverter"/>
+        <Style x:Key="ArrowButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Path x:Name="ArrowPath" Data="M 0 0 L 20 0 L 10 20 Z" Fill="Black"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ArrowPath" Property="Fill" Value="Red" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
     <Page.DataContext>
@@ -29,304 +46,341 @@
                         <TextBlock Text="フィルター" FontWeight="Bold" FontSize="22"/>
                         <Border BorderBrush="Black" BorderThickness="1" Height="1" Width="476" HorizontalAlignment="Left"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Orientation="Vertical">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="譜面情報" FontWeight="Bold"/>
-                            <StackPanel Grid.Column="1">
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="タイプ" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <CheckBox IsChecked="{Binding FilterValue.IsShowRank}">
-                                            <TextBlock Text="Ranked" Width="60"/>
-                                        </CheckBox>
-                                        <CheckBox IsChecked="{Binding FilterValue.IsShowUnRank}">
-                                            <TextBlock Text="Unranked" Width="60"/>
-                                        </CheckBox>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <StackPanel Width="200">
+                            <Button Content="Delete" Height="30" Width="180" Margin="0,0,0,8" Click="DeleteButton_Click" IsEnabled="{Binding IsListSelected}"/>
+                            <Button Content="Save (Overwrite)" Height="30" Width="180" Margin="0,0,0,8" Click="SaveButton_Click" IsEnabled="{Binding IsListSelected}"/>
+                            <Button Content="Save as (Create New)" Height="30" Width="180" Margin="0,0,0,8" Click="SaveAsButton_Click"/>
+                            <Button Content="Load" Height="30" Width="180" Margin="0,0,0,8" Click="LoadButton_Click"  IsEnabled="{Binding IsListSelected}"/>
+                            <ListBox Height="400" Width="180"
+                                     ItemsSource="{Binding FilterListItems}"
+                                     SelectedIndex="{Binding CurrentIndex}"
+                                     b:ReorderableItemsControlBehavior.Callback="{Binding DropCallback}"
+                                     AllowDrop="True">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding FilterName}"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <CheckBox IsChecked="{Binding IsConfirmBeforeSaveAndDelete}" Margin="10,8,0,0" Checked="ConfirmCheckBox_Checked" Unchecked="ConfirmCheckBox_Unchecked">
+                                <TextBlock Text="Delete, Save 前に確認" Width="140"/>
+                            </CheckBox>
+                            <TextBlock Text="{Binding Status}" Margin="12,8,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Margin="8,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="" FontWeight="Bold"/>
+                                <StackPanel Grid.Column="1">
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Filter Name" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBox Width="295" Text="{Binding CurrentFilterValue.FilterName}" />
                                     </StackPanel>
                                 </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="モード" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <StackPanel Orientation="Vertical">
-                                        <StackPanel Orientation="Horizontal">
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowStandard}">
-                                                <TextBlock Text="Standard" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowLawless}">
-                                                <TextBlock Text="Lawless" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowOneSaber}">
-                                                <TextBlock Text="OneSaber" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowLightShow}">
-                                                <TextBlock Text="LightShow" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShow90Degree}">
-                                                <TextBlock Text="90Degree" Width="60"/>
-                                            </CheckBox>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShow360Degree}">
-                                                <TextBlock Text="360Degree" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowNoArrows}">
-                                                <TextBlock Text="NoArrows" Width="60"/>
-                                            </CheckBox>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="難易度" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <StackPanel Orientation="Vertical">
-                                        <StackPanel Orientation="Horizontal">
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowEasy}">
-                                                <TextBlock Text="Easy" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowNormal}">
-                                                <TextBlock Text="Normal" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowHard}">
-                                                <TextBlock Text="Hard" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowExpert}">
-                                                <TextBlock Text="Expert" Width="60"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.IsShowExpertPlus}">
-                                                <TextBlock Text="ExpertPlus" Width="60"/>
-                                            </CheckBox>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Ranked Date" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,4,4,0"/>
-                                    <DatePicker SelectedDate="{Binding FilterValue.RankedDateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,4,4,0"/>
-                                    <DatePicker SelectedDate="{Binding FilterValue.RankedDateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="★" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinStar}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxStar}" />
-                                    <TextBlock Text="小数、ランク譜面のみ" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Duration" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinDuration, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxDuration, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
-                                    <TextBlock Text="小数、単位秒" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="BPM" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinBpm, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxBpm, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
-                                    <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Notes" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinNote, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxNote, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
-                                    <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Bomb" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinBomb, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxBomb, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
-                                    <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Wall" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinWall, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxWall, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
-                                    <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="NPS" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinNps, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxNps, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
-                                    <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="NJS" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinNjs, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxNjs, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
-                                    <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
+                            </Grid>
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="プレイ結果" FontWeight="Bold"/>
-                            <StackPanel Grid.Column="1">
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="スコア更新日時" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,4,4,0"/>
-                                    <DatePicker SelectedDate="{Binding FilterValue.DateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,4,4,0"/>
-                                    <DatePicker SelectedDate="{Binding FilterValue.DateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="プレイ状況" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <CheckBox IsChecked="{Binding FilterValue.IsShowClear}">
-                                        <TextBlock Text="Clear" Width="60"/>
-                                    </CheckBox>
-                                    <CheckBox IsChecked="{Binding FilterValue.IsShowFailure}">
-                                        <TextBlock Text="Failure" Width="60"/>
-                                    </CheckBox>
-                                    <CheckBox IsChecked="{Binding FilterValue.IsShowNotPlay}">
-                                        <TextBlock Text="未プレイ" Width="60"/>
-                                    </CheckBox>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Full Combo" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <CheckBox IsChecked="{Binding FilterValue.IsShowFullCombo}">
-                                        <TextBlock Text="フルコンボ" Width="60"/>
-                                    </CheckBox>
-                                    <CheckBox IsChecked="{Binding FilterValue.IsShowNotFullCombo}">
-                                        <TextBlock Text="not フルコンボ" Width="70"/>
-                                    </CheckBox>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="# (順位)" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinScoreRank, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxScoreRank, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
-                                    <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="PP" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinPp, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxPp, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
-                                    <TextBlock Text="小数、ランク譜面のみ" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="ACC" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinAcc, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxAcc, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
-                                    <TextBlock Text="小数、単位%" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Miss + Bad" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinMissPlusBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxMissPusBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
-                                    <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Miss" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinMiss, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxMiss, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
-                                    <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Bad" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MinBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
-                                    <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                    <TextBox Width="120" Text="{Binding FilterValue.MaxBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
-                                    <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
-                                    <TextBlock Text="Modifiers" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                    <StackPanel Orientation="Vertical">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="譜面情報" FontWeight="Bold"/>
+                                <StackPanel Grid.Column="1">
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="タイプ" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <StackPanel Orientation="Horizontal">
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierAny}">
-                                                <TextBlock Text="(Any)" Width="40"/>
+                                            <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowRank}">
+                                                <TextBlock Text="Ranked" Width="60"/>
                                             </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierBE}">
-                                                <TextBlock Text="BE" Width="25"/>
+                                            <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowUnRank}">
+                                                <TextBlock Text="Unranked" Width="60"/>
                                             </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierDA}">
-                                                <TextBlock Text="DA" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierFS}">
-                                                <TextBlock Text="FS" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierGN}">
-                                                <TextBlock Text="GN" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierIF}">
-                                                <TextBlock Text="IF" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierNA}">
-                                                <TextBlock Text="NA" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierNB}">
-                                                <TextBlock Text="NB" Width="25"/>
-                                            </CheckBox>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierNone}">
-                                                <TextBlock Text="(None)" Width="40"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierNF}">
-                                                <TextBlock Text="NF" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierNO}">
-                                                <TextBlock Text="NO" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierOD}">
-                                                <TextBlock Text="OD" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierOP}">
-                                                <TextBlock Text="OP" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierPM}">
-                                                <TextBlock Text="PM" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierSC}">
-                                                <TextBlock Text="SC" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierSF}">
-                                                <TextBlock Text="SF" Width="25"/>
-                                            </CheckBox>
-                                            <CheckBox IsChecked="{Binding FilterValue.ModifierSS}">
-                                                <TextBlock Text="SS" Width="25"/>
-                                            </CheckBox>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
                                         </StackPanel>
                                     </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="モード" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowStandard}">
+                                                    <TextBlock Text="Standard" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowLawless}">
+                                                    <TextBlock Text="Lawless" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowOneSaber}">
+                                                    <TextBlock Text="OneSaber" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowLightShow}">
+                                                    <TextBlock Text="LightShow" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShow90Degree}">
+                                                    <TextBlock Text="90Degree" Width="60"/>
+                                                </CheckBox>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShow360Degree}">
+                                                    <TextBlock Text="360Degree" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowNoArrows}">
+                                                    <TextBlock Text="NoArrows" Width="60"/>
+                                                </CheckBox>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="難易度" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowEasy}">
+                                                    <TextBlock Text="Easy" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowNormal}">
+                                                    <TextBlock Text="Normal" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowHard}">
+                                                    <TextBlock Text="Hard" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowExpert}">
+                                                    <TextBlock Text="Expert" Width="60"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowExpertPlus}">
+                                                    <TextBlock Text="ExpertPlus" Width="60"/>
+                                                </CheckBox>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Ranked Date" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,4,4,0"/>
+                                        <DatePicker SelectedDate="{Binding CurrentFilterValue.RankedDateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,4,4,0"/>
+                                        <DatePicker SelectedDate="{Binding CurrentFilterValue.RankedDateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="★" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinStar}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxStar}" />
+                                        <TextBlock Text="小数、ランク譜面のみ" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Duration" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinDuration, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxDuration, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <TextBlock Text="小数、単位秒" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="BPM" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinBpm, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxBpm, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Notes" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinNote, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxNote, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Bomb" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinBomb, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxBomb, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Wall" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinWall, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxWall, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="NPS" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinNps, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxNps, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="NJS" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinNjs, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxNjs, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
                                 </StackPanel>
-                                <TextBlock Text="※ 数値：数値以外を入力すると Unlimited" Foreground="Gray" Margin="0,0,0,0"/>
-                                <TextBlock Text="※ 日付：未入力が Unlimited" Foreground="Gray" Margin="0,0,0,0"/>
-                                <TextBlock Text="※ Modifiers：AND条件、ANYは複数の任意Modifierを表す、NoneはModifierなしを表す" Foreground="Gray" Margin="0,0,0,0"/>
-                                <TextBlock Text="    AnyをON、他OFF→フィルタリングなし" Foreground="Gray" Margin="0,0,0,0"/>
-                                <TextBlock Text="    SC+PMをON、他OFF→SCとPMの両方だけの場合が該当" Foreground="Gray" Margin="0,0,0,0"/>
-                                <TextBlock Text="    SC+PM+AnyをON、他OFF→SCとPMの両方を含む場合が該当" Foreground="Gray" Margin="0,0,0,0"/>
-                            </StackPanel>
-                        </Grid>
+                            </Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="プレイ結果" FontWeight="Bold"/>
+                                <StackPanel Grid.Column="1">
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="スコア更新日時" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,4,4,0"/>
+                                        <DatePicker SelectedDate="{Binding CurrentFilterValue.DateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,4,4,0"/>
+                                        <DatePicker SelectedDate="{Binding CurrentFilterValue.DateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="プレイ状況" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowClear}">
+                                            <TextBlock Text="Clear" Width="60"/>
+                                        </CheckBox>
+                                        <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowFailure}">
+                                            <TextBlock Text="Failure" Width="60"/>
+                                        </CheckBox>
+                                        <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowNotPlay}">
+                                            <TextBlock Text="未プレイ" Width="60"/>
+                                        </CheckBox>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Full Combo" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowFullCombo}">
+                                            <TextBlock Text="フルコンボ" Width="60"/>
+                                        </CheckBox>
+                                        <CheckBox IsChecked="{Binding CurrentFilterValue.IsShowNotFullCombo}">
+                                            <TextBlock Text="not フルコンボ" Width="70"/>
+                                        </CheckBox>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="# (順位)" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinScoreRank, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxScoreRank, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="PP" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinPp, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxPp, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <TextBlock Text="小数、ランク譜面のみ" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="ACC" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinAcc, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxAcc, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <TextBlock Text="小数、単位%" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Miss + Bad" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinMissPlusBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxMissPusBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Miss" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinMiss, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxMiss, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Bad" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
+                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                        <TextBlock Text="Modifiers" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierAny}">
+                                                    <TextBlock Text="(Any)" Width="40"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierBE}">
+                                                    <TextBlock Text="BE" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierDA}">
+                                                    <TextBlock Text="DA" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierFS}">
+                                                    <TextBlock Text="FS" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierGN}">
+                                                    <TextBlock Text="GN" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierIF}">
+                                                    <TextBlock Text="IF" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierNA}">
+                                                    <TextBlock Text="NA" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierNB}">
+                                                    <TextBlock Text="NB" Width="25"/>
+                                                </CheckBox>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierNone}">
+                                                    <TextBlock Text="(None)" Width="40"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierNF}">
+                                                    <TextBlock Text="NF" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierNO}">
+                                                    <TextBlock Text="NO" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierOD}">
+                                                    <TextBlock Text="OD" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierOP}">
+                                                    <TextBlock Text="OP" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierPM}">
+                                                    <TextBlock Text="PM" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierSC}">
+                                                    <TextBlock Text="SC" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierSF}">
+                                                    <TextBlock Text="SF" Width="25"/>
+                                                </CheckBox>
+                                                <CheckBox IsChecked="{Binding CurrentFilterValue.ModifierSS}">
+                                                    <TextBlock Text="SS" Width="25"/>
+                                                </CheckBox>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock Text="※ 数値：数値以外を入力すると Unlimited" Foreground="Gray" Margin="0,0,0,0"/>
+                                    <TextBlock Text="※ 日付：未入力が Unlimited" Foreground="Gray" Margin="0,0,0,0"/>
+                                    <TextBlock Text="※ Modifiers：AND条件、ANYは複数の任意Modifierを表す、NoneはModifierなしを表す" Foreground="Gray" Margin="0,0,0,0"/>
+                                    <TextBlock Text="    AnyをON、他OFF→フィルタリングなし" Foreground="Gray" Margin="0,0,0,0"/>
+                                    <TextBlock Text="    SC+PMをON、他OFF→SCとPMの両方だけの場合が該当" Foreground="Gray" Margin="0,0,0,0"/>
+                                    <TextBlock Text="    SC+PM+AnyをON、他OFF→SCとPMの両方を含む場合が該当" Foreground="Gray" Margin="0,0,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </StackPanel>

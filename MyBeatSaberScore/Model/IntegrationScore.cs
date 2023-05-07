@@ -4,7 +4,7 @@ using System;
 
 namespace MyBeatSaberScore.Model
 {
-    internal class IntegrationScore
+    public class IntegrationScore
     {
         /// <summary>
         /// マップ情報
@@ -307,7 +307,7 @@ namespace MyBeatSaberScore.Model
     }
 
     [Flags]
-    internal enum ModifiersFlag
+    public enum ModifiersFlag
     {
         BE = 1 << 0, // 4 Lives (Battery Energy)
         DA = 1 << 1, // Disappearing Arrows
@@ -326,7 +326,7 @@ namespace MyBeatSaberScore.Model
         SS = 1 << 14, // Slower Song
     }
 
-    internal class ScoreBase
+    public class ScoreBase
     {
         /// <summary>
         /// スコア更新日
@@ -491,7 +491,7 @@ namespace MyBeatSaberScore.Model
         }
     }
 
-    internal class ScoreSaberScore : ScoreBase
+    public class ScoreSaberScore : ScoreBase
     {
         public ScoreSaber.PlayerScore? Reference { get; private set; }
 
@@ -545,7 +545,7 @@ namespace MyBeatSaberScore.Model
         }
     }
 
-    internal class BeatLeaderScore : ScoreBase
+    public class BeatLeaderScore : ScoreBase
     {
         public BeatLeader.ScoreResponseWithMyScore? Reference { get; private set; }
 

@@ -8,11 +8,11 @@
         Height="auto" Width="440" WindowStyle="None" AllowsTransparency="True"	Background="Transparent"
         Loaded="Window_Loaded" SizeToContent="Height">
 
-    <Border CornerRadius="10" BorderBrush="DarkBlue" BorderThickness="1">
+    <Border CornerRadius="3" BorderBrush="DarkBlue" BorderThickness="3">
         <Border.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Offset="0" Color="AliceBlue"/>
-                <GradientStop Offset="0.5" Color="GhostWhite"/>
+                <GradientStop Offset="1" Color="AliceBlue"/>
+                <GradientStop Offset="1" Color="GhostWhite"/>
                 <GradientStop Offset="1" Color="LightSteelBlue"/>
             </LinearGradientBrush>
         </Border.Background>
