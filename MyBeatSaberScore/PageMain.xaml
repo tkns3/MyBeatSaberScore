@@ -215,25 +215,6 @@
                 </StatusBarItem>
                 <Separator />
                 <StatusBarItem>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="PP=[" Height="16"/>
-                        <TextBlock Text="{Binding FilterValue.MinPp, StringFormat=\{0:N0\}}" Height="16"/>
-                        <TextBlock Text="～" Height="16"/>
-                        <TextBlock Text="{Binding FilterValue.MaxPp, StringFormat=\{0:N0\}}" Height="16"/>
-                        <TextBlock Text=")" Height="16"/>
-                    </StackPanel>
-                </StatusBarItem>
-                <StatusBarItem>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="ACC=[" Height="16"/>
-                        <TextBlock Text="{Binding FilterValue.MinAcc, StringFormat=\{0:N0\}}" Height="16"/>
-                        <TextBlock Text="～" Height="16"/>
-                        <TextBlock Text="{Binding FilterValue.MaxAcc, StringFormat=\{0:N0\}}" Height="16"/>
-                        <TextBlock Text="%)" Height="16"/>
-                    </StackPanel>
-                </StatusBarItem>
-                <Separator />
-                <StatusBarItem>
                     <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding StatusText}"/>
                 </StatusBarItem>
             </StatusBar>

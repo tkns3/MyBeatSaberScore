@@ -86,367 +86,37 @@ namespace MyBeatSaberScore
             }
         }
 
-        /// <summary>
-        /// itemが曲名、BSR、HASHの指定がすべて満たしているかどうか。
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns>曲名、BSR、HASHの指定をすべて満たしたitemである場合にtrue</returns>
-        private bool FilterBySearch(IntegrationScore item)
-        {
-            if (AppData.FilterValue.SongName.Length > 0)
-            {
-                if (!item.SongFullName.Contains(AppData.FilterValue.SongName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-            }
-
-            if (AppData.FilterValue.Bsr.Length > 0)
-            {
-                if (!item.Map.Key.Contains(AppData.FilterValue.Bsr, StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-            }
-
-            if (AppData.FilterValue.Hash.Length > 0)
-            {
-                if (!item.Map.Hash.Contains(AppData.FilterValue.Hash, StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private bool FilterByMapGameMode(IntegrationScore item)
-        {
-            bool isShow = item.Map.MapMode switch
-            {
-                BeatMapMode.Standard => AppData.FilterValue.IsShowStandard,
-                BeatMapMode.OneSaber => AppData.FilterValue.IsShowOneSaber,
-                BeatMapMode.NoArrows => AppData.FilterValue.IsShowNoArrows,
-                BeatMapMode.Degree90 => AppData.FilterValue.IsShow90Degree,
-                BeatMapMode.Degree360 => AppData.FilterValue.IsShow360Degree,
-                BeatMapMode.Lightshow => AppData.FilterValue.IsShowLightShow,
-                BeatMapMode.Lawless => AppData.FilterValue.IsShowLawless,
-                _ => true,
-            };
-            return isShow;
-        }
-
-        private bool FilterByMapGameDifficulty(IntegrationScore item)
-        {
-            bool isShow = item.Map.MapDifficulty switch
-            {
-                BeatMapDifficulty.Easy => AppData.FilterValue.IsShowEasy,
-                BeatMapDifficulty.Normal => AppData.FilterValue.IsShowNormal,
-                BeatMapDifficulty.Hard => AppData.FilterValue.IsShowHard,
-                BeatMapDifficulty.Expert => AppData.FilterValue.IsShowExpert,
-                BeatMapDifficulty.ExpertPlus => AppData.FilterValue.IsShowExpertPlus,
-                _ => true,
-            };
-            return isShow;
-        }
-
-        private bool FilterByMapStatus(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                if (item.Map.BeatLeader.Ranked)
-                {
-                    return AppData.FilterValue.IsShowRank;
-                }
-                else
-                {
-                    return AppData.FilterValue.IsShowUnRank;
-                }
-            }
-            else
-            {
-                if (item.Map.ScoreSaber.Ranked)
-                {
-                    return AppData.FilterValue.IsShowRank;
-                }
-                else
-                {
-                    return AppData.FilterValue.IsShowUnRank;
-                }
-            }
-        }
-
-        private bool FilterByMapStar(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                if (item.Map.BeatLeader.Ranked)
-                {
-                    return (AppData.FilterValue.MinStar <= item.Map.BeatLeader.Star && item.Map.BeatLeader.Star < AppData.FilterValue.MaxStar);
-                }
-
-                return true;
-            }
-            else
-            {
-                if (item.Map.ScoreSaber.Ranked)
-                {
-                    return (AppData.FilterValue.MinStar <= item.Map.ScoreSaber.Star && item.Map.ScoreSaber.Star < AppData.FilterValue.MaxStar);
-                }
-
-                return true;
-            }
-        }
-
-        private bool FilterByMapRankedDate(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                if (item.Map.BeatLeader.RankedTime != null)
-                {
-                    if (AppData.FilterValue.RankedDateStart != null)
-                    {
-                        if (item.Map.BeatLeader.RankedTime < AppData.FilterValue.RankedDateStart)
-                        {
-                            return false;
-                        }
-                    }
-
-                    if (AppData.FilterValue.RankedDateEnd != null)
-                    {
-                        if (item.Map.BeatLeader.RankedTime > AppData.FilterValue.RankedDateEnd)
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                return true;
-            }
-            else
-            {
-                if (item.Map.ScoreSaber.RankedTime != null)
-                {
-                    if (AppData.FilterValue.RankedDateStart != null)
-                    {
-                        if (item.Map.ScoreSaber.RankedTime < AppData.FilterValue.RankedDateStart)
-                        {
-                            return false;
-                        }
-                    }
-
-                    if (AppData.FilterValue.RankedDateEnd != null)
-                    {
-                        if (item.Map.ScoreSaber.RankedTime > AppData.FilterValue.RankedDateEnd)
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                return true;
-            }
-        }
-
-        private bool FilterByResultPp(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                if (item.Map.BeatLeader.Ranked)
-                {
-                    return (AppData.FilterValue.MinPp <= item.BeatLeader.PP && item.BeatLeader.PP < AppData.FilterValue.MaxPp);
-                }
-
-                return true;
-            }
-            else
-            {
-                if (item.Map.ScoreSaber.Ranked)
-                {
-                    return (AppData.FilterValue.MinPp <= item.ScoreSaber.PP && item.ScoreSaber.PP < AppData.FilterValue.MaxPp);
-                }
-
-                return true;
-            }
-        }
-
-        private bool IsFailureByConfig(string modifiers)
-        {
-            if (modifiers.Length > 0)
-            {
-                foreach (var f in Config.Failures)
-                {
-                    if (modifiers.Contains(f))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private bool FilterByResultFullCombo(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                if (item.BeatLeader.FullCombo.Length > 0)
-                {
-                    return AppData.FilterValue.IsShowFullCombo;
-                }
-                else
-                {
-                    return AppData.FilterValue.IsShowNotFullCombo;
-                }
-            }
-            else
-            {
-                if (item.ScoreSaber.FullCombo.Length > 0)
-                {
-                    return AppData.FilterValue.IsShowFullCombo;
-                }
-                else
-                {
-                    return AppData.FilterValue.IsShowNotFullCombo;
-                }
-            }
-        }
-
-        private bool FilterByResultScoreUpdateDate(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                if (item.BeatLeader.TimeSet != null)
-                {
-                    if (AppData.FilterValue.DateStart != null)
-                    {
-                        if (item.BeatLeader.TimeSet < AppData.FilterValue.DateStart)
-                        {
-                            return false;
-                        }
-                    }
-
-                    if (AppData.FilterValue.DateEnd != null)
-                    {
-                        if (item.BeatLeader.TimeSet > AppData.FilterValue.DateEnd)
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                return true;
-            }
-            else
-            {
-                if (item.ScoreSaber.TimeSet != null)
-                {
-                    if (AppData.FilterValue.DateStart != null)
-                    {
-                        if (item.ScoreSaber.TimeSet < AppData.FilterValue.DateStart)
-                        {
-                            return false;
-                        }
-                    }
-
-                    if (AppData.FilterValue.DateEnd != null)
-                    {
-                        if (item.ScoreSaber.TimeSet > AppData.FilterValue.DateEnd)
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                return true;
-            }
-        }
-
-        private bool FilterByResultPlayStatus(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                if (item.BeatLeader.ModifiedScore < 0) // スコアなし＝プレイしていない
-                {
-                    return AppData.FilterValue.IsShowNotPlay;
-                }
-                else if (IsFailureByConfig(item.BeatLeader.Modifiers)) // モディファイに失敗相当の文字列あり＝フェイルしている
-                {
-                    return AppData.FilterValue.IsShowFailure;
-                }
-                else // 上記以外＝クリアしている
-                {
-                    return AppData.FilterValue.IsShowClear;
-                }
-            }
-            else
-            {
-                if (item.ScoreSaber.ModifiedScore < 0) // スコアなし＝プレイしていない
-                {
-                    return AppData.FilterValue.IsShowNotPlay;
-                }
-                else if (IsFailureByConfig(item.ScoreSaber.Modifiers)) // モディファイに失敗相当の文字列あり＝フェイルしている
-                {
-                    return AppData.FilterValue.IsShowFailure;
-                }
-                else // 上記以外＝クリアしている
-                {
-                    return AppData.FilterValue.IsShowClear;
-                }
-            }
-        }
-
-        private bool FilterByResultAcc(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                return (AppData.FilterValue.MinAcc <= item.BeatLeader.Acc && item.BeatLeader.Acc < AppData.FilterValue.MaxAcc);
-            }
-            else
-            {
-                return (AppData.FilterValue.MinAcc <= item.ScoreSaber.Acc && item.ScoreSaber.Acc < AppData.FilterValue.MaxAcc);
-            }
-        }
-
-        private bool FilterByResultWorldRank(IntegrationScore item)
-        {
-            if (AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader))
-            {
-                return (AppData.FilterValue.MinScoreRank <= item.BeatLeader.WorldRank && item.BeatLeader.WorldRank < AppData.FilterValue.MaxScoreRank);
-            }
-            else
-            {
-                return (AppData.FilterValue.MinScoreRank <= item.ScoreSaber.WorldRank && item.ScoreSaber.WorldRank < AppData.FilterValue.MaxScoreRank);
-            }
-        }
-
-        private bool FilterByCheckbox(IntegrationScore item)
-        {
-            if (AppData.FilterValue.IsShowCheckedOnly)
-            {
-                return item.IsShowChekdOnlySelected;
-            }
-
-            return true;
-        }
-
         private void DataGridFilter(object sender, FilterEventArgs e)
         {
             if (e.Item is IntegrationScore item)
             {
                 e.Accepted =
-                    FilterBySearch(item) &&
-                    FilterByMapStatus(item) &&
-                    FilterByMapGameMode(item) &&
-                    FilterByMapGameDifficulty(item) &&
-                    FilterByMapStar(item) &&
-                    FilterByMapRankedDate(item) &&
-                    FilterByResultFullCombo(item) &&
-                    FilterByResultScoreUpdateDate(item) &&
-                    FilterByResultPlayStatus(item) &&
-                    FilterByResultAcc(item) &&
-                    FilterByResultPp(item) &&
-                    FilterByResultWorldRank(item) &&
-                    FilterByCheckbox(item);
+                    AppData.MainPageFilter.Value.MapFullName.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapBsr.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapHash.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapRankStatus.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapMode.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapDifficulty.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapStar.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapDuration.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapBpm.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapNotes.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapBombs.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapWalls.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapNps.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapNjs.IsShow(item) &&
+                    AppData.MainPageFilter.Value.MapRankedDate.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayUpdateDate.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayResult.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayFullCombo.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayPp.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayAcc.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayWorldRank.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayMissPlusBad.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayMiss.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayBad.IsShow(item) &&
+                    AppData.MainPageFilter.Value.PlayModifiers.IsShow(item) &&
+                    AppData.MainPageFilter.Value.EtcCheckedOnly.IsShow(item);
             }
         }
 
@@ -1388,7 +1058,7 @@ namespace MyBeatSaberScore
 
         public ICollectionView GridData { get => GridItemsViewSource.View; }
 
-        public FilterValue FilterValue { get => AppData.FilterValue; }
+        public MainPageFilterViewModel FilterValue { get => AppData.MainPageFilter; }
 
         public bool IsReadOnly { get => _IsReadOnly; set => SetProperty(ref _IsReadOnly, value); }
 
