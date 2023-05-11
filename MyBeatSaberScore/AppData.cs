@@ -33,7 +33,7 @@ namespace MyBeatSaberScore
 
         // 譜面情報
         public FilterStringSearch MapFullName = new(IntegrationScore.GetFilterTargetMapName);
-        public FilterStringSearch MapBsr = new(IntegrationScore.GetFilterTargetMapName);
+        public FilterStringSearch MapBsr = new(IntegrationScore.GetFilterTargetMapBsr);
         public FilterStringSearch MapHash = new(IntegrationScore.GetFilterTargetMapHash);
         public FilterMapRankStatus MapRankStatus = new(IntegrationScore.GetFilterTargetMapTypeIsRanked);
         public FilterMapMode MapMode = new(IntegrationScore.GetFilterTargetMapMode);
