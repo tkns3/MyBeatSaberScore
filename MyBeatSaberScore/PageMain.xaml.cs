@@ -677,8 +677,39 @@ namespace MyBeatSaberScore
 
         class CsvTarget
         {
-            public string Name = "";
             public string Target = "";
+            public string Name = "";
+            public string Format = "";
+
+            public CsvTarget(string target, string? name = null, string? format = null)
+            {
+                Target = target;
+                Name = name ?? target;
+                if (format != null)
+                {
+                    Format = format;
+                }
+                else
+                {
+                    Format = "{0}";
+                    if (target == Config.ColumnTagMapScoreSaberRankedDate ||
+                        target == Config.ColumnTagMapBeatLeaderRankedDate ||
+                        target == Config.ColumnTagScoreSaberDate ||
+                        target == Config.ColumnTagBeatLeaderDate)
+                    {
+                        Format = "{0:yyyy/MM/dd HH:mm:ss (ddd)}";
+                    }
+                    if (target == Config.ColumnTagMapSongName ||
+                        target == "Map.SongSubName" ||
+                        target == "Map.SongAuthorName" ||
+                        target == "Map.MapperName" ||
+                        target == Config.ColumnTagScoreSaberModifiers ||
+                        target == Config.ColumnTagBeatLeaderModifiers)
+                    {
+                        Format = "\"{0}\"";
+                    }
+                }
+            }
         }
 
         private void OnClickCreateCSV(object sender, RoutedEventArgs e)
@@ -697,19 +728,20 @@ namespace MyBeatSaberScore
             }
 
             List<CsvTarget> csvTargets = new();
-            if (System.IO.File.Exists(System.IO.Path.Combine("data", "csv_target.json")))
+            if (System.IO.File.Exists(System.IO.Path.Combine("data", "csv_format.json")))
             {
                 try
                 {
-                    string jsonText = System.IO.File.ReadAllText(System.IO.Path.Combine("data", "csv_target.json"));
+                    string jsonText = System.IO.File.ReadAllText(System.IO.Path.Combine("data", "csv_format.json"));
                     JArray jsonArray = JArray.Parse(jsonText);
                     foreach (JObject obj in jsonArray.Cast<JObject>())
                     {
                         string? name = (string?)obj["Name"];
                         string? target = (string?)obj["Target"];
+                        string? format = (string?)obj["Format"];
                         if (name != null && target != null)
                         {
-                            csvTargets.Add(new CsvTarget { Name = name, Target = target });
+                            csvTargets.Add(new CsvTarget(target, name, format));
                         }
                     }
                 }
@@ -720,49 +752,49 @@ namespace MyBeatSaberScore
             }
             if (csvTargets.Count == 0)
             {
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapBsr, Name = Config.ColumnTagMapBsr });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapSongName, Name = Config.ColumnTagMapSongName });
-                csvTargets.Add(new CsvTarget { Target = "Map.SongSubName", Name = "Map.SongSubName" });
-                csvTargets.Add(new CsvTarget { Target = "Map.SongAuthorName", Name = "Map.SongAuthorName" });
-                csvTargets.Add(new CsvTarget { Target = "Map.MapperName", Name = "Map.MapperName" });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapMode, Name = Config.ColumnTagMapMode });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapDifficulty, Name = Config.ColumnTagMapDifficulty });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapDuration, Name = Config.ColumnTagMapDuration });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapBpm, Name = Config.ColumnTagMapBpm }); 
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapNotes, Name = Config.ColumnTagMapNotes });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapNps, Name = Config.ColumnTagMapNps });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapNjs, Name = Config.ColumnTagMapNjs });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapBombs, Name = Config.ColumnTagMapBombs }); 
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapWalls, Name = Config.ColumnTagMapWalls });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapHash, Name = Config.ColumnTagMapHash });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapScoreSaberRankedDate, Name = Config.ColumnTagMapScoreSaberRankedDate });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapScoreSaberStar, Name = Config.ColumnTagMapScoreSaberStar });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapBeatLeaderRankedDate, Name = Config.ColumnTagMapBeatLeaderRankedDate });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagMapBeatLeaderStar, Name = Config.ColumnTagMapBeatLeaderStar });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberDate, Name = Config.ColumnTagScoreSaberDate });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberScore, Name = Config.ColumnTagScoreSaberScore });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberAcc, Name = Config.ColumnTagScoreSaberAcc });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberAccDiff, Name = Config.ColumnTagScoreSaberAccDiff });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberMissPlusBad, Name = Config.ColumnTagScoreSaberMissPlusBad });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberFullCombo, Name = Config.ColumnTagScoreSaberFullCombo });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberPp, Name = Config.ColumnTagScoreSaberPp });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberModifiers, Name = Config.ColumnTagScoreSaberModifiers });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberScoreCount, Name = Config.ColumnTagScoreSaberScoreCount });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberMiss, Name = Config.ColumnTagScoreSaberMiss });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberBad, Name = Config.ColumnTagScoreSaberBad });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagScoreSaberWorldRank, Name = Config.ColumnTagScoreSaberWorldRank });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderDate, Name = Config.ColumnTagBeatLeaderDate });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderScore, Name = Config.ColumnTagBeatLeaderScore });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderAcc, Name = Config.ColumnTagBeatLeaderAcc });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderAccDiff, Name = Config.ColumnTagBeatLeaderAccDiff });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderMissPlusBad, Name = Config.ColumnTagBeatLeaderMissPlusBad });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderFullCombo, Name = Config.ColumnTagBeatLeaderFullCombo });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderPp, Name = Config.ColumnTagBeatLeaderPp });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderModifiers, Name = Config.ColumnTagBeatLeaderModifiers });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderScoreCount, Name = Config.ColumnTagBeatLeaderScoreCount });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderMiss, Name = Config.ColumnTagBeatLeaderMiss });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderBad, Name = Config.ColumnTagBeatLeaderBad });
-                csvTargets.Add(new CsvTarget { Target = Config.ColumnTagBeatLeaderWorldRank, Name = Config.ColumnTagBeatLeaderWorldRank });
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapBsr));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapSongName));
+                csvTargets.Add(new CsvTarget("Map.SongSubName"));
+                csvTargets.Add(new CsvTarget("Map.SongAuthorName"));
+                csvTargets.Add(new CsvTarget("Map.MapperName"));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapMode));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapDifficulty));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapDuration));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapBpm));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapNotes));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapNps));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapNjs));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapBombs));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapWalls));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapHash));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapScoreSaberRankedDate));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapScoreSaberStar));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapBeatLeaderRankedDate));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagMapBeatLeaderStar));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberDate));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberScore));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberAcc));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberAccDiff));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberMissPlusBad));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberFullCombo));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberPp));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberModifiers));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberScoreCount));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberMiss));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberBad));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagScoreSaberWorldRank));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderDate));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderScore));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderAcc));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderAccDiff));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderMissPlusBad));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderFullCombo));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderPp));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderModifiers));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderScoreCount));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderMiss));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderBad));
+                csvTargets.Add(new CsvTarget(Config.ColumnTagBeatLeaderWorldRank));
             }
 
             string delmiter = ",";
@@ -787,167 +819,146 @@ namespace MyBeatSaberScore
                 {
                     foreach (var csvTarget in csvTargets)
                     {
-                        switch (csvTarget.Target)
+                        try
                         {
-                            case Config.ColumnTagMapBsr:
-                                sb.Append(i.Map.Key);
-                                break;
-                            case Config.ColumnTagMapSongName:
-                                sb.Append($"\"{TrimDoubleQuotationMarks(i.Map.SongName)}\"");
-                                break;
-                            case "Map.SongSubName":
-                                sb.Append($"\"{TrimDoubleQuotationMarks(i.Map.SongSubName)}\"");
-                                break;
-                            case "Map.SongAuthorName":
-                                sb.Append($"\"{TrimDoubleQuotationMarks(i.Map.SongAuthorName)}\"");
-                                break;
-                            case "Map.MapperName":
-                                sb.Append($"\"{TrimDoubleQuotationMarks(i.Map.MapperName)}\"");
-                                break;
-                            case Config.ColumnTagMapMode:
-                                sb.Append(i.Map.MapMode);
-                                break;
-                            case Config.ColumnTagMapDifficulty:
-                                sb.Append(i.Map.MapDifficulty);
-                                break;
-                            case Config.ColumnTagMapDuration:
-                                sb.Append(i.Map.Duration);
-                                break;
-                            case Config.ColumnTagMapBpm:
-                                sb.Append(i.Map.Bpm);
-                                break;
-                            case Config.ColumnTagMapNotes:
-                                sb.Append(i.Map.Notes);
-                                break;
-                            case Config.ColumnTagMapNps:
-                                sb.Append(i.Map.Nps);
-                                break;
-                            case Config.ColumnTagMapNjs:
-                                sb.Append(i.Map.Njs);
-                                break;
-                            case Config.ColumnTagMapBombs:
-                                sb.Append(i.Map.Bombs);
-                                break;
-                            case Config.ColumnTagMapWalls:
-                                sb.Append(i.Map.Walls);
-                                break;
-                            case Config.ColumnTagMapHash:
-                                sb.Append(i.Map.Hash);
-                                break;
-                            case Config.ColumnTagMapScoreSaberRankedDate:
-                                if (i.Map.ScoreSaber.RankedTime != null)
-                                {
-                                    sb.Append(i.Map.ScoreSaber.RankedTime?.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)"));
-                                }
-                                else
-                                {
-                                    sb.Append("");
-                                }
-                                break;
-                            case Config.ColumnTagMapScoreSaberStar:
-                                sb.Append(i.Map.ScoreSaber.Star);
-                                break;
-                            case Config.ColumnTagMapBeatLeaderRankedDate:
-                                if (i.Map.BeatLeader.RankedTime != null)
-                                {
-                                    sb.Append(i.Map.BeatLeader.RankedTime?.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)"));
-                                }
-                                else
-                                {
-                                    sb.Append("");
-                                }
-                                break;
-                            case Config.ColumnTagMapBeatLeaderStar:
-                                sb.Append(i.Map.BeatLeader.Star);
-                                break;
-                            case Config.ColumnTagScoreSaberDate:
-                                if (i.ScoreSaber.TimeSet != null)
-                                {
-                                    sb.Append(i.ScoreSaber.TimeSet?.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)"));
-                                }
-                                else
-                                {
-                                    sb.Append("");
-                                }
-                                break;
-                            case Config.ColumnTagScoreSaberScore:
-                                sb.Append(i.ScoreSaber.ModifiedScore);
-                                break;
-                            case Config.ColumnTagScoreSaberAcc:
-                                sb.Append(i.ScoreSaber.Acc);
-                                break;
-                            case Config.ColumnTagScoreSaberAccDiff:
-                                sb.Append(i.ScoreSaber.AccDifference);
-                                break;
-                            case Config.ColumnTagScoreSaberMissPlusBad:
-                                sb.Append(i.ScoreSaber.MissPlusBad);
-                                break;
-                            case Config.ColumnTagScoreSaberFullCombo:
-                                sb.Append(i.ScoreSaber.FullCombo);
-                                break;
-                            case Config.ColumnTagScoreSaberPp:
-                                sb.Append(i.ScoreSaber.PP);
-                                break;
-                            case Config.ColumnTagScoreSaberModifiers:
-                                sb.Append($"\"{i.ScoreSaber.Modifiers}\"");
-                                break;
-                            case Config.ColumnTagScoreSaberScoreCount:
-                                sb.Append(i.ScoreSaber.ScoreCount);
-                                break;
-                            case Config.ColumnTagScoreSaberMiss:
-                                sb.Append(i.ScoreSaber.Miss);
-                                break;
-                            case Config.ColumnTagScoreSaberBad:
-                                sb.Append(i.ScoreSaber.Bad);
-                                break;
-                            case Config.ColumnTagScoreSaberWorldRank:
-                                sb.Append(i.ScoreSaber.WorldRank);
-                                break;
-                            case Config.ColumnTagBeatLeaderDate:
-                                if (i.BeatLeader.TimeSet != null)
-                                {
-                                    sb.Append(i.BeatLeader.TimeSet?.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss (ddd)"));
-                                }
-                                else
-                                {
-                                    sb.Append("");
-                                }
-                                break;
-                            case Config.ColumnTagBeatLeaderScore:
-                                sb.Append(i.BeatLeader.ModifiedScore);
-                                break;
-                            case Config.ColumnTagBeatLeaderAcc:
-                                sb.Append(i.BeatLeader.Acc);
-                                break;
-                            case Config.ColumnTagBeatLeaderAccDiff:
-                                sb.Append(i.BeatLeader.AccDifference);
-                                break;
-                            case Config.ColumnTagBeatLeaderMissPlusBad:
-                                sb.Append(i.BeatLeader.MissPlusBad);
-                                break;
-                            case Config.ColumnTagBeatLeaderFullCombo:
-                                sb.Append(i.BeatLeader.FullCombo);
-                                break;
-                            case Config.ColumnTagBeatLeaderPp:
-                                sb.Append(i.BeatLeader.PP);
-                                break;
-                            case Config.ColumnTagBeatLeaderModifiers:
-                                sb.Append($"\"{i.BeatLeader.Modifiers}\"");
-                                break;
-                            case Config.ColumnTagBeatLeaderScoreCount:
-                                sb.Append(i.BeatLeader.ScoreCount);
-                                break;
-                            case Config.ColumnTagBeatLeaderMiss:
-                                sb.Append(i.BeatLeader.Miss);
-                                break;
-                            case Config.ColumnTagBeatLeaderBad:
-                                sb.Append(i.BeatLeader.Bad);
-                                break;
-                            case Config.ColumnTagBeatLeaderWorldRank:
-                                sb.Append(i.BeatLeader.WorldRank);
-                                break;
-                            default:
-                                break;
+                            switch (csvTarget.Target)
+                            {
+                                case Config.ColumnTagMapBsr:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Key));
+                                    break;
+                                case Config.ColumnTagMapSongName:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.SongName.Replace("\"", "").Replace(",", "")));
+                                    break;
+                                case "Map.SongSubName":
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.SongSubName.Replace("\"", "").Replace(",", "")));
+                                    break;
+                                case "Map.SongAuthorName":
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.SongAuthorName.Replace("\"", "").Replace(",", "")));
+                                    break;
+                                case "Map.MapperName":
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.MapperName.Replace("\"", "").Replace(",", "")));
+                                    break;
+                                case Config.ColumnTagMapMode:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.MapMode));
+                                    break;
+                                case Config.ColumnTagMapDifficulty:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.MapDifficulty));
+                                    break;
+                                case Config.ColumnTagMapDuration:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Duration));
+                                    break;
+                                case Config.ColumnTagMapBpm:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Bpm));
+                                    break;
+                                case Config.ColumnTagMapNotes:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Notes));
+                                    break;
+                                case Config.ColumnTagMapNps:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Nps));
+                                    break;
+                                case Config.ColumnTagMapNjs:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Njs));
+                                    break;
+                                case Config.ColumnTagMapBombs:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Bombs));
+                                    break;
+                                case Config.ColumnTagMapWalls:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Walls));
+                                    break;
+                                case Config.ColumnTagMapHash:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.Hash));
+                                    break;
+                                case Config.ColumnTagMapScoreSaberRankedDate:
+                                    sb.Append(i.Map.ScoreSaber.RankedTime == null ? "" : string.Format(csvTarget.Format, i.Map.ScoreSaber.RankedTime?.ToLocalTime()));
+                                    break;
+                                case Config.ColumnTagMapScoreSaberStar:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.ScoreSaber.Star));
+                                    break;
+                                case Config.ColumnTagMapBeatLeaderRankedDate:
+                                    sb.Append(i.Map.BeatLeader.RankedTime == null ? "" : string.Format(csvTarget.Format, i.Map.BeatLeader.RankedTime?.ToLocalTime()));
+                                    break;
+                                case Config.ColumnTagMapBeatLeaderStar:
+                                    sb.Append(string.Format(csvTarget.Format, i.Map.BeatLeader.Star));
+                                    break;
+                                case Config.ColumnTagScoreSaberDate:
+                                    sb.Append(i.ScoreSaber.TimeSet == null ? "" : string.Format(csvTarget.Format, i.ScoreSaber.TimeSet?.ToLocalTime()));
+                                    break;
+                                case Config.ColumnTagScoreSaberScore:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.ModifiedScore));
+                                    break;
+                                case Config.ColumnTagScoreSaberAcc:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.Acc));
+                                    break;
+                                case Config.ColumnTagScoreSaberAccDiff:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.AccDifference));
+                                    break;
+                                case Config.ColumnTagScoreSaberMissPlusBad:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.MissPlusBad));
+                                    break;
+                                case Config.ColumnTagScoreSaberFullCombo:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.FullCombo));
+                                    break;
+                                case Config.ColumnTagScoreSaberPp:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.PP));
+                                    break;
+                                case Config.ColumnTagScoreSaberModifiers:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.Modifiers.Replace("\"", "").Replace(",", ".")));
+                                    break;
+                                case Config.ColumnTagScoreSaberScoreCount:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.ScoreCount));
+                                    break;
+                                case Config.ColumnTagScoreSaberMiss:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.Miss));
+                                    break;
+                                case Config.ColumnTagScoreSaberBad:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.Bad));
+                                    break;
+                                case Config.ColumnTagScoreSaberWorldRank:
+                                    sb.Append(string.Format(csvTarget.Format, i.ScoreSaber.WorldRank));
+                                    break;
+                                case Config.ColumnTagBeatLeaderDate:
+                                    sb.Append(i.BeatLeader.TimeSet == null ? "" : string.Format(csvTarget.Format, i.BeatLeader.TimeSet?.ToLocalTime()));
+                                    break;
+                                case Config.ColumnTagBeatLeaderScore:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.ModifiedScore));
+                                    break;
+                                case Config.ColumnTagBeatLeaderAcc:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.Acc));
+                                    break;
+                                case Config.ColumnTagBeatLeaderAccDiff:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.AccDifference));
+                                    break;
+                                case Config.ColumnTagBeatLeaderMissPlusBad:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.MissPlusBad));
+                                    break;
+                                case Config.ColumnTagBeatLeaderFullCombo:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.FullCombo));
+                                    break;
+                                case Config.ColumnTagBeatLeaderPp:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.PP));
+                                    break;
+                                case Config.ColumnTagBeatLeaderModifiers:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.Modifiers.Replace("\"", "").Replace(",", ".")));
+                                    break;
+                                case Config.ColumnTagBeatLeaderScoreCount:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.ScoreCount));
+                                    break;
+                                case Config.ColumnTagBeatLeaderMiss:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.Miss));
+                                    break;
+                                case Config.ColumnTagBeatLeaderBad:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.Bad));
+                                    break;
+                                case Config.ColumnTagBeatLeaderWorldRank:
+                                    sb.Append(string.Format(csvTarget.Format, i.BeatLeader.WorldRank));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Warn($"Target:{csvTarget.Target}, Format:{csvTarget.Format}, Exception:{ex}");
                         }
                         sb.Append(delmiter);
                     }
@@ -969,11 +980,6 @@ namespace MyBeatSaberScore
             {
                 _logger.Warn(ex.ToString());
             }
-        }
-
-        private static string TrimDoubleQuotationMarks(string target)
-        {
-            return target.Trim(new char[] { '"' });
         }
 
         private void XaDataGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
