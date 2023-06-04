@@ -138,6 +138,240 @@ Beat Saverアイコン（画像内①）、Score Saberアイコン（画像内�
 
 保存ダイアログが表示されるので任意のフォルダに任意の名前で保存してください。
 
+## CSV作成
+
+「CSV作成」ボタンをクリックすると表示している譜面データをCSVにエクスポートします。
+
+保存ダイアログが表示されるので任意のフォルダに任意の名前で保存してください。
+
+出力対象選択、ヘッダー項目名変更、値フォーマット変更を行いたい場合は `data/csv_format.json` を作成してください。
+
+`data/csv_format.json` のサンプル。
+
+    [
+      {
+        "Target": "Map.Bsr",
+        "Name": "Map.Bsr",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.SongName",
+        "Name": "Map.SongName",
+        "Format": "\"{0}\""
+      },
+      {
+        "Target": "Map.SongSubName",
+        "Name": "Map.SongSubName",
+        "Format": "\"{0}\""
+      },
+      {
+        "Target": "Map.SongAuthorName",
+        "Name": "Map.SongAuthorName",
+        "Format": "\"{0}\""
+      },
+      {
+        "Target": "Map.MapperName",
+        "Name": "Map.MapperName",
+        "Format": "\"{0}\""
+      },
+      {
+        "Target": "Map.Mode",
+        "Name": "Map.Mode",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Difficulty",
+        "Name": "Map.Difficulty",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Duration",
+        "Name": "Map.Duration",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Bpm ",
+        "Name": "Map.Bpm ",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Notes",
+        "Name": "Map.Notes",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Nps",
+        "Name": "Map.Nps",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Njs",
+        "Name": "Map.Njs",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Bombs ",
+        "Name": "Map.Bombs ",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Walls",
+        "Name": "Map.Walls",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.Hash",
+        "Name": "Map.Hash",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.ScoreSaber.RankedDate",
+        "Name": "Map.ScoreSaber.RankedDate",
+        "Format": "{0:yyyy/MM/dd HH:mm:ss (ddd)}"
+      },
+      {
+        "Target": "Map.ScoreSaber.Star",
+        "Name": "Map.ScoreSaber.Star",
+        "Format": "{0}"
+      },
+      {
+        "Target": "Map.BeatLeader.RankedDate",
+        "Name": "Map.BeatLeader.RankedDate",
+        "Format": "{0:yyyy/MM/dd HH:mm:ss (ddd)}"
+      },
+      {
+        "Target": "Map.BeatLeader.Star",
+        "Name": "Map.BeatLeader.Star",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.Date",
+        "Name": "ScoreSaber.Date",
+        "Format": "{0:yyyy/MM/dd HH:mm:ss (ddd)}"
+      },
+      {
+        "Target": "ScoreSaber.Score",
+        "Name": "ScoreSaber.Score",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.Acc",
+        "Name": "ScoreSaber.Acc",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.AccDiff",
+        "Name": "ScoreSaber.AccDiff",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.MissPlusBad",
+        "Name": "ScoreSaber.MissPlusBad",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.FullCombo",
+        "Name": "ScoreSaber.FullCombo",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.Pp",
+        "Name": "ScoreSaber.Pp",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.Modifiers",
+        "Name": "ScoreSaber.Modifiers",
+        "Format": "\"{0}\""
+      },
+      {
+        "Target": "ScoreSaber.ScoreCount",
+        "Name": "ScoreSaber.ScoreCount",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.Miss",
+        "Name": "ScoreSaber.Miss",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.Bad",
+        "Name": "ScoreSaber.Bad",
+        "Format": "{0}"
+      },
+      {
+        "Target": "ScoreSaber.WorldRank",
+        "Name": "ScoreSaber.WorldRank",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.Date",
+        "Name": "BeatLeader.Date",
+        "Format": "{0:yyyy/MM/dd HH:mm:ss (ddd)}"
+      },
+      {
+        "Target": "BeatLeader.Score",
+        "Name": "BeatLeader.Score",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.Acc",
+        "Name": "BeatLeader.Acc",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.AccDiff",
+        "Name": "BeatLeader.AccDiff",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.MissPlusBad",
+        "Name": "BeatLeader.MissPlusBad",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.FullCombo",
+        "Name": "BeatLeader.FullCombo",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.Pp",
+        "Name": "BeatLeader.Pp",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.Modifiers",
+        "Name": "BeatLeader.Modifiers",
+        "Format": "\"{0}\""
+      },
+      {
+        "Target": "BeatLeader.ScoreCount",
+        "Name": "BeatLeader.ScoreCount",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.Miss",
+        "Name": "BeatLeader.Miss",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.Bad",
+        "Name": "BeatLeader.Bad",
+        "Format": "{0}"
+      },
+      {
+        "Target": "BeatLeader.WorldRank",
+        "Name": "BeatLeader.WorldRank",
+        "Format": "{0}"
+      }
+    ]
+
+表のどの列をエクスポートするかはTargetで指定します。指定していないTargetはCSVにエクスポートしません。
+
+CSVヘッダーの項目名はNameで指定します。任意の文字列を指定してください。
+
+値フォーマットはFormatで指定します。C# string.Formatの書式指定文字列を指定します。
+
 # Ｑ＆Ａ
 
 ## 起動しません
