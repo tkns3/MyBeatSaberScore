@@ -75,7 +75,7 @@ namespace MyBeatSaberScore.Model
 
         public IntegrationScore(BeatLeader.ScoreResponseWithMyScore score, BeatLeaderPlayHistory.SpecificMapPlayHistory results)
         {
-            string hash = score.leaderboard.song.hash.ToLower();
+            string hash = (score.leaderboard.song.hash == null) ? "" : score.leaderboard.song.hash.ToLower();
             var map = BeatMapDic.Get(hash, score.leaderboard.difficulty.mapMode, score.leaderboard.difficulty.mapDifficulty) ?? CreateBeatMapData(score);
 
             Map = map;
@@ -129,12 +129,12 @@ namespace MyBeatSaberScore.Model
         {
             return new BeatMapData()
             {
-                Key = score.leaderboardId.Replace("x", "")[0..^2],
-                Hash = score.leaderboard.song.hash.ToLower(),
-                SongName = score.leaderboard.song.name,
-                SongSubName = score.leaderboard.song.subName,
-                SongAuthorName = score.leaderboard.song.author,
-                MapperName = score.leaderboard.song.mapper,
+                Key = (score.leaderboardId == null) ? "" : score.leaderboardId.Replace("x", "")[0..^2],
+                Hash = (score.leaderboard.song.hash == null) ? "" : score.leaderboard.song.hash.ToLower(),
+                SongName = score.leaderboard.song.name ?? "",
+                SongSubName = score.leaderboard.song.subName ?? "",
+                SongAuthorName = score.leaderboard.song.author ?? "",
+                MapperName = score.leaderboard.song.mapper ?? "",
                 UploadedTime = new(),
                 Bpm = 0,
                 Duration = 0,
@@ -587,7 +587,7 @@ namespace MyBeatSaberScore.Model
             IsFirstClear = results.IsFirstClear();
             ClearStatus = (IsFirstScore ? 1 : 0) + (IsFirstClear ? 2 : 0);
             PP = score.pp;
-            Modifiers = score.modifiers;
+            Modifiers = score.modifiers ?? "";
             Modifiers2 = ParseModifiers(Modifiers);
             ScoreCount = results.Count;
             MissPlusBad = score.badCuts + score.missedNotes;

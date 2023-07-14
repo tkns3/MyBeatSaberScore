@@ -76,7 +76,7 @@ namespace MyBeatSaberScore.Model
             if (File.Exists(_profilePath))
             {
                 var profile = Json.DeserializeFromLocalFile<BeatLeader.PlayerResponseFull>(_profilePath);
-                if (profile != null && profile.id.Equals(ProfileId))
+                if (profile != null && profile.id != null && profile.id.Equals(ProfileId))
                 {
                     Profile = profile;
                     result = true;
@@ -95,8 +95,11 @@ namespace MyBeatSaberScore.Model
                 {
                     foreach (var score in collection.data)
                     {
-                        PlayedScores[score.leaderboardId] = score;
-                        PlayHistory.Add(score);
+                        if (score.leaderboardId != null)
+                        {
+                            PlayedScores[score.leaderboardId] = score;
+                            PlayHistory.Add(score);
+                        }
                     }
                 }
             }
@@ -140,7 +143,7 @@ namespace MyBeatSaberScore.Model
         public async Task<bool> FetchLatestProfileAsync()
         {
             var profile = await BeatLeader.GetPlayerInfo(ProfileId);
-            if (profile.id.Length > 0 && profile.id.Equals(ProfileId))
+            if (profile.id?.Length > 0 && profile.id.Equals(ProfileId))
             {
                 Profile = profile;
                 Json.SerializeToLocalFile(Profile, _profilePath, Formatting.Indented);
@@ -200,8 +203,11 @@ namespace MyBeatSaberScore.Model
                     {
                         foreach (var score in collection.data)
                         {
-                            _self.PlayedScores[score.leaderboardId] = score;
-                            _self.PlayHistory.Add(score);
+                            if (score.leaderboardId != null)
+                            {
+                                _self.PlayedScores[score.leaderboardId] = score;
+                                _self.PlayHistory.Add(score);
+                            }
                         }
                     });
 
@@ -233,11 +239,14 @@ namespace MyBeatSaberScore.Model
                         foreach (var score in collection.data)
                         {
                             // 更新日が同じデータがローカルにあればすべて取得できた
-                            if (_self.PlayedScores.TryGetValue(score.leaderboardId, out var played))
+                            if (score.leaderboardId != null)
                             {
-                                if (played.timeset == score.timeset)
+                                if (_self.PlayedScores.TryGetValue(score.leaderboardId, out var played))
                                 {
-                                    _getResult = BeatLeader.GetScoresResult.FINISH;
+                                    if (played.timeset == score.timeset)
+                                    {
+                                        _getResult = BeatLeader.GetScoresResult.FINISH;
+                                    }
                                 }
                             }
                         }

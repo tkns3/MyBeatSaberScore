@@ -140,14 +140,18 @@ namespace MyBeatSaberScore.APIs
                     };
                 }
             }
-            public string difficultyName { get; set; } = string.Empty;
-            public string modeName { get; set; } = string.Empty;
+            public string? difficultyName { get; set; }
+            public string? modeName { get; set; }
             public int status { get; set; }
             public ModifiersMap modifierValues { get; set; } = new();
             public int nominatedTime { get; set; }
             public int qualifiedTime { get; set; }
             public int rankedTime { get; set; }
             public double? stars { get; set; }
+            public double? predictedAcc { get; set; }
+            public double? passRating { get; set; }
+            public double? accRating { get; set; }
+            public double? techRating { get; set; }
             public int type { get; set; }
             public double njs { get; set; }
             public double nps { get; set; }
@@ -188,29 +192,29 @@ namespace MyBeatSaberScore.APIs
             public int baseScore { get; set; }
             public int modifiedScore { get; set; }
             public double accuracy { get; set; }
-            public string playerId { get; set; } = string.Empty;
+            public string? playerId { get; set; }
             public double pp { get; set; }
             public double bonusPp { get; set; }
             public int rank { get; set; }
             public int countryRank { get; set; }
-            public string country { get; set; } = string.Empty;
+            public string? country { get; set; }
             public double fcAccuracy { get; set; }
             public double fcPp { get; set; }
-            public string replay { get; set; } = string.Empty;
-            public string modifiers { get; set; } = string.Empty;
+            public string? replay { get; set; }
+            public string? modifiers { get; set; }
             public int badCuts { get; set; }
             public int missedNotes { get; set; }
             public int bombCuts { get; set; }
             public int wallsHit { get; set; }
             public int pauses { get; set; }
             public bool fullCombo { get; set; }
-            public string platform { get; set; } = string.Empty;
+            public string? platform { get; set; }
             public int maxCombo { get; set; }
-            public int maxStreak { get; set; }
+            public int? maxStreak { get; set; }
             public int hmd { get; set; }
             public int controller { get; set; }
-            public string leaderboardId { get; set; } = string.Empty;
-            public string timeset { get; set; } = string.Empty;
+            public string? leaderboardId { get; set; }
+            public string? timeset { get; set; }
             public int timepost { get; set; }
             public int replaysWatched { get; set; }
             public PlayerResponse player { get; set; } = new();
@@ -222,7 +226,7 @@ namespace MyBeatSaberScore.APIs
 
         public class LeaderboardResponse
         {
-            public string id { get; set; } = string.Empty;
+            public string? id { get; set; }
             public Song song { get; set; } = new();
             public DifficultyDescription difficulty { get; set; } = new();
             //public object scores { get; set; }
@@ -235,8 +239,8 @@ namespace MyBeatSaberScore.APIs
 
         public class Song
         {
-            public string id { get; set; } = string.Empty;
-            public string hash
+            public string? id { get; set; }
+            public string? hash
             {
                 get
                 {
@@ -244,25 +248,28 @@ namespace MyBeatSaberScore.APIs
                 }
                 set
                 {
-                    _hash = value.ToLower();
+                    if (value != null)
+                    {
+                        _hash = value?.ToLower();
+                    }
                 }
             }
-            public string name { get; set; } = string.Empty;
+            public string? name { get; set; }
             //public object description { get; set; }
-            public string subName { get; set; } = string.Empty;
-            public string author { get; set; } = string.Empty;
-            public string mapper { get; set; } = string.Empty;
+            public string? subName { get; set; }
+            public string? author { get; set; }
+            public string? mapper { get; set; }
             public int mapperId { get; set; }
-            public string coverImage { get; set; } = string.Empty;
-            public string downloadUrl { get; set; } = string.Empty;
+            public string? coverImage { get; set; }
+            public string? downloadUrl { get; set; }
             public double bpm { get; set; }
             public double duration { get; set; }
-            public string tags { get; set; } = string.Empty;
-            public string createdTime { get; set; } = string.Empty;
+            public string? tags { get; set; }
+            public string? createdTime { get; set; }
             public int uploadTime { get; set; }
             public DifficultyDescription[] difficulties { get; set; } = Array.Empty<DifficultyDescription>();
 
-            private string _hash = string.Empty;
+            private string? _hash;
         }
 
         public class ModifiersMap
@@ -284,15 +291,15 @@ namespace MyBeatSaberScore.APIs
 
         public class PlayerResponse
         {
-            public string id { get; set; } = string.Empty;
-            public string name { get; set; } = string.Empty;
-            public string platform { get; set; } = string.Empty;
-            public string avatar { get; set; } = string.Empty;
-            public string country { get; set; } = string.Empty;
+            public string? id { get; set; }
+            public string? name { get; set; }
+            public string? platform { get; set; }
+            public string? avatar { get; set; }
+            public string? country { get; set; }
             public double pp { get; set; }
             public int rank { get; set; }
             public int countryRank { get; set; }
-            public string role { get; set; } = string.Empty;
+            public string? role { get; set; }
             //public object[] socials { get; set; }
             //public object patreonFeatures { get; set; }
             //public object profileSettings { get; set; }
@@ -302,14 +309,14 @@ namespace MyBeatSaberScore.APIs
         public class ClanResponse
         {
             public int id { get; set; }
-            public string tag { get; set; } = string.Empty;
-            public string color { get; set; } = string.Empty;
+            public string? tag { get; set; }
+            public string? color { get; set; }
         }
 
         public class ScoreImprovement
         {
             public int id { get; set; }
-            public string timeset { get; set; } = string.Empty;
+            public string? timeset { get; set; }
             public int score { get; set; }
             public double accuracy { get; set; }
             public double pp { get; set; }
@@ -344,26 +351,25 @@ namespace MyBeatSaberScore.APIs
             public bool banned { get; set; }
             public bool inactive { get; set; }
             //public object banDescription { get; set; }
-            public string externalProfileUrl { get; set; } = string.Empty;
+            public string? externalProfileUrl { get; set; }
             //public object history { get; set; }
             //public object[] badges { get; set; }
             //public object pinnedScores { get; set; }
             //public object[] changes { get; set; }
-            public string histories { get; set; } = string.Empty;
             public PlayerScoreStats scoreStats { get; set; } = new();
             public double lastWeekPp { get; set; }
             public int lastWeekRank { get; set; }
             public int lastWeekCountryRank { get; set; }
             public EventPlayer[] eventsParticipating { get; set; } = Array.Empty<EventPlayer>();
-            public string id { get; set; } = string.Empty;
-            public string name { get; set; } = string.Empty;
-            public string platform { get; set; } = string.Empty;
-            public string avatar { get; set; } = string.Empty;
-            public string country { get; set; } = string.Empty;
+            public string? id { get; set; }
+            public string? name { get; set; }
+            public string? platform { get; set; }
+            public string? avatar { get; set; }
+            public string? country { get; set; }
             public double pp { get; set; }
             public int rank { get; set; }
             public int countryRank { get; set; }
-            public string role { get; set; } = string.Empty;
+            public string? role { get; set; }
             //public object[] socials { get; set; }
             //public object patreonFeatures { get; set; }
             //public object profileSettings { get; set; }
@@ -420,9 +426,9 @@ namespace MyBeatSaberScore.APIs
         {
             public int id { get; set; }
             public int eventId { get; set; }
-            public string name { get; set; } = string.Empty;
-            public string playerId { get; set; } = string.Empty;
-            public string country { get; set; } = string.Empty;
+            public string? name { get; set; }
+            public string? playerId { get; set; }
+            public string? country { get; set; }
             public int rank { get; set; }
             public int countryRank { get; set; }
             public double pp { get; set; }

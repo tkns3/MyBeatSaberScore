@@ -73,10 +73,10 @@ namespace MyBeatSaberScore
             if (((FrameworkElement)sender).DataContext is Config.User obj)
             {
                 var beatLeaderProfile = await BeatLeader.GetPlayerInfo(obj.id);
-                if (beatLeaderProfile != null && beatLeaderProfile.id.Length > 0)
+                if (beatLeaderProfile != null && beatLeaderProfile.id?.Length > 0)
                 {
-                    obj.beatLeaderName = beatLeaderProfile.name;
-                    obj.beatLeaderAvatar = beatLeaderProfile.avatar;
+                    obj.beatLeaderName = beatLeaderProfile.name ?? "";
+                    obj.beatLeaderAvatar = beatLeaderProfile.avatar ?? "";
                 }
                 var scoreSaberProfile = await ScoreSaber.GetPlayerInfo(obj.id);
                 if (scoreSaberProfile != null && scoreSaberProfile.id.Length > 0)

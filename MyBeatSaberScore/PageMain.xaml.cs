@@ -588,7 +588,7 @@ namespace MyBeatSaberScore
             {
                 if (((FrameworkElement)sender).DataContext is IntegrationScore item)
                 {
-                    if (item.BeatLeader.Reference?.leaderboardId.Length > 0)
+                    if (item.BeatLeader.Reference?.leaderboardId != null && item.BeatLeader.Reference?.leaderboardId.Length > 0)
                     {
                         var url = $"https://www.beatleader.xyz/leaderboard/global/{item.BeatLeader.Reference?.leaderboardId}";
                         _ = OpenUrl(url);
@@ -1444,10 +1444,10 @@ namespace MyBeatSaberScore
 
         public void SetPlayerProfile(BeatLeader.PlayerResponseFull profile)
         {
-            ProfileId = profile.id;
-            Name = profile.name;
-            ProfilePicture = (profile.avatar.Length == 0) ? "Resources/_404.png" : profile.avatar;
-            Country = profile.country;
+            ProfileId = profile.id ?? "";
+            Name = profile.name ?? "";
+            ProfilePicture = (profile.avatar == null || profile.avatar.Length == 0) ? "Resources/_404.png" : profile.avatar;
+            Country = profile.country ?? "";
             Pp = profile.pp;
             GlobalRank = profile.rank;
             CountryRank = profile.countryRank;

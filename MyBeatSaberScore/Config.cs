@@ -211,10 +211,10 @@ namespace MyBeatSaberScore
             public User(string id, BeatLeader.PlayerResponseFull beatLeaderProfile, ScoreSaber.PlayerProfile scoreSaberProfile)
             {
                 this.id = id;
-                beatLeaderName = beatLeaderProfile.name;
-                beatLeaderAvatar = beatLeaderProfile.avatar;
-                scoreSaberName = scoreSaberProfile.name;
-                scoreSaberAvatar = scoreSaberProfile.profilePicture;
+                beatLeaderName = beatLeaderProfile.name ?? "";
+                beatLeaderAvatar = beatLeaderProfile.avatar ?? "";
+                scoreSaberName = scoreSaberProfile.name ?? "";
+                scoreSaberAvatar = scoreSaberProfile.profilePicture ?? "";
             }
         }
 
