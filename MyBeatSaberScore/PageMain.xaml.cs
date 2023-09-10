@@ -51,6 +51,11 @@ namespace MyBeatSaberScore
             }
 
             Instance = this;
+
+            if (Config.Grid.displayRowNumber)
+            {
+                XaDataGrid.LoadingRow += DisplayRowIndex;
+            }
         }
 
         internal List<Config.GridColumnParam>? GetGridColumnParams()
@@ -68,6 +73,11 @@ namespace MyBeatSaberScore
             {
                 return null;
             }
+        }
+
+        private void DisplayRowIndex(object? s, DataGridRowEventArgs e)
+        {
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }
 
         private void RefreshGrid()
@@ -170,6 +180,12 @@ namespace MyBeatSaberScore
             UpdateDataGridColumnVisibility();
             XaDataGridColumnCover.Width = Config.Grid.rowHeight;
             XaDataGrid.RowHeight = Config.Grid.rowHeight;
+
+            XaDataGrid.LoadingRow -= DisplayRowIndex;
+            if (Config.Grid.displayRowNumber)
+            {
+                XaDataGrid.LoadingRow += DisplayRowIndex;
+            }
 
             if (AppData.IsFirst)
             {

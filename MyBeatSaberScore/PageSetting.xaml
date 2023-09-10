@@ -292,6 +292,11 @@
                                                 <TextBlock Text=" (Open BeatLeader in your browser)" Width="200"/>
                                             </StackPanel>
                                         </CheckBox>
+                                        <CheckBox IsChecked="{Binding IsDisplayRowNumber}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="行番号" Width="200"/>
+                                            </StackPanel>
+                                        </CheckBox>
                                     </StackPanel>
 
                                 </StackPanel>

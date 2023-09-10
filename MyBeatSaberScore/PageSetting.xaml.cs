@@ -84,6 +84,19 @@ namespace MyBeatSaberScore
             }
         }
 
+        public bool IsDisplayRowNumber
+        {
+            get
+            {
+                return Config.Grid.displayRowNumber;
+            }
+            set
+            {
+                Config.Grid.displayRowNumber = value;
+                OnPropertyChanged();
+            }
+        }
+
         public static Config.RestoreMode WindowBoundsRestoreMode
         {
             get

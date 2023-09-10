@@ -225,6 +225,8 @@ namespace MyBeatSaberScore
             public List<String> notDisplayColumns { get; set; } = new();
 
             public GridColumnRestoreParam columnRestore { get; set; } = new();
+
+            public bool displayRowNumber { get; set; } = false;
         }
 
         public class GridColumnRestoreParam
