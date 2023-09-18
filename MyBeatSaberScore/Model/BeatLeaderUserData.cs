@@ -171,6 +171,7 @@ namespace MyBeatSaberScore.Model
             private List<BeatLeader.ScoreResponseWithMyScoreResponseWithMetadata> _collections = new();
             private int _page = 1;
             private IStepExecuter.Status _status = IStepExecuter.Status.Processing;
+            private System.Diagnostics.Stopwatch _sw = new();
 
             public FetchLatestScoresExecuter(BeatLeaderUserData self, bool isGetAll)
             {
@@ -180,6 +181,7 @@ namespace MyBeatSaberScore.Model
                 predict = (predict < 0) ? 1 : predict;
                 _totalStep = (int)Math.Ceiling((double)predict / 100) + 1; // 通信N回 + 構築1回 ※通信回数は予測なので前後する可能性あり
                 _finishedStep = 0;
+                _sw.Start();
             }
 
             public int TotalStepCount { get => _totalStep; }
@@ -192,8 +194,24 @@ namespace MyBeatSaberScore.Model
             {
                 if (_getResult == BeatLeader.GetScoresResult.CONTINUE)
                 {
+                    if (_page > 1)
+                    {
+                        var elapsed = _sw.ElapsedMilliseconds;
+                        if (elapsed < 1000)
+                        {
+                            Task.Delay((int)(1100 - elapsed)).Wait();
+                        }
+                        _sw.Restart();
+                    }
                     FetchNextPartScores();
-                    _finishedStep = Math.Max(_finishedStep + 1, _totalStep - 1);
+                    if (_getResult != BeatLeader.GetScoresResult.RETRY)
+                    {
+                        _finishedStep = Math.Max(_finishedStep + 1, _totalStep - 1);
+                    }
+                    else
+                    {
+                        _getResult = BeatLeader.GetScoresResult.CONTINUE;
+                    }
                     _status = IStepExecuter.Status.Processing;
                     return _status;
                 }
@@ -251,9 +269,8 @@ namespace MyBeatSaberScore.Model
                             }
                         }
                     }
+                    _page++;
                 }
-
-                _page++;
             }
         }
     }

@@ -15,6 +15,7 @@ namespace MyBeatSaberScore.APIs
             FAIL,
             CONTINUE,
             FINISH,
+            RETRY,
         }
 
         public static async Task<(GetScoresResult, ScoreResponseWithMyScoreResponseWithMetadata)> GetPlayerScores(string id, int page, int count, string? sortBy = null, string? order = null, string? search = null, string? diff = null, string? type = null, double? stars_from = null, double? stars_to = null, int? time_from = null, int? time_to = null, int? eventId = null)
@@ -39,6 +40,14 @@ namespace MyBeatSaberScore.APIs
                 var response = await HttpTool.GetAndDeserialize<ScoreResponseWithMyScoreResponseWithMetadata>(url);
                 var result = (response.data.Length == 0) ? GetScoresResult.FINISH : GetScoresResult.CONTINUE;
                 return (result, response);
+            }
+            catch (HttpTool.HttpFailuerException ex)
+            {
+                _logger.Warn($"{url}: {ex}");
+                if (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                {
+                    return (GetScoresResult.RETRY, new ScoreResponseWithMyScoreResponseWithMetadata());
+                }
             }
             catch (Exception ex)
             {

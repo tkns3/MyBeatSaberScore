@@ -30,12 +30,23 @@ namespace MyBeatSaberScore.Utility
             }
         }
 
+        public class HttpFailuerException : Exception
+        {
+            public HttpStatusCode StatusCode { get; set; }
+
+            public HttpFailuerException(HttpStatusCode statusCode, String message)
+                : base(message)
+            {
+                StatusCode = statusCode;
+            }
+        }
+
         public static async Task<T> GetAndDeserialize<T>(string url)
         {
             var res = await HttpTool.Client.GetAsync(url);
             if (!res.IsSuccessStatusCode)
             {
-                throw new Exception($"http status is {res.StatusCode}");
+                throw new HttpFailuerException(res.StatusCode, $"http status is {res.StatusCode}");
             }
             using var httpStream = await res.Content.ReadAsStreamAsync();
             using var sr = new StreamReader(httpStream);
