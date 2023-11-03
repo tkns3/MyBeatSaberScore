@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="MyBeatSaberScore.UserControls.ClearableTextBox"
+             Name="clearableTextBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyBeatSaberScore.UserControls"
+             xmlns:local2="clr-namespace:MyBeatSaberScore"
+             mc:Ignorable="d" 
+             Height="20">
+
+    <UserControl.Resources>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#0000" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Ellipse Canvas.Top="1" Canvas.Left="1" Width="22" Height="22" Fill="{TemplateBinding Background}"/>
+                                    <Path x:Name="Icon" Stroke="#79747E" StrokeThickness="2" Data="M6,6 l12,12 M6,18 l12,-12"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Icon" Property="Data" Value="M6,6 l12,12 M6,18 l12,-12"/>
+                                <Setter Property="Background" Value="#8DDD" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Icon" Property="Data" Value="M6,6 l12,12 M6,18 l12,-12"/>
+                                <Setter Property="Background" Value="#8AAA" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="{x:Static SystemColors.ActiveBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <local2:PlaceholderTextBox
+                x:Name="TextBox"
+                Grid.Column="0"
+                BorderThickness="0"
+                BorderBrush="#0000"
+                Margin="0"
+                VerticalContentAlignment="Center"
+                Text="{Binding Text, ElementName=clearableTextBox, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                Placeholder="{Binding Placeholder, ElementName=clearableTextBox, Mode=TwoWay}"
+                TextChanged="TextBox_TextChanged"/>
+
+            <Button
+                x:Name="ClearButton"
+                Visibility="Collapsed"
+                Grid.Column="1"
+                Content="Clear Button"
+                Style="{StaticResource ButtonStyle}"
+                Click="ClearButton_Click"/>
+        </Grid>
+    </Border>
+</UserControl>
