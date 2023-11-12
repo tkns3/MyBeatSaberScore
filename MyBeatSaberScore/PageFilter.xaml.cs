@@ -246,5 +246,7 @@ namespace MyBeatSaberScore
         }
 
         public string Status { get => _status; set => SetProperty(ref _status, value); }
+
+        public string DefaultTime { get => Config.Filter.defaultTime; }
     }
 }

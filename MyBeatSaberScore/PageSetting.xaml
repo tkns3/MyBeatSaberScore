@@ -305,6 +305,36 @@
                         </Grid>
                     </StackPanel>
                 </Grid>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Height="20" Source="Resources/menu_filter.png" Margin="2,4,8,0"></Image>
+                            <TextBlock Text="フィルター" FontWeight="Bold" FontSize="22"/>
+                        </StackPanel>
+                        <Border BorderBrush="Black" BorderThickness="1" Height="1" Width="476" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="日時" FontWeight="Bold"/>
+                            <StackPanel Grid.Column="1">
+                                <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="デフォルト時刻" FontWeight="Bold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="日時未指定の状態で日付を選択したときのデフォルト時刻を指定します。" Foreground="Gray" Margin="0,0,0,4"/>
+                                    <ComboBox ItemsSource="{Binding FilterDefaultTimeList}" SelectedItem="{Binding FilterDefaultTime}" Margin="0,0,0,4" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
     </Grid>

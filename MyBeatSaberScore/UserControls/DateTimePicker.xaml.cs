@@ -63,6 +63,15 @@ namespace MyBeatSaberScore.UserControls
             }
         }
 
+        public static readonly DependencyProperty DefaultTimeProperty =
+            DependencyProperty.Register("DefaultTime", typeof(string), typeof(DateTimePicker), new PropertyMetadata("00:00"));
+
+        public string DefaultTime
+        {
+            get { return (string)GetValue(DefaultTimeProperty); }
+            set { SetValue(DefaultTimeProperty, value); }
+        }
+
         public static readonly DependencyProperty PlaceholderProperty =
             DependencyProperty.Register("Placeholder", typeof(string), typeof(DateTimePicker), new PropertyMetadata(string.Empty));
 
@@ -106,7 +115,10 @@ namespace MyBeatSaberScore.UserControls
             if (Calendar1.SelectedDate != null)
             {
                 DateTime date = Calendar1.SelectedDate.Value;
-                SelectedDateTime = new DateTimeOffset(date.Year, date.Month, date.Day, SelectedDateTime?.Hour ?? 0, SelectedDateTime?.Minute ?? 0, 0, TimeZoneInfo.Local.BaseUtcOffset);
+                string time = (string)DefaultTime;
+                int hour = SelectedDateTime?.Hour ?? int.Parse(time.Substring(0, 2));
+                int minute = SelectedDateTime?.Minute ?? int.Parse(time.Substring(3, 2));
+                SelectedDateTime = new DateTimeOffset(date.Year, date.Month, date.Day, hour, minute, 0, TimeZoneInfo.Local.BaseUtcOffset);
             }
             else
             {

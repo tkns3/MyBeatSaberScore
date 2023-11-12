@@ -1,11 +1,9 @@
 ﻿using MyBeatSaberScore.APIs;
 using MyBeatSaberScore.Utility;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Reflection;
 using System.Windows.Controls;
 
 namespace MyBeatSaberScore
@@ -94,6 +92,8 @@ namespace MyBeatSaberScore
 
         public static WindowConfig Window => _data.window;
 
+        public static FilterConfig Filter => _data.filter;
+
         public static void LoadFromLocalFile()
         {
             try
@@ -176,6 +176,8 @@ namespace MyBeatSaberScore
             public WindowConfig window { get; set; } = new();
 
             public GridConfig grid { get; set; } = new();
+
+            public FilterConfig filter { get; set; } = new();
 
             public void Normalize()
             {
@@ -320,6 +322,12 @@ namespace MyBeatSaberScore
             /// </summary>
             Saved,
         }
+
+        public class FilterConfig
+        {
+            public string defaultTime { get; set; } = "00:00";
+        }
+
 #pragma warning restore IDE1006 // 命名スタイル
     }
 }

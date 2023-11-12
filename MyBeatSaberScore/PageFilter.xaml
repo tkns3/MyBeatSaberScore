@@ -157,9 +157,9 @@
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Ranked Date" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,4,4,0"/>
-                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.RankedDateStart, Mode=TwoWay}"/>
+                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.RankedDateStart, Mode=TwoWay}" DefaultTime="{Binding DefaultTime}"/>
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,4,4,0"/>
-                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.RankedDateEnd, Mode=TwoWay}"/>
+                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.RankedDateEnd, Mode=TwoWay}" DefaultTime="{Binding DefaultTime}"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="★" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
@@ -238,9 +238,9 @@
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="スコア更新日時" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,4,4,0"/>
-                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.DateStart, Mode=TwoWay}"/>
+                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.DateStart, Mode=TwoWay}" DefaultTime="{Binding DefaultTime}"/>
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,4,4,0"/>
-                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.DateEnd, Mode=TwoWay}"/>
+                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.DateEnd, Mode=TwoWay}" DefaultTime="{Binding DefaultTime}"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="プレイ状況" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
