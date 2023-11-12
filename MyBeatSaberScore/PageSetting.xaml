@@ -10,6 +10,7 @@
 
     <Page.Resources>
         <convert:DateConverter x:Key="DateConverter"/>
+        <convert:DateTimeOffsetConverter x:Key="DateTimeOffsetConverter"/>
         <convert:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         <Style TargetType="{x:Type Button}" x:Key="ImageButtonStyle">
             <Setter Property="Template">
@@ -63,7 +64,7 @@
                                     <StackPanel Orientation="Horizontal" Margin="20,4,0,0">
                                         <Button Content="保存" Width="80" Click="ButtonSaveWindowBounds_Click"/>
                                         <TextBlock Text="保存日：" Margin="8,2,0,0"/>
-                                        <TextBlock Text="{Binding WindowBoundsSavedDate, Converter={StaticResource DateConverter}}" Margin="4,2,0,0"/>
+                                        <TextBlock Text="{Binding WindowBoundsSavedDate, Converter={StaticResource DateTimeOffsetConverter}}" Margin="4,2,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
@@ -110,7 +111,7 @@
                                     <StackPanel Orientation="Horizontal" Margin="20,4,0,0">
                                         <Button Content="保存" Width="80" Click="ButtonSaveColumnParams_Click"/>
                                         <TextBlock Text="保存日：" Margin="8,2,0,0"/>
-                                        <TextBlock Text="{Binding ColumnParamsSavedDate, Converter={StaticResource DateConverter}}" Margin="4,2,0,0"/>
+                                        <TextBlock Text="{Binding ColumnParamsSavedDate, Converter={StaticResource DateTimeOffsetConverter}}" Margin="4,2,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
 

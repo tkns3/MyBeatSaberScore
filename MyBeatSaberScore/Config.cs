@@ -118,7 +118,7 @@ namespace MyBeatSaberScore
         {
             try
             {
-                Utility.Json.SerializeToLocalFile(_data, _configPath, Formatting.Indented);
+                Utility.Json.SerializeToLocalFile(_data, _configPath);
             }
             catch (Exception ex)
             {
@@ -233,7 +233,7 @@ namespace MyBeatSaberScore
         {
             public RestoreMode mode { get; set; } = RestoreMode.Last;
 
-            public DateTime? savedDate { get; set; }
+            public DateTimeOffset? savedDate { get; set; }
 
             public List<GridColumnParam> lastParams { get; set; } = new();
 
@@ -272,7 +272,7 @@ namespace MyBeatSaberScore
         {
             public RestoreMode mode { get; set; } = RestoreMode.Last;
 
-            public DateTime? savedDate { get; set; }
+            public DateTimeOffset? savedDate { get; set; }
 
             public WindowBounds last { get; set; } = new();
 

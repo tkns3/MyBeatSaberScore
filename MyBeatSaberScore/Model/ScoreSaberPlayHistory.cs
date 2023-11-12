@@ -9,7 +9,7 @@ namespace MyBeatSaberScore.Model
     public class ScoreSaberPlayHistory
     {
         readonly Dictionary<long, SpecificMapPlayHistory> _resultsByLeaderboardId = new();
-        readonly SortedList<DateTime, PlayResult> _allResults = new();
+        readonly SortedList<DateTimeOffset, PlayResult> _allResults = new();
 
         public void LoadFromLocalFile(string path)
         {
@@ -25,7 +25,7 @@ namespace MyBeatSaberScore.Model
 
         public void SaveToLocalFile(string path)
         {
-            Json.SerializeToLocalFile(_allResults.Values, path, Newtonsoft.Json.Formatting.Indented);
+            Json.SerializeToLocalFile(_allResults.Values, path);
         }
 
         public void Clear()
@@ -108,12 +108,12 @@ namespace MyBeatSaberScore.Model
 
             public bool hasReplay { get; set; }
 
-            public DateTime timeSet { get; set; }
+            public DateTimeOffset timeSet { get; set; }
         }
 
         public class SpecificMapPlayHistory
         {
-            readonly SortedList<DateTime, PlayResult> _results = new();
+            readonly SortedList<DateTimeOffset, PlayResult> _results = new();
 
             public void Add(PlayResult result)
             {

@@ -36,10 +36,10 @@ namespace MyBeatSaberScore.APIs
         public class MapDetail
         {
             public bool automapper { get; set; }
-            public DateTime createdAt { get; set; }
-            public DateTime? curatedAt { get; set; }
+            public DateTimeOffset createdAt { get; set; }
+            public DateTimeOffset? curatedAt { get; set; }
             public UserDetail? curator { get; set; } = new();
-            public DateTime? deletedAt { get; set; }
+            public DateTimeOffset? deletedAt { get; set; }
             public string description { get; set; } = "";
             public string id
             {
@@ -52,15 +52,15 @@ namespace MyBeatSaberScore.APIs
                     _id = value.ToLower();
                 }
             }
-            public DateTime lastPublishedAt { get; set; }
+            public DateTimeOffset lastPublishedAt { get; set; }
             public MapDetailMetadata metadata { get; set; } = new();
             public string name { get; set; } = "";
             public bool qualified { get; set; }
             public bool ranked { get; set; }
             public MapStats stats { get; set; } = new();
             public List<string> tags { get; set; } = new();
-            public DateTime updatedAt { get; set; }
-            public DateTime uploaded { get; set; }
+            public DateTimeOffset updatedAt { get; set; }
+            public DateTimeOffset uploaded { get; set; }
             public UserDetail uploader { get; set; } = new();
             public List<MapVersion> versions { get; set; } = new();
 
@@ -134,7 +134,7 @@ namespace MyBeatSaberScore.APIs
         public class MapVersion
         {
             public string coverURL { get; set; } = "";
-            public DateTime createdAt { get; set; }
+            public DateTimeOffset createdAt { get; set; }
             public List<MapDifficulty> diffs { get; set; } = new();
             public string downloadURL { get; set; } = "";
             public string feedback { get; set; } = "";
@@ -162,9 +162,9 @@ namespace MyBeatSaberScore.APIs
             }
             public string previewURL { get; set; } = "";
             public int sageScore { get; set; }
-            public DateTime scheduledAt { get; set; }
+            public DateTimeOffset scheduledAt { get; set; }
             public string state { get; set; } = "";
-            public DateTime testplayAt { get; set; }
+            public DateTimeOffset testplayAt { get; set; }
             public List<MapTestplay> testplays { get; set; } = new();
 
             private string _hash = "";
@@ -248,7 +248,7 @@ namespace MyBeatSaberScore.APIs
 
         public class MapTestplay
         {
-            public DateTime createdAt { get; set; }
+            public DateTimeOffset createdAt { get; set; }
             public string feedback { get; set; } = "";
             public string feedbackAt { get; set; } = "";
             public UserDetail user { get; set; } = new();

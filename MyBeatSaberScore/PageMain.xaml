@@ -18,7 +18,7 @@
         <convert:AccConverter x:Key="AccConverter"/>
         <convert:AccDiffConverter x:Key="AccDiffConverter"/>
         <convert:BsrConverter x:Key="BsrConverter"/>
-        <convert:DateConverter x:Key="DateConverter"/>
+        <convert:DateTimeOffsetConverter x:Key="DateTimeOffsetConverter"/>
         <convert:PPConverter x:Key="PPConverter"/>
         <convert:StarConverter x:Key="StarConverter"/>
         <convert:TimeConverter x:Key="TimeConverter"/>
@@ -290,7 +290,7 @@
 
                     <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" utility:TagBehavior.Tag="Map.SongName" Width="220" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
 
-                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Date"  Width="140" Binding="{Binding ScoreSaber.TimeSet, Converter={StaticResource DateConverter}}">
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Date"  Width="140" Binding="{Binding ScoreSaber.TimeSet, Converter={StaticResource DateTimeOffsetConverter}}">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -301,7 +301,7 @@
                         </DataGridTextColumn.HeaderTemplate>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Date"  Width="140" Binding="{Binding BeatLeader.TimeSet, Converter={StaticResource DateConverter}}">
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Date"  Width="140" Binding="{Binding BeatLeader.TimeSet, Converter={StaticResource DateTimeOffsetConverter}}">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -711,7 +711,7 @@
 
                     <DataGridTextColumn Header="Hash" utility:TagBehavior.Tag="Map.Hash" Width="64" Binding="{Binding Map.Hash}"/>
 
-                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.ScoreSaber.RankedDate"  Width="140" Binding="{Binding Map.ScoreSaber.RankedTime, Converter={StaticResource DateConverter}}">
+                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.ScoreSaber.RankedDate"  Width="140" Binding="{Binding Map.ScoreSaber.RankedTime, Converter={StaticResource DateTimeOffsetConverter}}">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -722,7 +722,7 @@
                         </DataGridTextColumn.HeaderTemplate>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.BeatLeader.RankedDate"  Width="140" Binding="{Binding Map.BeatLeader.RankedTime, Converter={StaticResource DateConverter}}">
+                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.BeatLeader.RankedDate"  Width="140" Binding="{Binding Map.BeatLeader.RankedTime, Converter={StaticResource DateTimeOffsetConverter}}">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">

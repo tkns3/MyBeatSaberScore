@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="MyBeatSaberScore.UserControls.DateTimePicker"
+             Name="dateTimePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyBeatSaberScore.UserControls"
+             xmlns:local2="clr-namespace:MyBeatSaberScore"
+             mc:Ignorable="d" 
+             Height="20">
+
+    <UserControl.Resources>
+        <Style x:Key="ClearButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#0000" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Ellipse Canvas.Top="1" Canvas.Left="1" Width="22" Height="22" Fill="{TemplateBinding Background}"/>
+                                    <Path x:Name="Icon" Stroke="#79747E" StrokeThickness="2" Data="M6,6 l12,12 M6,18 l12,-12"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#8DDD" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#8AAA" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DatePickButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#0000" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Ellipse Canvas.Top="1" Canvas.Left="1" Width="22" Height="22" Fill="{TemplateBinding Background}"/>
+                                    <Path  x:Name="Icon" Fill="#79747E" Stroke="#79747E" StrokeThickness="1" Data="M72.2,262.025a11.468,11.468,0,0,0-11.3,11.628v23.318a11.467,11.467,0,1,0,22.935,0l0-23.318A11.469,11.469,0,0,0,72.2,262.025Zm76.623,0a11.468,11.468,0,0,0-11.3,11.628v23.318a11.467,11.467,0,1,0,22.935,0l0-23.318a11.469,11.469,0,0,0-11.636-11.628ZM29.64,288.706A16.9,16.9,0,0,0,12.965,305.39V445.34A16.9,16.9,0,0,0,29.64,462.024H191.708a16.909,16.909,0,0,0,16.684-16.684V305.39a16.909,16.909,0,0,0-16.684-16.684H168.8v8.1a19.82,19.82,0,1,1-39.617,0v-8.1H92.175v8.1a19.82,19.82,0,1,1-39.617,0v-8.1ZM35.9,329.663H185.451v109.42H35.9Z" Height="14" Stretch="Fill" Width="14" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.867,1.211" Canvas.Left="5.044" Canvas.Top="4.545"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#8DDD" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#8AAA" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TimePickButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#0000" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Viewbox>
+                                <Canvas Width="24" Height="24">
+                                    <Ellipse Canvas.Top="1" Canvas.Left="1" Width="22" Height="22" Fill="{TemplateBinding Background}"/>
+                                    <Path Stroke="#79747E" StrokeThickness="1" Data="M20,36A16,16,0,1,1,36,20,16.01833,16.01833,0,0,1,20,36ZM20,6A14,14,0,1,0,34,20,14.01572,14.01572,0,0,0,20,6Z" Height="14" Stretch="Fill" Width="14" Canvas.Left="5.2" Canvas.Top="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Path Stroke="#79747E" StrokeThickness="1" Data="M25,26a.99676.99676,0,0,1-.707-.293l-5-5A1.00012,1.00012,0,0,1,19,20V10a1,1,0,0,1,2,0v9.58594l4.707,4.707A1,1,0,0,1,25,26Z" Height="8" Stretch="Fill" Width="4" Canvas.Left="11.3" Canvas.Top="7.2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#8DDD" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#8AAA" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="{x:Static SystemColors.ActiveBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <local2:PlaceholderTextBox
+                    x:Name="TextBox1"
+                    Grid.Column="0"
+                    BorderThickness="0"
+                    BorderBrush="#0000"
+                    Margin="0"
+                    VerticalContentAlignment="Center"
+                    Placeholder="{Binding Placeholder, ElementName=dateTimePicker, Mode=TwoWay}"
+                    LostFocus="TextBox1_LostFocus"/>
+
+                <Button
+                    x:Name="ClearButton"
+                    Visibility="Collapsed"
+                    Grid.Column="1"
+                    Content="Clear Button"
+                    Style="{StaticResource ClearButtonStyle}"
+                    Click="ClearButton_Click"/>
+
+                <Button
+                    x:Name="DatePickButton"
+                    Visibility="Visible"
+                    Grid.Column="2"
+                    Content="Clear Button"
+                    Style="{StaticResource DatePickButtonStyle}"
+                    Click="DatePickButton_Click"/>
+
+                <Button
+                    x:Name="TimePickButton"
+                    Visibility="Visible"
+                    Grid.Column="3"
+                    Content="Clear Button"
+                    Style="{StaticResource TimePickButtonStyle}"
+                    Click="TimePickButton_Click"/>
+            </Grid>
+        </Border>
+        <Popup x:Name="DatePickupPopup" Grid.Row="1" StaysOpen="False" AllowsTransparency="True" Opened="DatePickupPopup_Opened" >
+            <Calendar x:Name="Calendar1" SelectedDatesChanged="Calendar1_SelectedDatesChanged" />
+        </Popup>
+        <Popup x:Name="TimePickupPopup" Grid.Row="1" StaysOpen="False" AllowsTransparency="True" Opened="TimePickupPopup_Opened">
+            <ListBox x:Name="TimeListBox1" Height="200" SelectionChanged="TimeListBox1_SelectionChanged" />
+        </Popup>
+    </Grid>
+
+</UserControl>

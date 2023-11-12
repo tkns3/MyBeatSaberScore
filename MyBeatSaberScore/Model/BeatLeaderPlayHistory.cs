@@ -9,7 +9,7 @@ namespace MyBeatSaberScore.Model
     public class BeatLeaderPlayHistory
     {
         readonly Dictionary<string, SpecificMapPlayHistory> _resultsByLeaderboardId = new();
-        readonly SortedList<DateTime, PlayResult> _allResults = new();
+        readonly SortedList<DateTimeOffset, PlayResult> _allResults = new();
 
         public void LoadFromLocalFile(string path)
         {
@@ -25,7 +25,7 @@ namespace MyBeatSaberScore.Model
 
         public void SaveToLocalFile(string path)
         {
-            Json.SerializeToLocalFile(_allResults.Values, path, Newtonsoft.Json.Formatting.Indented);
+            Json.SerializeToLocalFile(_allResults.Values, path);
         }
 
         public void Clear()
@@ -77,7 +77,7 @@ namespace MyBeatSaberScore.Model
                 maxStreak = score.maxStreak ?? 0,
                 hmd = score.hmd,
                 controller = score.controller,
-                timeset = new DateTime(1970, 1, 1).AddSeconds(double.Parse(score.timeset ?? "")),
+                timeset = DateTimeOffset.FromUnixTimeSeconds(long.TryParse(score.timeset, out var epochSeconds) ? epochSeconds : 0),
                 timepost = score.timepost,
                 replaysWatched = score.replaysWatched,
             });
@@ -123,14 +123,14 @@ namespace MyBeatSaberScore.Model
             public int maxStreak { get; set; }
             public int hmd { get; set; }
             public int controller { get; set; }
-            public DateTime timeset { get; set; }
+            public DateTimeOffset timeset { get; set; }
             public int timepost { get; set; }
             public int replaysWatched { get; set; }
         }
 
         public class SpecificMapPlayHistory
         {
-            readonly SortedList<DateTime, PlayResult> _results = new();
+            readonly SortedList<DateTimeOffset, PlayResult> _results = new();
 
             public void Add(PlayResult result)
             {

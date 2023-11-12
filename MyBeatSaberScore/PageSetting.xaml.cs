@@ -40,7 +40,7 @@ namespace MyBeatSaberScore
         {
             if (MainWindow.Instance != null)
             {
-                _model.WindowBoundsSavedDate = DateTime.Now;
+                _model.WindowBoundsSavedDate = DateTimeOffset.Now;
                 Config.Window.boundsRestore.saved = MainWindow.Instance.GetWindowBounds();
                 Config.SaveToLocalFile();
             }
@@ -53,7 +53,7 @@ namespace MyBeatSaberScore
                 var columnParams = PageMain.Instance.GetGridColumnParams();
                 if (columnParams != null)
                 {
-                    _model.ColumnParamsSavedDate = DateTime.Now;
+                    _model.ColumnParamsSavedDate = DateTimeOffset.Now;
                     Config.Grid.columnRestore.savedParams.Clear();
                     Config.Grid.columnRestore.savedParams.AddRange(columnParams);
                     Config.SaveToLocalFile();
@@ -109,7 +109,7 @@ namespace MyBeatSaberScore
             }
         }
 
-        public DateTime? WindowBoundsSavedDate
+        public DateTimeOffset? WindowBoundsSavedDate
         {
             get
             {
@@ -134,7 +134,7 @@ namespace MyBeatSaberScore
             }
         }
 
-        public DateTime? ColumnParamsSavedDate
+        public DateTimeOffset? ColumnParamsSavedDate
         {
             get
             {
