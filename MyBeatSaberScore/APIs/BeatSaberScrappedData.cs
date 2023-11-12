@@ -108,7 +108,7 @@ namespace MyBeatSaberScore.APIs
             public string SongAuthorName { get; set; } = "";
             public string LevelAuthorName { get; set; } = "";
             public List<Difficulty> Diffs { get; set; } = new();
-            public DateTime Uploaded { get; set; }
+            public DateTimeOffset Uploaded { get; set; }
             public double Bpm { get; set; }
             public int Downloads { get; set; }
             public int Upvotes { get; set; }
@@ -175,7 +175,7 @@ namespace MyBeatSaberScore.APIs
             }
             public double Stars { get; set; }
             public bool Ranked { get; set; }
-            public DateTime RankedUpdateTime { get; set; }
+            public DateTimeOffset RankedUpdateTime { get; set; }
             public int Bombs { get; set; }
             public int Notes { get; set; }
             public int Obstacles { get; set; }

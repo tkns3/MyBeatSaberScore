@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:MyBeatSaberScore"
       xmlns:convert="clr-namespace:MyBeatSaberScore.Convertes"
       xmlns:b="clr-namespace:MyBeatSaberScore.Utility"
+      xmlns:uc="clr-namespace:MyBeatSaberScore.UserControls"
       mc:Ignorable="d" 
       d:DesignWidth="1070"
       Title="PageFilter">
@@ -78,7 +79,7 @@
                                 <StackPanel Grid.Column="1">
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Filter Name" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
-                                        <TextBox Width="295" Text="{Binding CurrentFilterValue.FilterName}" />
+                                        <uc:ClearableTextBox Width="295" Text="{Binding CurrentFilterValue.FilterName, Mode=TwoWay}" />
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>
@@ -156,72 +157,72 @@
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Ranked Date" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,4,4,0"/>
-                                        <DatePicker SelectedDate="{Binding CurrentFilterValue.RankedDateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.RankedDateStart, Mode=TwoWay}" DefaultTime="{Binding DefaultTime}"/>
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,4,4,0"/>
-                                        <DatePicker SelectedDate="{Binding CurrentFilterValue.RankedDateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.RankedDateEnd, Mode=TwoWay}" DefaultTime="{Binding DefaultTime}"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="★" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinStar}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="0" Text="{Binding CurrentFilterValue.MinStar, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='StarMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxStar}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="20" Text="{Binding CurrentFilterValue.MaxStar, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='StarMax', Mode=TwoWay}" />
                                         <TextBlock Text="小数、ランク譜面のみ" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Duration" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinDuration, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinDuration, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxDuration, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxDuration, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax', Mode=TwoWay}" />
                                         <TextBlock Text="小数、単位秒" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="BPM" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinBpm, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinBpm, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxBpm, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxBpm, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax', Mode=TwoWay}" />
                                         <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Notes" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinNote, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinNote, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxNote, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxNote, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax', Mode=TwoWay}" />
                                         <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Bomb" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinBomb, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinBomb, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxBomb, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxBomb, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax', Mode=TwoWay}" />
                                         <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Wall" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinWall, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinWall, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxWall, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxWall, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax', Mode=TwoWay}" />
                                         <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="NPS" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinNps, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinNps, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxNps, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxNps, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax', Mode=TwoWay}" />
                                         <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="NJS" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinNjs, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinNjs, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxNjs, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxNjs, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax', Mode=TwoWay}" />
                                         <TextBlock Text="小数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
@@ -237,9 +238,9 @@
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="スコア更新日時" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,4,4,0"/>
-                                        <DatePicker SelectedDate="{Binding CurrentFilterValue.DateStart}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.DateStart, Mode=TwoWay}" DefaultTime="{Binding DefaultTime}"/>
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,4,4,0"/>
-                                        <DatePicker SelectedDate="{Binding CurrentFilterValue.DateEnd}" Width="120" HorizontalAlignment="Left"></DatePicker>
+                                        <uc:DateTimePicker Width="160" Placeholder="Unlimited" SelectedDateTime="{Binding CurrentFilterValue.DateEnd, Mode=TwoWay}" DefaultTime="{Binding DefaultTime}"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="プレイ状況" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
@@ -265,49 +266,49 @@
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="# (順位)" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinScoreRank, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinScoreRank, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxScoreRank, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxScoreRank, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax', Mode=TwoWay}" />
                                         <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="PP" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinPp, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinPp, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxPp, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxPp, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax', Mode=TwoWay}" />
                                         <TextBlock Text="小数、ランク譜面のみ" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="ACC" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinAcc, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinAcc, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxAcc, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxAcc, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='DoubleMax', Mode=TwoWay}" />
                                         <TextBlock Text="小数、単位%" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Miss + Bad" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinMissPlusBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinMissPlusBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxMissPusBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxMissPusBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax', Mode=TwoWay}" />
                                         <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Miss" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinMiss, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinMiss, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxMiss, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxMiss, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax', Mode=TwoWay}" />
                                         <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
                                         <TextBlock Text="Bad" FontWeight="Bold" Margin="0,0,0,0" Width="100"/>
                                         <TextBlock Text="Min" Foreground="Gray" Margin="0,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MinBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MinBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMin', Mode=TwoWay}" />
                                         <TextBlock Text="Max" Foreground="Gray" Margin="4,2,4,0"/>
-                                        <TextBox Width="120" Text="{Binding CurrentFilterValue.MaxBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax'}" />
+                                        <uc:ClearableTextBox Width="160" Placeholder="Unlimited" Text="{Binding CurrentFilterValue.MaxBad, Converter={StaticResource UnlimitableNumericConverter}, ConverterParameter='LongMax', Mode=TwoWay}" />
                                         <TextBlock Text="整数" Foreground="Gray" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,0,8" Orientation="Horizontal">

@@ -2,6 +2,7 @@
 using MyBeatSaberScore.APIs;
 using MyBeatSaberScore.BeatMap;
 using MyBeatSaberScore.Model;
+using MyBeatSaberScore.UserControls;
 using MyBeatSaberScore.Utility;
 using Newtonsoft.Json.Linq;
 using System;
@@ -56,6 +57,13 @@ namespace MyBeatSaberScore
             {
                 XaDataGrid.LoadingRow += DisplayRowIndex;
             }
+
+            // [note]
+            // UserControl 内の TextBox に対する Binding の UpdateSourceTrigger を XML だけで上手く指定する方法がわからない。
+            // とりあえず UserControl のコードビハインドに UpdateSourceTrigger を設定するメソッドを用意して対応しておく。
+            XaSongNameFilter.SetTextBoxUpdateSourceTrigger(UpdateSourceTrigger.PropertyChanged);
+            XaBsrFilter.SetTextBoxUpdateSourceTrigger(UpdateSourceTrigger.PropertyChanged);
+            XaHashFilter.SetTextBoxUpdateSourceTrigger(UpdateSourceTrigger.PropertyChanged);
         }
 
         internal List<Config.GridColumnParam>? GetGridColumnParams()
@@ -516,7 +524,7 @@ namespace MyBeatSaberScore
 
         private void OnFilterTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (((PlaceholderTextBox)sender)._imeFlag) return;
+            if (((ClearableTextBox)sender).ImeFlag) return;
             RefreshGrid();
         }
 

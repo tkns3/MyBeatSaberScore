@@ -80,11 +80,11 @@ namespace MyBeatSaberScore.Model
 
     public class FilterDateTimeRange : FilterItemBase
     {
-        public DateTime? MinValue;
-        public DateTime? MaxValue;
-        public Func<object, DateTime?> GetFilterTargetValue;
+        public DateTimeOffset? MinValue;
+        public DateTimeOffset? MaxValue;
+        public Func<object, DateTimeOffset?> GetFilterTargetValue;
 
-        public FilterDateTimeRange(DateTime? min, DateTime? max,Func<object, DateTime?> getFilterTargetValue)
+        public FilterDateTimeRange(DateTimeOffset? min, DateTimeOffset? max, Func<object, DateTimeOffset?> getFilterTargetValue)
         {
             MinValue = min;
             MaxValue = max;
@@ -93,7 +93,7 @@ namespace MyBeatSaberScore.Model
 
         public override bool IsShow(object obj)
         {
-            DateTime? value = GetFilterTargetValue(obj);
+            DateTimeOffset? value = GetFilterTargetValue(obj);
             if (value != null)
             {
                 if (MinValue != null)
@@ -106,11 +106,15 @@ namespace MyBeatSaberScore.Model
 
                 if (MaxValue != null)
                 {
-                    if (value > MaxValue)
+                    if (value >= MaxValue)
                     {
                         return false;
                     }
                 }
+            }
+            else
+            {
+                return (MinValue == null) && (MaxValue == null);
             }
             return true;
         }

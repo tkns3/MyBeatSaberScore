@@ -8,6 +8,7 @@
       xmlns:beatmap="clr-namespace:MyBeatSaberScore.BeatMap"
       xmlns:convert="clr-namespace:MyBeatSaberScore.Convertes"
       xmlns:utility="clr-namespace:MyBeatSaberScore.Utility"
+      xmlns:uc="clr-namespace:MyBeatSaberScore.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1200"
       Title="PageMain" Loaded="Page_Loaded"
@@ -17,7 +18,7 @@
         <convert:AccConverter x:Key="AccConverter"/>
         <convert:AccDiffConverter x:Key="AccDiffConverter"/>
         <convert:BsrConverter x:Key="BsrConverter"/>
-        <convert:DateConverter x:Key="DateConverter"/>
+        <convert:DateTimeOffsetConverter x:Key="DateTimeOffsetConverter"/>
         <convert:PPConverter x:Key="PPConverter"/>
         <convert:StarConverter x:Key="StarConverter"/>
         <convert:TimeConverter x:Key="TimeConverter"/>
@@ -196,9 +197,11 @@
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="160">
                             <Canvas>
                                 <TextBlock Canvas.Left="4" Canvas.Top="6" Text="検索"/>
-                                <local:PlaceholderTextBox x:Name="XaSongNameFilter" Text="{Binding FilterValue.SongName, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="8" Canvas.Top="28" Placeholder="曲名・曲作者・譜面作者" Width="144" ToolTip="曲名で検索" TextChanged="OnFilterTextChanged" Height="18"/>
-                                <local:PlaceholderTextBox x:Name="XaBsrFilter" Text="{Binding FilterValue.Bsr, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="8" Canvas.Top="51" Placeholder="BSR" Width="144" ToolTip="BSRで検索" TextChanged="OnFilterTextChanged" Height="18"/>
-                                <local:PlaceholderTextBox x:Name="XaHashFilter" Text="{Binding FilterValue.Hash, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="8" Canvas.Top="74" Placeholder="HASH" Width="144" ToolTip="HASHで検索" TextChanged="OnFilterTextChanged" Height="18"/>
+                                <!-- UserControl 内の TextBox に対して Binding の UpdateSourceTrigger=PropertyChanged を XAML で上手く指定する方法がわからない。 -->
+                                <!-- コードビハインドで各コントロールに対しメソッド SetTextBoxUpdateSourceTrigger を使い UpdateSourceTrigger を設定する方式にしている。 -->
+                                <uc:ClearableTextBox x:Name="XaSongNameFilter" Text="{Binding FilterValue.SongName, Mode=TwoWay}" Canvas.Left="8" Canvas.Top="28" Placeholder="曲名・曲作者・譜面作者" Width="144" ToolTip="曲名、曲作者、譜面作者のいずれかに部分一致する譜面を検索する" TextChanged="OnFilterTextChanged" Height="18"/>
+                                <uc:ClearableTextBox x:Name="XaBsrFilter" Text="{Binding FilterValue.Bsr, Mode=TwoWay}" Canvas.Left="8" Canvas.Top="51" Placeholder="BSR" Width="144" ToolTip="BSRが部分一致する譜面を検索する" TextChanged="OnFilterTextChanged" Height="18"/>
+                                <uc:ClearableTextBox x:Name="XaHashFilter" Text="{Binding FilterValue.Hash, Mode=TwoWay}" Canvas.Left="8" Canvas.Top="74" Placeholder="HASH" Width="144" ToolTip="HASHが部分一致する譜面を検索する" TextChanged="OnFilterTextChanged" Height="18"/>
                             </Canvas>
                         </Border>
                         <Border Margin="2,0,2,0" BorderBrush="#FF757575" BorderThickness="1" Height="98" Width="160">
@@ -287,7 +290,7 @@
 
                     <DataGridTextColumn Header="曲名 / 曲作者 [ 譜面作者 ]" utility:TagBehavior.Tag="Map.SongName" Width="220" Binding="{Binding SongFullName}" ElementStyle="{StaticResource WrapText}"/>
 
-                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Date"  Width="140" Binding="{Binding ScoreSaber.TimeSet, Converter={StaticResource DateConverter}}">
+                    <DataGridTextColumn utility:TagBehavior.Tag="ScoreSaber.Date"  Width="140" Binding="{Binding ScoreSaber.TimeSet, Converter={StaticResource DateTimeOffsetConverter}}">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -298,7 +301,7 @@
                         </DataGridTextColumn.HeaderTemplate>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Date"  Width="140" Binding="{Binding BeatLeader.TimeSet, Converter={StaticResource DateConverter}}">
+                    <DataGridTextColumn utility:TagBehavior.Tag="BeatLeader.Date"  Width="140" Binding="{Binding BeatLeader.TimeSet, Converter={StaticResource DateTimeOffsetConverter}}">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -708,7 +711,7 @@
 
                     <DataGridTextColumn Header="Hash" utility:TagBehavior.Tag="Map.Hash" Width="64" Binding="{Binding Map.Hash}"/>
 
-                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.ScoreSaber.RankedDate"  Width="140" Binding="{Binding Map.ScoreSaber.RankedTime, Converter={StaticResource DateConverter}}">
+                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.ScoreSaber.RankedDate"  Width="140" Binding="{Binding Map.ScoreSaber.RankedTime, Converter={StaticResource DateTimeOffsetConverter}}">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -719,7 +722,7 @@
                         </DataGridTextColumn.HeaderTemplate>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.BeatLeader.RankedDate"  Width="140" Binding="{Binding Map.BeatLeader.RankedTime, Converter={StaticResource DateConverter}}">
+                    <DataGridTextColumn Header="Ranked Date" utility:TagBehavior.Tag="Map.BeatLeader.RankedDate"  Width="140" Binding="{Binding Map.BeatLeader.RankedTime, Converter={StaticResource DateTimeOffsetConverter}}">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">

@@ -193,7 +193,7 @@ namespace MyBeatSaberScore.Model
             return ((IntegrationScore)item).Map.MapDifficulty;
         }
 
-        public static DateTime? GetFilterTargetMapRankedDate(object item)
+        public static DateTimeOffset? GetFilterTargetMapRankedDate(object item)
         {
             bool beatLeader = AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader);
             return beatLeader ? ((IntegrationScore)item).Map.BeatLeader.RankedTime : ((IntegrationScore)item).Map.ScoreSaber.RankedTime;
@@ -240,7 +240,7 @@ namespace MyBeatSaberScore.Model
             return ((IntegrationScore)item).Map.Njs;
         }
 
-        public static DateTime? GetFilterTargetPlayUpdateDate(object item)
+        public static DateTimeOffset? GetFilterTargetPlayUpdateDate(object item)
         {
             bool beatLeader = AppData.ViewTarget.HasFlag(ViewTarget.BeatLeader);
             return beatLeader ? ((IntegrationScore)item).BeatLeader.TimeSet : ((IntegrationScore)item).ScoreSaber.TimeSet;
@@ -331,7 +331,7 @@ namespace MyBeatSaberScore.Model
         /// <summary>
         /// スコア更新日
         /// </summary>
-        public DateTime? TimeSet { get; protected set; }
+        public DateTimeOffset? TimeSet { get; protected set; }
 
         /// <summary>
         /// スコア
@@ -579,7 +579,7 @@ namespace MyBeatSaberScore.Model
         public void Set(BeatMapData map, BeatLeader.ScoreResponseWithMyScore score, BeatLeaderPlayHistory.SpecificMapPlayHistory results)
         {
             Reference = score;
-            TimeSet = (score.modifiedScore >= 0) ? new DateTime(1970, 1, 1).AddSeconds(double.Parse(score.timeset)) : null;
+            TimeSet = (score.modifiedScore >= 0) ? DateTimeOffset.FromUnixTimeSeconds(long.TryParse(score.timeset, out var epochSeconds) ? epochSeconds : 0).ToOffset(TimeZoneInfo.Local.BaseUtcOffset) : null;
             ModifiedScore = score.modifiedScore;
             Acc = (map.MaxScore > 0 && score.modifiedScore > 0) ? (double)score.modifiedScore * 100 / map.MaxScore : 0;
             AccDifference = (map.MaxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / map.MaxScore : 0;

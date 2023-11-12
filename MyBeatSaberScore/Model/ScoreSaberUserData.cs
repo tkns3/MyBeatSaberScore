@@ -125,7 +125,7 @@ namespace MyBeatSaberScore.Model
             };
             collection.metadata.total = PlayedScores.Values.Count;
 
-            Json.SerializeToLocalFile(collection, _scoresPath, Formatting.Indented);
+            Json.SerializeToLocalFile(collection, _scoresPath);
 
             PlayHistory.SaveToLocalFile(_historyPath);
         }
@@ -143,7 +143,7 @@ namespace MyBeatSaberScore.Model
             if (profile.id.Length > 0 && profile.id.Equals(ProfileId))
             {
                 Profile = profile;
-                Json.SerializeToLocalFile(Profile, _profilePath, Formatting.Indented);
+                Json.SerializeToLocalFile(Profile, _profilePath);
                 IsExistProfile = true;
                 return true;
             }

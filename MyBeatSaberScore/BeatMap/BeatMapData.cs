@@ -11,7 +11,7 @@ namespace MyBeatSaberScore.BeatMap
         public string SongSubName { get; set; } = "";
         public string SongAuthorName { get; set; } = "";
         public string MapperName { get; set; } = "";
-        public DateTime UploadedTime { get; set; } = new();
+        public DateTimeOffset UploadedTime { get; set; } = new();
         public double Bpm { get; set; }
         public double Duration { get; set; }
         public BeatMapDifficulty MapDifficulty { get; set; }
@@ -30,7 +30,7 @@ namespace MyBeatSaberScore.BeatMap
     public class RankedInformation
     {
         public bool Ranked { get; set; } = false;
-        public DateTime? RankedTime { get; set; }
+        public DateTimeOffset? RankedTime { get; set; }
         public double Star { get; set; }
     }
 }

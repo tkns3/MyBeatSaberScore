@@ -18,17 +18,16 @@ namespace MyBeatSaberScore.Utility
             return deserialized;
         }
 
-        public static void SerializeToLocalFile<T>(T data, string path, JsonSerializerSettings? setting = null)
-        {
-            var jsonString = JsonConvert.SerializeObject(data, setting);
-            File.WriteAllText(path, jsonString, System.Text.Encoding.UTF8);
-        }
-
-        public static void SerializeToLocalFile<T>(T data, string path, Formatting format = Formatting.None)
+        public static void SerializeToLocalFile<T>(T data, string path, Formatting format = Formatting.Indented)
         {
             var dir = System.IO.Path.GetDirectoryName(path);
             if (dir != null) Directory.CreateDirectory(dir);
-            var jsonString = JsonConvert.SerializeObject(data, format);
+            var setting = new JsonSerializerSettings()
+            {
+                Formatting = format,
+                DateFormatString = "yyyy-MM-ddTHH:mm:sszzz"
+            };
+            var jsonString = JsonConvert.SerializeObject(data, setting);
             File.WriteAllText(path, jsonString, System.Text.Encoding.UTF8);
         }
     }

@@ -223,14 +223,14 @@ namespace MyBeatSaberScore.BeatMap
                     case 2:
                         if (_t1Result)
                         {
-                            Json.SerializeToLocalFile(_beatSaberScrappedDataCache, _beatSaberScrappedDataChachePath, Formatting.Indented);
+                            Json.SerializeToLocalFile(_beatSaberScrappedDataCache, _beatSaberScrappedDataChachePath);
                         }
                         _finishedStep += 1;
                         break;
                     case 3:
                         if (_t2Result)
                         {
-                            Json.SerializeToLocalFile(_beatLeaderRankedMapsCache, _beatLeaderRankedMapsChachePath, Formatting.Indented);
+                            Json.SerializeToLocalFile(_beatLeaderRankedMapsCache, _beatLeaderRankedMapsChachePath);
                         }
                         _finishedStep += 1;
                         _status = IStepExecuter.Status.Completed;

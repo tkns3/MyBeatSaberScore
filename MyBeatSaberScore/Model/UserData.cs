@@ -73,7 +73,7 @@ namespace MyBeatSaberScore.Model
             }
 
             // スコア更新日順にならべるときBeatLeaderとScoreSaberのうち更新日が新しいほうを比較対象に使う
-            static DateTime? orderKeySelector(IntegrationScore score)
+            static DateTimeOffset? orderKeySelector(IntegrationScore score)
             {
                 if (score.BeatLeader.TimeSet != null && score.ScoreSaber.TimeSet != null)
                 {

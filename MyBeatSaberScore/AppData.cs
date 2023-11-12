@@ -133,10 +133,10 @@ namespace MyBeatSaberScore
                 MapNps.MaxValue = GetValue(node, "MapNps_MaxValue", ParseToDouble, double.MaxValue);
                 MapNjs.MinValue = GetValue(node, "MapNjs_MinValue", ParseToDouble, double.MinValue);
                 MapNjs.MaxValue = GetValue(node, "MapNjs_MaxValue", ParseToDouble, double.MaxValue);
-                MapRankedDate.MinValue = GetValue<DateTime?>(node, "MapRankedDate_MinValue", ParseToDateTime, null);
-                MapRankedDate.MaxValue = GetValue<DateTime?>(node, "MapRankedDate_MaxValue", ParseToDateTime, null);
-                PlayUpdateDate.MinValue = GetValue<DateTime?>(node, "PlayUpdateDate_MinValue", ParseToDateTime, null);
-                PlayUpdateDate.MaxValue = GetValue<DateTime?>(node, "PlayUpdateDate_MaxValue", ParseToDateTime, null);
+                MapRankedDate.MinValue = GetValue<DateTimeOffset?>(node, "MapRankedDate_MinValue", ParseToDateTimeOffset, null);
+                MapRankedDate.MaxValue = GetValue<DateTimeOffset?>(node, "MapRankedDate_MaxValue", ParseToDateTimeOffset, null);
+                PlayUpdateDate.MinValue = GetValue<DateTimeOffset?>(node, "PlayUpdateDate_MinValue", ParseToDateTimeOffset, null);
+                PlayUpdateDate.MaxValue = GetValue<DateTimeOffset?>(node, "PlayUpdateDate_MaxValue", ParseToDateTimeOffset, null);
                 PlayResult.ShowClear = GetValue(node, "PlayResult_ShowClear", ParseToBool, true);
                 PlayResult.ShowFailure = GetValue(node, "PlayResult_ShowFailure", ParseToBool, true);
                 PlayResult.ShowNotPlay = GetValue(node, "PlayResult_ShowNotPlay", ParseToBool, true);
@@ -210,10 +210,10 @@ namespace MyBeatSaberScore
                 new JProperty("MapNps_MaxValue", (MapNps.MaxValue == double.MaxValue) ? "unlimited" : MapNps.MaxValue.ToString()),
                 new JProperty("MapNjs_MinValue", (MapNjs.MinValue == double.MinValue) ? "unlimited" : MapNjs.MinValue.ToString()),
                 new JProperty("MapNjs_MaxValue", (MapNjs.MaxValue == double.MaxValue) ? "unlimited" : MapNjs.MaxValue.ToString()),
-                new JProperty("MapRankedDate_MinValue", MapRankedDate.MinValue.ToString()),
-                new JProperty("MapRankedDate_MaxValue", MapRankedDate.MaxValue.ToString()),
-                new JProperty("PlayUpdateDate_MinValue", PlayUpdateDate.MinValue.ToString()),
-                new JProperty("PlayUpdateDate_MaxValue", PlayUpdateDate.MaxValue.ToString()),
+                new JProperty("MapRankedDate_MinValue", MapRankedDate.MinValue?.ToString("yyyy-MM-ddTHH:mm:sszzz")),
+                new JProperty("MapRankedDate_MaxValue", MapRankedDate.MaxValue?.ToString("yyyy-MM-ddTHH:mm:sszzz")),
+                new JProperty("PlayUpdateDate_MinValue", PlayUpdateDate.MinValue?.ToString("yyyy-MM-ddTHH:mm:sszzz")),
+                new JProperty("PlayUpdateDate_MaxValue", PlayUpdateDate.MaxValue?.ToString("yyyy-MM-ddTHH:mm:sszzz")),
                 new JProperty("PlayResult_ShowClear", PlayResult.ShowClear.ToString()),
                 new JProperty("PlayResult_ShowFailure", PlayResult.ShowFailure.ToString()),
                 new JProperty("PlayResult_ShowNotPlay", PlayResult.ShowNotPlay.ToString()),
@@ -295,11 +295,11 @@ namespace MyBeatSaberScore
             return defaultValue;
         }
 
-        private DateTime? ParseToDateTime(string value, DateTime? defaultValue)
+        private DateTimeOffset? ParseToDateTimeOffset(string value, DateTimeOffset? defaultValue)
         {
-            if (DateTime.TryParse(value, out var result))
+            if (DateTimeOffset.TryParse(value, out var result))
             {
-                return result;
+                return result.ToOffset(TimeZoneInfo.Local.BaseUtcOffset);
             }
             return defaultValue;
         }
@@ -345,12 +345,12 @@ namespace MyBeatSaberScore
         public double MaxNps { get { return Value.MapNps.MaxValue; } set { SetProperty(ref Value.MapNps.MaxValue, value); } }
         public double MinNjs { get { return Value.MapNjs.MinValue; } set { SetProperty(ref Value.MapNjs.MinValue, value); } }
         public double MaxNjs { get { return Value.MapNjs.MaxValue; } set { SetProperty(ref Value.MapNjs.MaxValue, value); } }
-        public DateTime? RankedDateStart { get { return Value.MapRankedDate.MinValue; } set { SetProperty(ref Value.MapRankedDate.MinValue, value); } }
-        public DateTime? RankedDateEnd { get { return Value.MapRankedDate.MaxValue; } set { SetProperty(ref Value.MapRankedDate.MaxValue, value); } }
+        public DateTimeOffset? RankedDateStart { get { return Value.MapRankedDate.MinValue; } set { SetProperty(ref Value.MapRankedDate.MinValue, value); } }
+        public DateTimeOffset? RankedDateEnd { get { return Value.MapRankedDate.MaxValue; } set { SetProperty(ref Value.MapRankedDate.MaxValue, value); } }
 
         // プレイ結果
-        public DateTime? DateStart { get { return Value.PlayUpdateDate.MinValue; } set { SetProperty(ref Value.PlayUpdateDate.MinValue, value); } }
-        public DateTime? DateEnd { get { return Value.PlayUpdateDate.MaxValue; } set { SetProperty(ref Value.PlayUpdateDate.MaxValue, value); } }
+        public DateTimeOffset? DateStart { get { return Value.PlayUpdateDate.MinValue; } set { SetProperty(ref Value.PlayUpdateDate.MinValue, value); } }
+        public DateTimeOffset? DateEnd { get { return Value.PlayUpdateDate.MaxValue; } set { SetProperty(ref Value.PlayUpdateDate.MaxValue, value); } }
         public bool IsShowClear { get { return Value.PlayResult.ShowClear; } set { SetProperty(ref Value.PlayResult.ShowClear, value); } }
         public bool IsShowFailure { get { return Value.PlayResult.ShowFailure; } set { SetProperty(ref Value.PlayResult.ShowFailure, value); } }
         public bool IsShowNotPlay { get { return Value.PlayResult.ShowNotPlay; } set { SetProperty(ref Value.PlayResult.ShowNotPlay, value); } }

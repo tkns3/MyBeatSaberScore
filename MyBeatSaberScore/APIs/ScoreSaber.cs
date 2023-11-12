@@ -179,7 +179,7 @@ namespace MyBeatSaberScore.APIs
             public bool fullCombo { get; set; }
             public long hmd { get; set; }
             public bool hasReplay { get; set; }
-            public DateTime timeSet { get; set; } = new();
+            public DateTimeOffset timeSet { get; set; } = new();
         }
 
         public class LeaderboardPlayerInfo
@@ -212,10 +212,10 @@ namespace MyBeatSaberScore.APIs
             public string levelAuthorName { get; set; } = "";
             public Difficulty difficulty { get; set; } = new();
             public long maxScore { get; set; }
-            public DateTime createdDate { get; set; }
-            public DateTime? rankedDate { get; set; }
-            public DateTime? qualifiedDate { get; set; }
-            public DateTime? lovedDate { get; set; }
+            public DateTimeOffset createdDate { get; set; }
+            public DateTimeOffset? rankedDate { get; set; }
+            public DateTimeOffset? qualifiedDate { get; set; }
+            public DateTimeOffset? lovedDate { get; set; }
             public bool ranked { get; set; }
             public bool qualified { get; set; }
             public bool loved { get; set; }
