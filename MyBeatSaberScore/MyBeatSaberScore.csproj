@@ -8,6 +8,7 @@
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
     <PlatformTarget>x64</PlatformTarget>
     <Version>0.10.0</Version>
+	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
