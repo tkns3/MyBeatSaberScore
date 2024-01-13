@@ -21,6 +21,10 @@ namespace MyBeatSaberScore.BeatMap
         public long Walls { get; set; }
         public double Njs { get; set; }
         public double Nps { get; set; }
+        /// <summary>
+        /// 理論最大スコアの値。
+        /// ただしアークノーツ、チェインノーツを含むマップの場合は正しくない値が格納されている可能性あり。
+        /// </summary>
         public long MaxScore { get; set; }
         public RankedInformation ScoreSaber { get; set; } = new();
         public RankedInformation BeatLeader { get; set; } = new();

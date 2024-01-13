@@ -524,11 +524,18 @@ namespace MyBeatSaberScore.Model
 
         public void Set(BeatMapData map, ScoreSaber.PlayerScore score, ScoreSaberPlayHistory.SpecificMapPlayHistory results)
         {
+            // アークノーツ、チェインノーツが含まれるマップの場合 map.MaxScore の値が正しくない可能性あり。
+            // ランク譜面はアークノーツ、チェインノーツが含まれていないので map.MaxScore の値は正しい。
+            // 古いスコアの場合 score.leaderboard.maxScore が 0 の可能性あり。
+            // ランク譜面のスコアで score.leaderboard.maxScore が正しくない譜面が存在する。
+            // 以上からランク譜面は map.MaxScore を優先して使い、ランク譜面以外は score.leaderboard.maxScore を優先して使う。
+
+            long maxScore = (map.ScoreSaber.Ranked) ? (map.MaxScore) : ((score.leaderboard.maxScore > 0) ? score.leaderboard.maxScore : map.MaxScore);
             Reference = score;
             TimeSet = (score.score.modifiedScore >= 0) ? score.score.timeSet : null;
             ModifiedScore = score.score.modifiedScore;
-            Acc = (map.MaxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / map.MaxScore : 0;
-            AccDifference = (map.MaxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / map.MaxScore : 0;
+            Acc = (maxScore > 0 && score.score.modifiedScore > 0) ? (double)score.score.modifiedScore * 100 / maxScore : 0;
+            AccDifference = (maxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / maxScore : 0;
             IsFirstScore = results.Count == 1;
             IsFirstClear = results.IsFirstClear();
             ClearStatus = (IsFirstScore ? 1 : 0) + (IsFirstClear ? 2 : 0);
@@ -578,11 +585,12 @@ namespace MyBeatSaberScore.Model
 
         public void Set(BeatMapData map, BeatLeader.ScoreResponseWithMyScore score, BeatLeaderPlayHistory.SpecificMapPlayHistory results)
         {
+            long maxScore = score.leaderboard.difficulty.maxScore;
             Reference = score;
             TimeSet = (score.modifiedScore >= 0) ? DateTimeOffset.FromUnixTimeSeconds(long.TryParse(score.timeset, out var epochSeconds) ? epochSeconds : 0).ToOffset(TimeZoneInfo.Local.BaseUtcOffset) : null;
             ModifiedScore = score.modifiedScore;
-            Acc = (map.MaxScore > 0 && score.modifiedScore > 0) ? (double)score.modifiedScore * 100 / map.MaxScore : 0;
-            AccDifference = (map.MaxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / map.MaxScore : 0;
+            Acc = (maxScore > 0 && score.modifiedScore > 0) ? (double)score.modifiedScore * 100 / maxScore : 0;
+            AccDifference = (maxScore > 0 && results.LatestChange() > 0) ? (double)results.LatestChange() * 100 / maxScore : 0;
             IsFirstScore = results.Count == 1;
             IsFirstClear = results.IsFirstClear();
             ClearStatus = (IsFirstScore ? 1 : 0) + (IsFirstClear ? 2 : 0);
