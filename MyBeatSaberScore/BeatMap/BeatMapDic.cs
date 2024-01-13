@@ -109,6 +109,12 @@ namespace MyBeatSaberScore.BeatMap
             {
                 map.Diffs.ForEach(diff =>
                 {
+                    // 備考：
+                    //   ScoreSaberのRanked要件にStandardであることという条件がある。
+                    //   ScrappedDataはStandard以外の難易度でもRankedがtrueになるバグがある。
+                    //   そのためStandard以外の難易度の場合はScrappedDataのランク関連パラメータを参照しない。
+
+                    var isRanked = diff.Ranked && diff.MapMode == BeatMapMode.Standard;
                     var dicKey = GetDictionaryKey(map.Hash, diff.MapMode, diff.MapDifficulty);
                     var mapData = new BeatMapData()
                     {
@@ -131,9 +137,9 @@ namespace MyBeatSaberScore.BeatMap
                         MaxScore = MaxScore(diff.Notes),
                         Deleted = false,
                     };
-                    mapData.ScoreSaber.Ranked = diff.Ranked && diff.MapMode == BeatMapMode.Standard; // ScrappedDataはStandard以外のRankedがtrueになるバグがあるので除外しておく (ScoreSaberのRanked要件にStandardであることという条件がある)
-                    mapData.ScoreSaber.RankedTime = (diff.Ranked && diff.MapMode == BeatMapMode.Standard) ? diff.RankedUpdateTime : null;
-                    mapData.ScoreSaber.Star = diff.Stars;
+                    mapData.ScoreSaber.Ranked = isRanked; 
+                    mapData.ScoreSaber.RankedTime = (isRanked) ? diff.RankedUpdateTime : null;
+                    mapData.ScoreSaber.Star = (isRanked) ? diff.Stars : 0.0d;
 
                     if (!_dic.TryAdd(dicKey, mapData))
                     {
@@ -177,7 +183,7 @@ namespace MyBeatSaberScore.BeatMap
                     };
                     mapData.BeatLeader.Ranked = map.Ranked;
                     mapData.BeatLeader.RankedTime = (map.Ranked) ? map.RankedTime : null;
-                    mapData.BeatLeader.Star = map.Stars;
+                    mapData.BeatLeader.Star = (map.Ranked) ? map.Stars : 0.0d;
 
                     _ = _dic.TryAdd(dicKey, mapData);
                 }
