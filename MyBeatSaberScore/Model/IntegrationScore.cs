@@ -61,7 +61,28 @@ namespace MyBeatSaberScore.Model
         public IntegrationScore(ScoreSaber.PlayerScore score, ScoreSaberPlayHistory.SpecificMapPlayHistory results)
         {
             string hash = score.leaderboard.songHash.ToLower();
-            var map = BeatMapDic.Get(hash, score.leaderboard.difficulty.mapMode, score.leaderboard.difficulty.mapDifficulty) ?? CreateBeatMapData(score);
+
+            // GameModeが"SoloGeneraged90Degree"か"SoloGeneraged360Degree"になっているのはBeat-360fyerが"SoloStandard"から生成したマップ
+            // そのためBeatMapDicからは"SoloStandard"で検索する
+            BeatMapMode mapMode = score.leaderboard.difficulty.mapMode;
+            if ((mapMode == BeatMapMode.GeneragedDegree90) || (mapMode == BeatMapMode.GeneragedDegree360))
+            {
+                mapMode = BeatMapMode.Standard;
+            }
+            var map = BeatMapDic.Get(hash, mapMode, score.leaderboard.difficulty.mapDifficulty) ?? CreateBeatMapData(score);
+
+            // GameModeが"SoloGeneraged90Degree"か"SoloGeneraged360Degree"のときはマップ情報を仮生成する
+            if (mapMode != score.leaderboard.difficulty.mapMode)
+            {
+                map = map.Clone();
+                map.MapMode = score.leaderboard.difficulty.mapMode;
+                map.ScoreSaber.Ranked = false;
+                map.ScoreSaber.RankedTime = null;
+                map.ScoreSaber.Star = 0;
+                map.BeatLeader.Ranked = false;
+                map.BeatLeader.RankedTime = null;
+                map.BeatLeader.Star = 0;
+            }
 
             Map = map;
             ScoreSaber = new(map, score, results);

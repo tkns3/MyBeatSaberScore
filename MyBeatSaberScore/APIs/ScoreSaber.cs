@@ -108,6 +108,8 @@ namespace MyBeatSaberScore.APIs
                 BeatMapMode.Degree360 => "Solo360Degree",
                 BeatMapMode.Lightshow => "SoloLightshow",
                 BeatMapMode.Lawless => "SoloLawless",
+                BeatMapMode.GeneragedDegree90 => "SoloGenerated90Degree",
+                BeatMapMode.GeneragedDegree360 => "SoloGenerated360Degree",
                 _ => "SoloStandard",
             };
             string url = $"https://scoresaber.com/api/leaderboard/by-hash/{hash}/info?difficulty={difficulty}&mode={mode}";
@@ -272,6 +274,8 @@ namespace MyBeatSaberScore.APIs
                         "Solo90Degree" => BeatMapMode.Degree90,
                         "Solo360Degree" => BeatMapMode.Degree360,
                         "SoloLawless" => BeatMapMode.Lawless,
+                        "SoloGenerated90Degree" => BeatMapMode.GeneragedDegree90,
+                        "SoloGenerated360Degree" => BeatMapMode.GeneragedDegree360,
                         _ => BeatMapMode.Unknown,
                     };
                 }

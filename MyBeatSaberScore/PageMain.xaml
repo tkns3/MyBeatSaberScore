@@ -340,6 +340,12 @@
                                                 <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.NoArrows}">
                                                     <Setter Property="Image.Source" Value="Resources/noarrows.png"/>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.GeneragedDegree90}">
+                                                    <Setter Property="Image.Source" Value="Resources/Generaged90degree.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Map.MapMode}" Value="{x:Static beatmap:BeatMapMode.GeneragedDegree360}">
+                                                    <Setter Property="Image.Source" Value="Resources/Generaged360degree.png"/>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Image.Style>

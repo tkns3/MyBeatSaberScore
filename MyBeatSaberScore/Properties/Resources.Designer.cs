@@ -183,6 +183,26 @@ namespace MyBeatSaberScore.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
+        internal static byte[] Generaged360degree {
+            get {
+                object obj = ResourceManager.GetObject("Generaged360degree", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] Generaged90degree {
+            get {
+                object obj = ResourceManager.GetObject("Generaged90degree", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
         internal static byte[] hard {
             get {
                 object obj = ResourceManager.GetObject("hard", resourceCulture);

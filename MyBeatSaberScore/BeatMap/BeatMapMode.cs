@@ -9,6 +9,8 @@
         Degree90,
         Degree360,
         Lightshow,
-        Lawless
+        Lawless,
+        GeneragedDegree90,
+        GeneragedDegree360,
     }
 }

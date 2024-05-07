@@ -29,6 +29,36 @@ namespace MyBeatSaberScore.BeatMap
         public RankedInformation ScoreSaber { get; set; } = new();
         public RankedInformation BeatLeader { get; set; } = new();
         public bool Deleted { get; set; }
+
+        public BeatMapData Clone()
+        {
+            var map = new BeatMapData();
+            map.Key = Key;
+            map.Hash = Hash;
+            map.SongName = SongName;
+            map.SongSubName = SongSubName;
+            map.SongAuthorName = SongAuthorName;
+            map.MapperName = MapperName;
+            map.UploadedTime = UploadedTime;
+            map.Bpm = Bpm;
+            map.Duration = Duration;
+            map.MapDifficulty = MapDifficulty;
+            map.MapMode = MapMode;
+            map.Bpm = Bpm;
+            map.Notes = Notes;
+            map.Walls = Walls;
+            map.Njs = Njs;
+            map.Nps = Nps;
+            map.MaxScore = MaxScore;
+            map.ScoreSaber.Ranked = ScoreSaber.Ranked;
+            map.ScoreSaber.RankedTime = ScoreSaber.RankedTime;
+            map.ScoreSaber.Star = ScoreSaber.Star;
+            map.BeatLeader.Ranked = BeatLeader.Ranked;
+            map.BeatLeader.RankedTime = BeatLeader.RankedTime;
+            map.BeatLeader.Star = BeatLeader.Star;
+            map.Deleted = Deleted;
+            return map;
+        }
     }
 
     public class RankedInformation

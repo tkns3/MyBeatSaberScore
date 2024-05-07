@@ -29,6 +29,8 @@
     <None Remove="Resources\easy.png" />
     <None Remove="Resources\expert.png" />
     <None Remove="Resources\expertplus.png" />
+    <None Remove="Resources\Generaged360degree.png" />
+    <None Remove="Resources\Generaged90degree.png" />
     <None Remove="Resources\hard.png" />
     <None Remove="Resources\lawless.png" />
     <None Remove="Resources\lightshow.png" />
@@ -59,6 +61,8 @@
   <ItemGroup>
     <EmbeddedResource Include="log4net.config" />
     <Resource Include="Resources\beatleader_gray.png" />
+    <Resource Include="Resources\Generaged360degree.png" />
+    <Resource Include="Resources\Generaged90degree.png" />
     <Resource Include="Resources\reload.png" />
     <Resource Include="Resources\scoresaber_gray.png" />
   </ItemGroup>
