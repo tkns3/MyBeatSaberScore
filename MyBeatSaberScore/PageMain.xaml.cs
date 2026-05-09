@@ -17,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace MyBeatSaberScore
 {
@@ -30,6 +31,7 @@ namespace MyBeatSaberScore
         private PageMainViewModel _viewModel;
 
         private Dictionary<string, DataGridColumn> _dataGridColumnsDic;
+        private readonly DispatcherTimer _filterRefreshTimer;
 
         private int _preDisplayIndex;
 
@@ -37,6 +39,11 @@ namespace MyBeatSaberScore
 
         public PageMain()
         {
+            _filterRefreshTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(180),
+            };
+
             InitializeComponent();
             _viewModel = (PageMainViewModel)DataContext;
             _viewModel.GridItemsViewSource.Filter += new FilterEventHandler(DataGridFilter);
@@ -64,6 +71,12 @@ namespace MyBeatSaberScore
             XaSongNameFilter.SetTextBoxUpdateSourceTrigger(UpdateSourceTrigger.PropertyChanged);
             XaBsrFilter.SetTextBoxUpdateSourceTrigger(UpdateSourceTrigger.PropertyChanged);
             XaHashFilter.SetTextBoxUpdateSourceTrigger(UpdateSourceTrigger.PropertyChanged);
+
+            _filterRefreshTimer.Tick += (_, _) =>
+            {
+                _filterRefreshTimer.Stop();
+                RefreshGrid();
+            };
         }
 
         internal List<Config.GridColumnParam>? GetGridColumnParams()
@@ -109,34 +122,45 @@ namespace MyBeatSaberScore
         {
             if (e.Item is IntegrationScore item)
             {
-                e.Accepted =
-                    AppData.MainPageFilter.Value.MapFullName.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapBsr.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapHash.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapRankStatus.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapMode.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapDifficulty.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapStar.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapDuration.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapBpm.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapNotes.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapBombs.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapWalls.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapNps.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapNjs.IsShow(item) &&
-                    AppData.MainPageFilter.Value.MapRankedDate.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayUpdateDate.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayResult.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayFullCombo.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayPp.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayAcc.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayWorldRank.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayMissPlusBad.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayMiss.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayBad.IsShow(item) &&
-                    AppData.MainPageFilter.Value.PlayModifiers.IsShow(item) &&
-                    AppData.MainPageFilter.Value.EtcCheckedOnly.IsShow(item);
+                var f = AppData.MainPageFilter.Value;
+                bool accepted = true;
+
+                // 有効な条件のみ評価して不要な判定コストを下げる
+                if (f.MapFullName.SearchValue.Length > 0) accepted &= f.MapFullName.IsShow(item);
+                if (accepted && f.MapBsr.SearchValue.Length > 0) accepted &= f.MapBsr.IsShow(item);
+                if (accepted && f.MapHash.SearchValue.Length > 0) accepted &= f.MapHash.IsShow(item);
+                if (accepted && !(f.MapRankStatus.ShowRanked && f.MapRankStatus.ShowUnRanked)) accepted &= f.MapRankStatus.IsShow(item);
+                if (accepted && !(f.MapMode.ShowStandard && f.MapMode.ShowLawless && f.MapMode.ShowOneSaber && f.MapMode.ShowLightShow && f.MapMode.ShowDegree90 && f.MapMode.ShowDegree360 && f.MapMode.ShowNoArrows)) accepted &= f.MapMode.IsShow(item);
+                if (accepted && !(f.MapDifficulty.ShowEasy && f.MapDifficulty.ShowNormal && f.MapDifficulty.ShowHard && f.MapDifficulty.ShowExpert && f.MapDifficulty.ShowExpertPlus)) accepted &= f.MapDifficulty.IsShow(item);
+                if (accepted && (f.MapStar.MinValue > 0 || f.MapStar.MaxValue < 20)) accepted &= f.MapStar.IsShow(item);
+                if (accepted && (f.MapDuration.MinValue > double.MinValue || f.MapDuration.MaxValue < double.MaxValue)) accepted &= f.MapDuration.IsShow(item);
+                if (accepted && (f.MapBpm.MinValue > double.MinValue || f.MapBpm.MaxValue < double.MaxValue)) accepted &= f.MapBpm.IsShow(item);
+                if (accepted && (f.MapNotes.MinValue > long.MinValue || f.MapNotes.MaxValue < long.MaxValue)) accepted &= f.MapNotes.IsShow(item);
+                if (accepted && (f.MapBombs.MinValue > long.MinValue || f.MapBombs.MaxValue < long.MaxValue)) accepted &= f.MapBombs.IsShow(item);
+                if (accepted && (f.MapWalls.MinValue > long.MinValue || f.MapWalls.MaxValue < long.MaxValue)) accepted &= f.MapWalls.IsShow(item);
+                if (accepted && (f.MapNps.MinValue > double.MinValue || f.MapNps.MaxValue < double.MaxValue)) accepted &= f.MapNps.IsShow(item);
+                if (accepted && (f.MapNjs.MinValue > double.MinValue || f.MapNjs.MaxValue < double.MaxValue)) accepted &= f.MapNjs.IsShow(item);
+                if (accepted && (f.MapRankedDate.MinValue != null || f.MapRankedDate.MaxValue != null)) accepted &= f.MapRankedDate.IsShow(item);
+                if (accepted && (f.PlayUpdateDate.MinValue != null || f.PlayUpdateDate.MaxValue != null)) accepted &= f.PlayUpdateDate.IsShow(item);
+                if (accepted && !(f.PlayResult.ShowClear && f.PlayResult.ShowFailure && f.PlayResult.ShowNotPlay)) accepted &= f.PlayResult.IsShow(item);
+                if (accepted && !(f.PlayFullCombo.ShowFullCombo && f.PlayFullCombo.ShowNotFullCombo)) accepted &= f.PlayFullCombo.IsShow(item);
+                if (accepted && (f.PlayPp.MinValue > double.MinValue || f.PlayPp.MaxValue < double.MaxValue)) accepted &= f.PlayPp.IsShow(item);
+                if (accepted && (f.PlayAcc.MinValue > double.MinValue || f.PlayAcc.MaxValue < double.MaxValue)) accepted &= f.PlayAcc.IsShow(item);
+                if (accepted && (f.PlayWorldRank.MinValue > long.MinValue || f.PlayWorldRank.MaxValue < long.MaxValue)) accepted &= f.PlayWorldRank.IsShow(item);
+                if (accepted && (f.PlayMissPlusBad.MinValue > long.MinValue || f.PlayMissPlusBad.MaxValue < long.MaxValue)) accepted &= f.PlayMissPlusBad.IsShow(item);
+                if (accepted && (f.PlayMiss.MinValue > long.MinValue || f.PlayMiss.MaxValue < long.MaxValue)) accepted &= f.PlayMiss.IsShow(item);
+                if (accepted && (f.PlayBad.MinValue > long.MinValue || f.PlayBad.MaxValue < long.MaxValue)) accepted &= f.PlayBad.IsShow(item);
+                if (accepted && !(f.PlayModifiers.Any && !f.PlayModifiers.None && f.PlayModifiers.Flag == 0)) accepted &= f.PlayModifiers.IsShow(item);
+                if (accepted && f.EtcCheckedOnly.ShowCheckedOnly) accepted &= f.EtcCheckedOnly.IsShow(item);
+
+                e.Accepted = accepted;
             }
+        }
+
+        private void QueueRefreshGrid()
+        {
+            _filterRefreshTimer.Stop();
+            _filterRefreshTimer.Start();
         }
 
         private void UpdateDataGridColumnVisibility()
@@ -514,18 +538,18 @@ namespace MyBeatSaberScore
 
         private void OnFilterEnableChanged(object sender, RoutedEventArgs e)
         {
-            RefreshGrid();
+            QueueRefreshGrid();
         }
 
         private void OnFilterSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            RefreshGrid();
+            QueueRefreshGrid();
         }
 
         private void OnFilterTextChanged(object sender, TextChangedEventArgs e)
         {
             if (((ClearableTextBox)sender).ImeFlag) return;
-            RefreshGrid();
+            QueueRefreshGrid();
         }
 
         private void OnClickCopyBSR(object sender, RoutedEventArgs e)
