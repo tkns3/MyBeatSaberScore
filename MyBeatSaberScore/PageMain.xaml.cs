@@ -619,7 +619,7 @@ namespace MyBeatSaberScore
                     {
                         // 未プレイランク譜面のLeaderbordIdはScrappedDataに含まれていないので取得してくる必要がある
                         var info = await ScoreSaber.GetLeaderboard(item.Map.Hash, item.Map.MapDifficulty, item.Map.MapMode);
-                        var url = $"https://scoresaber.com/leaderboard/{info.difficulty.leaderboardId}";
+                        var url = $"https://scoresaber.com/leaderboard/{info.id}";
                         _ = OpenUrl(url);
                     }
                 }

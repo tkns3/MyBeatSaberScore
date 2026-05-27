@@ -186,12 +186,31 @@ namespace MyBeatSaberScore.APIs
 
         public class LeaderboardPlayerInfo
         {
-            public long id { get; set; }
+            [System.Text.Json.Serialization.JsonConverter(typeof(StringOrLongConverter))]
+            public string id { get; set; } = "";
             public string name { get; set; } = "";
             public string profilePicture { get; set; } = "";
             public string country { get; set; } = "";
             public long permissions { get; set; }
             public string role { get; set; } = "";
+        }
+
+        // カスタムコンバーター
+        private class StringOrLongConverter : System.Text.Json.Serialization.JsonConverter<string>
+        {
+            public override string Read(ref System.Text.Json.Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                if (reader.TokenType == System.Text.Json.JsonTokenType.Number)
+                {
+                    return reader.GetInt64().ToString();
+                }
+                return reader.GetString() ?? "";
+            }
+
+            public override void Write(System.Text.Json.Utf8JsonWriter writer, string value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value);
+            }
         }
 
         public class LeaderboardInfo
@@ -221,7 +240,7 @@ namespace MyBeatSaberScore.APIs
             public bool ranked { get; set; }
             public bool qualified { get; set; }
             public bool loved { get; set; }
-            public long maxPP { get; set; }
+            public double maxPP { get; set; }
             public double stars { get; set; }
             public bool positiveModifiers { get; set; }
             public long plays { get; set; }
@@ -235,13 +254,13 @@ namespace MyBeatSaberScore.APIs
 
         public class Difficulty
         {
+            // 旧形式との互換性を保つ
             public long leaderboardId { get; set; }
-            public long difficulty
+            
+            // 新形式のプロパティ
+            public long leaderboard
             {
-                get
-                {
-                    return _difficulty;
-                }
+                get => _difficulty > 0 ? _difficulty : leaderboardId;
                 set
                 {
                     _difficulty = value;
@@ -256,6 +275,26 @@ namespace MyBeatSaberScore.APIs
                     };
                 }
             }
+            
+            // 旧形式との互換性を保つ
+            public long difficulty
+            {
+                get => _difficulty;
+                set
+                {
+                    _difficulty = value;
+                    mapDifficulty = value switch
+                    {
+                        1 => BeatMapDifficulty.Easy,
+                        3 => BeatMapDifficulty.Normal,
+                        5 => BeatMapDifficulty.Hard,
+                        7 => BeatMapDifficulty.Expert,
+                        9 => BeatMapDifficulty.ExpertPlus,
+                        _ => BeatMapDifficulty.Unknown,
+                    };
+                }
+            }
+            
             public string gameMode
             {
                 get
